@@ -1,0 +1,67 @@
+<header class="bg-gray-800 text-white">
+    <nav class="container mx-auto px-4 py-3">
+      <div class="flex items-center justify-between">
+        <!-- Logo -->
+        <!-- <div class="text-2xl font-bold text-[#828aff]">
+          madu
+        </div> -->
+        <a href="/home" class="flex items-center">
+          <img class="h-12 w-auto" src="assets/img/logos/logo-madu-coloreado.svg" alt="Madu Company Logo">
+        </a>
+        <!-- Desktop Menu -->
+        <div class="hidden md:flex items-center space-x-6">
+          <div class="relative group">
+            <!-- Botón del dropdown -->
+            <button class="flex items-center hover:text-[#ACB1F2] focus:outline-none">
+              Servicios
+              <svg class="w-4 h-4 ml-1 transition duration-300 ease-in-out transform group-hover:rotate-180" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>  
+            </button>
+        
+            <!-- Dropdown Menu -->
+            <div
+              class="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 group-hover:block transition-opacity duration-300 ease-in-out opacity-0 group-hover:opacity-100">
+              <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Servicio 1</a>
+                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Servicio 2</a>
+                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Servicio 3</a>
+              </div>
+            </div>
+          </div>
+        
+          <a href="#" class="hover:text-[#ACB1F2]">Nosotros</a>
+          <a href="#" class="hover:text-[#ACB1F2]">Contacto</a>
+        </div>
+
+
+  
+        <!-- Desktop Buttons -->
+        <div class="hidden md:flex items-center space-x-4">
+          <a href="#" type="button" class="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Comienza Aquí</a>
+          <a href="/login" class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-full border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Iniciar Sesión</a>
+        </div>
+  
+        <!-- Mobile menu button -->
+        <div class="md:hidden">
+          <button (click)="toggleMobileMenu()" class="text-white focus:outline-none">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+  
+      <!-- Mobile Menu -->
+      <div [class.hidden]="!isMobileMenuOpen" class="md:hidden">
+        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+          <a href="#" class="block hover:bg-[#6A75FF] px-3 py-2 rounded-md">Servicios</a>
+          <a href="#" class="block hover:bg-[#6A75FF] px-3 py-2 rounded-md">Nosotros</a>
+          <a href="#" class="block hover:bg-[#6A75FF] px-3 py-2 rounded-md">Contacto</a>
+          <a href="#" class="block bg-[#6A75FF] text-white px-3 py-2 rounded-md mt-4">Comencemos</a>
+          <a href="#" class="block bg-[#7A7EFF] text-white px-3 py-2 rounded-md mt-2">Iniciar Sesión</a>
+        </div>
+      </div>
+    </nav>
+  </header>

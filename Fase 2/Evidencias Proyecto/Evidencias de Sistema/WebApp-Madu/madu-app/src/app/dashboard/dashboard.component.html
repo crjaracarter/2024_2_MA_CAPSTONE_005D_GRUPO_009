@@ -1,0 +1,16 @@
+<div class="flex h-screen bg-gray-100">
+  <!-- Sidebar -->
+  <app-sidebar class="hidden md:flex"></app-sidebar>
+
+  <div class="flex flex-col flex-1 overflow-hidden">
+    <!-- Topbar -->
+    <app-topbar></app-topbar>
+
+    <!-- Main content -->
+    <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-200">
+      <div class="container mx-auto px-6 py-8">
+        <app-main-content></app-main-content>
+      </div>
+    </main>
+  </div>
+</div>
