@@ -9,6 +9,7 @@ import { TopbarComponent } from "./dashboard/topbar/topbar.component";
 import { MainContentComponent } from "./dashboard/main-content/main-content.component";
 import { OnInit } from '@angular/core';
 import { initFlowbite } from 'flowbite';
+import { NgxSonnerToaster } from 'ngx-sonner';
 
 
 @Component({
@@ -17,12 +18,7 @@ import { initFlowbite } from 'flowbite';
   imports: [
     RouterOutlet,
     HomeComponent,
-    HeaderComponent,
-    FooterComponent,
-    DashboardComponent,
-    SidebarComponent,
-    TopbarComponent,
-    MainContentComponent
+    NgxSonnerToaster
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'

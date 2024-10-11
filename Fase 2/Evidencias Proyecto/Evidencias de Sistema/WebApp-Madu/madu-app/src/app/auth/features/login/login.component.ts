@@ -1,28 +1,22 @@
 import { Component, inject } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { hasEmailError, isRequired } from '../../utils/validators';
-import { AuthService } from '../../data-access/auth.service';
-import { toast } from 'ngx-sonner';
+import { FormBuilder, FormControl, ReactiveFormsModule, Validators, FormGroup } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { toast } from 'ngx-sonner';
+import { AuthService } from '../../data-access/auth.service';
+import { isRequired, hasEmailError } from '../../utils/validators';
 import { GoogleButtonComponent } from '../../ui/google-button/google-button.component';
 
-interface FormSignUp {
-  email: FormControl<string | null>;
-  password: FormControl<string | null>;
-}
-
 @Component({
-  selector: 'app-sign-up',
+  selector: 'app-login',
   standalone: true,
   imports: [ReactiveFormsModule, RouterLink, GoogleButtonComponent],
-  templateUrl: './sign-up.component.html',
+  providers: [AuthService],
+  templateUrl: './login.component.html',
+  styleUrl: './login.component.scss'
 })
-export default class SignUpComponent {
+
+
+export class LoginComponent {
   private _formBuilder = inject(FormBuilder);
   private _authService = inject(AuthService);
   private _router = inject(Router);
@@ -35,7 +29,7 @@ export default class SignUpComponent {
     return hasEmailError(this.form);
   }
 
-  form = this._formBuilder.group<FormSignUp>({
+  form = this._formBuilder.group<FormLogin>({
     email: this._formBuilder.control('', [
       Validators.required,
       Validators.email,
@@ -49,12 +43,12 @@ export default class SignUpComponent {
     try {
       const { email, password } = this.form.value;
 
-      if (!email || !password) return;
+      if (!email || !password ) return;
 
-      await this._authService.signUp({ email, password });
+      await this._authService.signIn({ email, password });
 
-      toast.success('Usuario creado correctamente');
-      this._router.navigateByUrl('/tasks');
+      toast.success('Hola nuevamente');
+      this._router.navigateByUrl('/dashboard');
     } catch (error) {
       toast.error('Ocurrio un error');
     }
@@ -64,9 +58,14 @@ export default class SignUpComponent {
     try {
       await this._authService.signInWithGoogle();
       toast.success('Bienvenido denuevo');
-      this._router.navigateByUrl('/tasks');
+      this._router.navigateByUrl('/dashboard');
     } catch (error) {
       toast.error('Ocurrio un error');
     }
   }
+}
+
+export interface FormLogin {
+  email: FormControl<string | null>;
+  password: FormControl<string | null>;
 }

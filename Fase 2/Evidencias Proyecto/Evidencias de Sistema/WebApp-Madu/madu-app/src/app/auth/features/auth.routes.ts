@@ -1,12 +1,14 @@
-import { Routes } from "@angular/router";
+import { Routes } from '@angular/router';
+import { LoginComponent } from './login/login.component';
+import { RegisterComponent } from './register/register.component';
 
-export default [
-    {
-        path: 'sign-in',
-        loadComponent: () => import('./sign-in/sign-in.component'),
-    },
-    {
-        path: 'sign-up',
-        loadComponent: () => import('./sign-up/sign-up.component'),
-    },
-] as Routes;
+export const routes: Routes = [
+  { 
+    path: 'login', 
+    loadComponent: () => import('./login/login.component').then(m => m.LoginComponent)
+  },
+  { 
+    path: 'register', 
+    loadComponent: () => import('./register/register.component').then(m => m.RegisterComponent)
+  },
+];
