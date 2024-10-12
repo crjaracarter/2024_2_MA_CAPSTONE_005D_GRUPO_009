@@ -1,19 +1,143 @@
-<div class="flex flex-col w-64 bg-gray-800 text-white h-full">
-  <div class="flex items-center justify-center h-20 shadow-md">
-    <h1 class="text-3xl font-semibold">Madu App</h1>
+<aside
+  class="bg-gradient-to-br from-gray-800 to-gray-900 -translate-x-80 fixed inset-0 z-50 my-4 ml-4 h-[calc(100vh-32px)] w-72 rounded-xl transition-transform duration-300 xl:translate-x-0">
+  <div class="relative border-b border-white/20">
+    <a class="flex items-center gap-4 py-6 px-8" href="#/">
+      <h6 class="block antialiased tracking-normal font-sans text-base font-semibold leading-relaxed text-white">Madu |
+        Admin Dashboard</h6>
+    </a>
+    <button
+      class="middle none font-sans font-medium text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none w-8 max-w-[32px] h-8 max-h-[32px] rounded-lg text-xs text-white hover:bg-white/10 active:bg-white/30 absolute right-0 top-0 grid rounded-br-none rounded-tl-none xl:hidden"
+      type="button">
+      <span class="absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"
+          aria-hidden="true" class="h-5 w-5 text-white">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </span>
+    </button>
   </div>
-  <nav class="flex-grow">
-    <a href="#" class="flex items-center py-4 px-6 hover:bg-gray-700">
-      <span class="mx-4">Dashboard</span>
-    </a>
-    <a href="#" class="flex items-center py-4 px-6 hover:bg-gray-700">
-      <span class="mx-4">Users</span>
-    </a>
-    <a href="#" class="flex items-center py-4 px-6 hover:bg-gray-700">
-      <span class="mx-4">Analytics</span>
-    </a>
-    <a href="#" class="flex items-center py-4 px-6 hover:bg-gray-700">
-      <span class="mx-4">Settings</span>
-    </a>
-  </nav>
-</div>
+  <div class="m-4">
+    <ul class="mb-4 flex flex-col gap-1">
+      <li>
+        <!-- Inicio -->
+        <a class="" href="#">
+          <button
+            class="middle none font-sans font-bold center transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 rounded-lg text-white hover:bg-white/10 active:bg-white/30 w-full flex items-center gap-4 px-4 capitalize"
+            type="button">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path
+              d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+          </svg>
+          <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">Inicio</p>
+        </button>
+        </a>
+      </li>
+      <li>
+        <!-- Mi Perfil -->
+        <a class="" href="#">
+          <button
+            class="middle none font-sans font-bold center transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 rounded-lg text-white hover:bg-white/10 active:bg-white/30 w-full flex items-center gap-4 px-4 capitalize"
+            type="button">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+          </svg>
+          <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">Mi Perfil
+          </p>
+        </button>
+        </a>
+      </li>
+      <li class="mx-3.5 mt-4 mb-2">
+        <p class="block antialiased font-sans text-sm leading-normal text-white font-black uppercase opacity-75">Gestión
+        </p>
+      </li>
+      <li>
+        <!-- Personas -->
+        <a class="" href="#">
+          <button
+            class="middle none font-sans font-bold center transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 rounded-lg text-white hover:bg-white/10 active:bg-white/30 w-full flex items-center gap-4 px-4 capitalize"
+            type="button">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path
+              d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
+          </svg>
+          <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">Personas
+          </p>
+        </button>
+        </a>
+      </li>
+      <li>
+        <!-- Reclutamiento -->
+        <a class="" href="#">
+          <button
+          class="middle none font-sans font-bold center transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 rounded-lg text-white hover:bg-white/10 active:bg-white/30 w-full flex items-center gap-4 px-4 capitalize"
+          type="button">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+            <path fill-rule="evenodd"
+              d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z"
+              clip-rule="evenodd" />
+          </svg>
+          <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">Reclutamiento
+          </p>
+          </button>
+        </a>
+      </li>
+      <li>
+        <!-- Notificaciones -->
+        <a class="" href="#">
+          <button
+            class="middle none font-sans font-bold center transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 rounded-lg text-white hover:bg-white/10 active:bg-white/30 w-full flex items-center gap-4 px-4 capitalize"
+            type="button">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path
+                d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
+            </svg>
+            <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">
+              Notificaciones
+            </p>
+          </button>
+        </a>
+      </li>
+    </ul>
+    <ul class="mb-4 flex flex-col gap-1">
+      <li class="mx-3.5 mt-4 mb-2">
+        <p class="block antialiased font-sans text-sm leading-normal text-white font-black uppercase opacity-75">¿Hasta
+          Luego?</p>
+      </li>
+      <li>
+        <!-- Cerrar Sesión -->
+        <a class="" href="#">
+          <button
+            class="middle none font-sans font-bold center transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 rounded-lg text-white hover:bg-white/10 active:bg-white/30 w-full flex items-center gap-4 px-4 capitalize"
+            type="button">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd"
+                d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z"
+                clip-rule="evenodd" />
+            </svg>
+            <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">Cerrar
+              Sesión
+            </p>
+          </button>
+        </a>
+      </li>
+      <!-- Madu -->
+      <li>
+        <a class="" href="#">
+          <button
+            class="middle none font-sans font-bold center transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 rounded-lg text-white hover:bg-white/10 active:bg-white/30 w-full flex items-center gap-4 px-4 capitalize"
+            type="button">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd"
+                d="M4.083 9h1.946c.089-1.546.383-2.97.837-4.118A6.004 6.004 0 004.083 9zM10 2a8 8 0 100 16 8 8 0 000-16zm0 2c-.076 0-.232.032-.465.262-.238.234-.497.623-.737 1.182-.389.907-.673 2.142-.766 3.556h3.936c-.093-1.414-.377-2.649-.766-3.556-.24-.56-.5-.948-.737-1.182C10.232 4.032 10.076 4 10 4zm3.971 5c-.089-1.546-.383-2.97-.837-4.118A6.004 6.004 0 0115.917 9h-1.946zm-2.003 2H8.032c.093 1.414.377 2.649.766 3.556.24.56.5.948.737 1.182.233.23.389.262.465.262.076 0 .232-.032.465-.262.238-.234.498-.623.737-1.182.389-.907.673-2.142.766-3.556zm1.166 4.118c.454-1.147.748-2.572.837-4.118h1.946a6.004 6.004 0 01-2.783 4.118zm-6.268 0C6.412 13.97 6.118 12.546 6.03 11H4.083a6.004 6.004 0 002.783 4.118z"
+                clip-rule="evenodd" />
+            </svg>
+            <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">Madu
+            </p>
+          </button>
+        </a>
+      </li>
+
+    </ul>
+  </div>
+</aside>
