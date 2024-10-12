@@ -17,7 +17,7 @@ export const routes: Routes = [
         canActivateChild: [privateGuard()],
         loadChildren: () => import('./task/features/task.routes').then(m => m.default),
       },
-      // Otras rutas que deben tener header y footer
+      
     ],
   },
   {
