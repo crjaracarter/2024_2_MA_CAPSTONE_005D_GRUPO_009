@@ -4,6 +4,10 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { MainLayoutComponent } from './layout/main-layout/main-layout.component';
 import { privateGuard, publicGuard } from './core/auth.guard';
 import { ContactComponent } from './pages/contact/contact.component';
+import { ConocenosComponent } from './pages/conocenos/conocenos.component';
+import { ReclutamientoComponent } from './pages/reclutamiento/reclutamiento.component';
+import { PreciosComponent } from './pages/precios/precios.component';
+import { BlogComponent } from './pages/blog/blog.component';
 
 export const routes: Routes = [
   {
@@ -12,6 +16,10 @@ export const routes: Routes = [
     children: [
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'contact', component: ContactComponent, pathMatch: 'full'},
+      { path: 'conocenos', component: ConocenosComponent, pathMatch: 'full'},
+      { path: 'reclutamiento', component: ReclutamientoComponent, pathMatch: 'full'},
+      { path: 'precios', component: PreciosComponent, pathMatch: 'full'},
+      { path: 'blog', component: BlogComponent, pathMatch: 'full'},
       {
         path: 'tasks',
         canActivateChild: [privateGuard()],
