@@ -8,6 +8,7 @@ import { ConocenosComponent } from './pages/conocenos/conocenos.component';
 import { ReclutamientoComponent } from './pages/reclutamiento/reclutamiento.component';
 import { PreciosComponent } from './pages/precios/precios.component';
 import { BlogComponent } from './pages/blog/blog.component';
+import { UsersComponent } from './users/users.component';
 
 export const routes: Routes = [
   {
@@ -20,11 +21,6 @@ export const routes: Routes = [
       { path: 'reclutamiento', component: ReclutamientoComponent, pathMatch: 'full'},
       { path: 'precios', component: PreciosComponent, pathMatch: 'full'},
       { path: 'blog', component: BlogComponent, pathMatch: 'full'},
-      {
-        path: 'tasks',
-        canActivateChild: [privateGuard()],
-        loadChildren: () => import('./task/features/task.routes').then(m => m.default),
-      },
       
     ],
   },
@@ -34,9 +30,20 @@ export const routes: Routes = [
   },
   {
     path: 'dashboard',
-    component: DashboardComponent,
+    loadChildren: () => import('./dashboard/dashboard.routes').then(m => m.DASHBOARD_ROUTES),
     canActivate: [privateGuard()],
   },
+  {
+    path: 'tasks',
+    canActivateChild: [privateGuard()],
+    loadChildren: () => import('./task/features/task.routes').then(m => m.default),
+  },
+  {
+    path: 'employees',
+    canActivateChild: [privateGuard()],
+    loadChildren: () => import('./employees/features/employees.routes').then(m => m.default),
+  },
+  { path: 'users', component: UsersComponent, pathMatch: 'full'},
   {
     path: '**',
     redirectTo: '',
