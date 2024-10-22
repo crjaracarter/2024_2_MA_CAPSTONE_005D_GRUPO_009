@@ -1,0 +1,14 @@
+
+Name
+----
+main-content
+pages
+sidebar
+topbar
+dashboard.component.html
+dashboard.component.scss
+dashboard.component.spec.ts
+dashboard.component.ts
+dashboard.routes.ts
+lista.txt
+
