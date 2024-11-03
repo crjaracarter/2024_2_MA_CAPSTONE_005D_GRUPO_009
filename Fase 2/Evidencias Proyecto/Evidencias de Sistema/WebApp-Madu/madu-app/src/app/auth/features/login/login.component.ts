@@ -5,6 +5,7 @@ import { toast } from 'ngx-sonner';
 import { AuthService } from '../../data-access/auth.service';
 import { isRequired, hasEmailError } from '../../utils/validators';
 import { GoogleButtonComponent } from '../../ui/google-button/google-button.component';
+import { Empleador, UserRole, AccountStatus, Gender } from '../../../core/interfaces/user.interface';
 
 @Component({
   selector: 'app-login',
@@ -21,14 +22,7 @@ export class LoginComponent {
   private _authService = inject(AuthService);
   private _router = inject(Router);
 
-  isRequired(field: 'email' | 'password') {
-    return isRequired(field, this.form);
-  }
-
-  hasEmailError() {
-    return hasEmailError(this.form);
-  }
-
+  // Definición del formulario reactivo
   form = this._formBuilder.group<FormLogin>({
     email: this._formBuilder.control('', [
       Validators.required,
@@ -37,30 +31,65 @@ export class LoginComponent {
     password: this._formBuilder.control('', Validators.required),
   });
 
+  // Implementación de validaciones manuales
+  isRequired(field: 'email' | 'password'): boolean {
+    const control = this.form.get(field);
+    return control ? control.hasError('required') && control.touched : false;
+  }
+
+  hasEmailError(): boolean {
+    const emailControl = this.form.get('email');
+    return emailControl ? emailControl.hasError('email') && emailControl.touched : false;
+  }
+
   async submit() {
     if (this.form.invalid) return;
 
     try {
       const { email, password } = this.form.value;
 
-      if (!email || !password ) return;
+      console.log('Intentando iniciar sesión con:', email, password);
 
-      await this._authService.signIn({ email, password });
+      if (!email || !password) {
+        toast.error('Email y contraseña son obligatorios');
+        return;
+      }
+
+      await this._authService.signIn({
+        email,
+        password,
+        nombres: '',
+        apellidos: '',
+        telefono: '',
+        region: '',
+        ciudad: '',
+        rut: '',
+        rol: UserRole.USUARIO,
+        genero: Gender.OTRO,
+        estadoCuenta: AccountStatus.ACTIVA,
+        fechaCreacion: new Date(),
+        ultimoAcceso: new Date()
+      });
+
 
       toast.success('Hola nuevamente');
       this._router.navigateByUrl('/dashboard');
-    } catch (error) {
-      toast.error('Ocurrio un error');
+    } catch (error: any) {
+      console.error('Error en inicio de sesión:', error);
+      toast.error(error.message || 'Ocurrió un error al iniciar sesión');
+      this.form.reset();
     }
   }
 
   async submitWithGoogle() {
     try {
+      console.log('Iniciando sesión con Google');
       await this._authService.signInWithGoogle();
-      toast.success('Bienvenido denuevo');
+      toast.success('Bienvenido de nuevo');
       this._router.navigateByUrl('/dashboard');
-    } catch (error) {
-      toast.error('Ocurrio un error');
+    } catch (error: any) {
+      console.error('Error en inicio de sesión con Google:', error);
+      toast.error(error.message || 'Ocurrió un error al iniciar sesión con Google');
     }
   }
 }

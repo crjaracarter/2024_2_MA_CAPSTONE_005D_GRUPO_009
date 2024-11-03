@@ -1,0 +1,140 @@
+<div class="max-w-4xl mx-auto py-10">
+    <h1 class="text-4xl font-bold mb-6 text-center text-indigo-700">¡Sé parte de la experiencia Madu!</h1>
+    <p class="text-center mb-8">
+        Con nuestro software integral de gestión de personas centralizas todas tus tareas en una sola plataforma:
+        desde
+        el pago de remuneraciones, hasta el desarrollo profesional de tus colaboradores.
+    </p>
+
+    <div class="flex flex-col md:flex-row justify-between">
+        <!-- Izquierda -->
+        <div class="w-full md:w-1/2 px-4">
+            <div class="mb-4">
+                <h2 class="font-bold text-xl mb-4 text-indigo-700">Agenda una llamada</h2>
+                <p>Expertos te orientarán de manera personalizada a encontrar las mejores soluciones que se adapten
+                    a
+                    tus necesidades.</p>
+            </div>
+            <div class="mb-4">
+                <h2 class="font-bold text-xl mb-4 text-indigo-700">Súmate a la experiencia</h2>
+                <p>Durante la implementación, especialistas te acompañarán para que conozcas y seas un experto en tu
+                    plataforma Madu.</p>
+            </div>
+            <div class="mb-4">
+                <h2 class="font-bold text-xl mb-4 text-indigo-700">Crea un lugar de trabajo más feliz</h2>
+                <p>¡Vive la experiencia Madu, fortalece tu cultura organizacional y gestiona tu activo más valioso,
+                    las
+                    personas!</p>
+            </div>
+        </div>
+
+        <!-- Derecha: Formulario -->
+        <div class="w-full md:w-1/2 px-4">
+            <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="bg-gray-100 shadow-md rounded-lg p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <!-- Nombre -->
+                    <div>
+                        <label class="block text-sm font-bold mb-2" for="name">Tu Nombre*</label>
+                        <input type="text" class="w-full p-3 border border-gray-300 rounded-lg"
+                            [(ngModel)]="contact.name" name="name" required placeholder="Nombre">
+                    </div>
+
+                    <!-- Apellido -->
+                    <div>
+                        <label class="block text-sm font-bold mb-2" for="surname">Tu Apellido*</label>
+                        <input type="text" class="w-full p-3 border border-gray-300 rounded-lg"
+                            [(ngModel)]="contact.surname" name="surname" required placeholder="Apellido">
+                    </div>
+                </div>
+
+                <!-- Correo -->
+                <div class="mb-4">
+                    <label class="block text-sm font-bold mb-2" for="email">Tu correo del trabajo*</label>
+                    <input type="email" class="w-full p-3 border border-gray-300 rounded-lg" [(ngModel)]="contact.email"
+                        name="email" required placeholder="ejemplo@trabajo.com">
+                </div>
+
+                <!-- Empresa -->
+                <div class="mb-4">
+                    <label class="block text-sm font-bold mb-2" for="company">Pyme en la que trabajas*</label>
+                    <input type="text" class="w-full p-3 border border-gray-300 rounded-lg"
+                        [(ngModel)]="contact.company" name="company" required placeholder="Nombre de la Pyme">
+                </div>
+
+                <!-- Campos adicionales -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm font-bold mb-2" for="employees">¿Cuántos colaboradores hay en tu
+                            Pyme?*</label>
+                        <input type="number" class="w-full p-3 border border-gray-300 rounded-lg"
+                            [(ngModel)]="contact.employees" name="employees" required>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold mb-2" for="area">Área que desempeña tu Pyme</label>
+                        <select class="w-full p-3 border border-gray-300 rounded-lg" [(ngModel)]="contact.area"
+                            name="area" required>
+                            <option value="" disabled selected>Selecciona un área</option>
+                            <option value="RRHH">Recursos Humanos</option>
+                            <option value="Finanzas">Finanzas</option>
+                            <option value="Marketing">Marketing</option>
+                            <option value="Ventas">Ventas</option>
+                            <option value="Operaciones">Operaciones</option>
+                            <option value="Logística">Logística</option>
+                            <option value="Producción">Producción</option>
+                            <option value="Tecnología">Tecnología</option>
+                            <option value="Calidad">Calidad</option>
+                            <option value="Atención al Cliente">Atención al Cliente</option>
+                            <option value="Compras">Compras</option>
+                            <option value="Legal">Legal</option>
+                            <option value="Administración">Administración</option>
+                            <option value="Innovación">Innovación</option>
+                            <option value="Desarrollo de Negocios">Desarrollo de Negocios</option>
+                            <option value="Comunicaciones">Comunicaciones</option>
+                            <option value="Gestión de Proyectos">Gestión de Proyectos</option>
+                            <option value="Sistemas de Información">Sistemas de Información</option>
+                            <!-- Otras opciones -->
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Botón de envío -->
+                <div class="mt-6">
+                    <button type="submit" [disabled]="contactForm.invalid || isLoading"
+                        class="w-full bg-gradient-to-r from-indigo-400 to-indigo-700 text-white p-3 rounded-lg text-center font-semibold relative"
+                        [ngClass]="{
+                            'opacity-50 cursor-not-allowed': contactForm.invalid || isLoading,
+                            'bg-green-500': submitStatus === 'success',
+                            'bg-red-500': submitStatus === 'error'
+                        }">
+                        <span *ngIf="submitStatus === 'idle'">
+                            {{ contactForm.invalid ? 'Complete todos los campos' : 'Continuar' }}
+                        </span>
+                        <span *ngIf="submitStatus === 'loading'" class="flex justify-center">
+                            <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                </path>
+                            </svg>
+                        </span>
+                        <span *ngIf="submitStatus === 'success'">¡Enviado con éxito!</span>
+                        <span *ngIf="submitStatus === 'error'">Error al enviar</span>
+                    </button>
+
+                    <!-- Mensajes de estado -->
+                    <div class="mt-2 text-center text-sm">
+                        <p *ngIf="submitStatus === 'success'" class="text-green-600">
+                            Tu información se ha enviado correctamente.
+                        </p>
+                        <p *ngIf="submitStatus === 'error'" class="text-red-600">
+                            Hubo un error al enviar la información. Por favor, intenta nuevamente.
+                        </p>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,10 @@
+
+Name
+----
+app
+assets
+index.html
+lista.txt
+main.ts
+styles.scss
+

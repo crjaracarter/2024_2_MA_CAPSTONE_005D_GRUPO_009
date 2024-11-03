@@ -17,7 +17,7 @@ export const appConfig: ApplicationConfig = {
         projectId: "madu-app-ca037",
         appId: "1:324971633488:web:3aa0547d66ea67a64fea55",
         storageBucket: "madu-app-ca037.appspot.com",
-        apiKey: "AIzaSyDtU2h5LbsxAPCKoLuSOSArprTCLpOv8kc",
+        apiKey: "",
         authDomain: "madu-app-ca037.firebaseapp.com",
         messagingSenderId: "324971633488"
       })

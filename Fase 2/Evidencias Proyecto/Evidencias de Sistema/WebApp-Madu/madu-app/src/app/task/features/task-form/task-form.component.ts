@@ -19,25 +19,34 @@ export default class TaskFormComponent {
 
   loading = signal(false);
 
-  idTask = input.required<string>();
+  idTask = input<string | undefined>();
 
   form = this._formBuilder.group({
     title: this._formBuilder.control('', Validators.required),
     completed: this._formBuilder.control(false, Validators.required),
   });
 
-  constructor() {
+  onstructor() {
     effect(() => {
       const id = this.idTask();
       if (id) {
         this.getTask(id);
+      } else {
+        // Resetear el formulario para una nueva tarea
+        this.form.reset({
+          title: '',
+          completed: false
+        });
       }
     });
   }
 
   async submit() {
-    if (this.form.invalid) return;
-
+    if (this.form.invalid) {
+      toast.error('Por favor, complete todos los campos requeridos.');
+      return;
+    }
+  
     try {
       this.loading.set(true);
       const { title, completed } = this.form.value;
@@ -45,19 +54,21 @@ export default class TaskFormComponent {
         title: title || '',
         completed: !!completed,
       };
-
+  
       const id = this.idTask();
-
+  
       if (id) {
         await this._taskService.update(task, id);
+        toast.success('Tarea actualizada correctamente.');
       } else {
         await this._taskService.create(task);
+        toast.success('Tarea creada correctamente.');
       }
-
-      toast.success(`Tarea ${id ? 'actualizada' : 'creada'}  correctamente.`);
+  
       this._router.navigateByUrl('/tasks');
     } catch (error) {
-      toast.success('Ocurrio un problema.');
+      console.error('Error al guardar la tarea:', error);
+      toast.error('Ocurrió un problema al guardar la tarea.');
     } finally {
       this.loading.set(false);
     }

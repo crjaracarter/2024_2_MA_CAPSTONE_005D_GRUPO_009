@@ -1,0 +1,11 @@
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    &:hover {
+      background-color: #4f46e5; // Color base del botón
+    }
+  }
+  
+  button:not(:disabled) {
+    cursor: pointer;
+  }

@@ -1,0 +1,179 @@
+<!-- register-empleador.component.html -->
+<div class="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+  <div class="sm:mx-auto sm:w-full sm:max-w-md">
+    <a routerLink="/home">
+      <img class="mx-auto h-12 w-auto" src="assets/img/logos/logo-madu-coloreado.svg" alt="Madu Company Logo">
+    </a>
+    <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+      Registro de Empleador
+    </h2>
+  </div>
+
+  <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+    <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+      <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-6">
+        <!-- Datos básicos -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Correo electrónico</label>
+          <input type="email" formControlName="email"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
+          @if(hasEmailError()) {
+          <p class="mt-2 text-sm text-red-600">El correo debe ser válido</p>
+          }
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Contraseña</label>
+          <input type="password" formControlName="password"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
+          @if(form.get('password')?.errors?.['required'] && form.get('password')?.touched) {
+          <p class="mt-2 text-sm text-red-600">La contraseña es obligatoria</p>
+          }
+          @if(form.get('password')?.errors?.['minlength']) {
+          <p class="mt-2 text-sm text-red-600">La contraseña debe tener al menos 6 caracteres</p>
+          }
+        </div>
+
+        <!-- Datos personales -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Nombres</label>
+            <input type="text" formControlName="nombres"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Apellidos</label>
+            <input type="text" formControlName="apellidos"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Teléfono</label>
+            <input type="tel" formControlName="telefono"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="+56 9 XXXX XXXX" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700">RUT Personal</label>
+            <input type="text" formControlName="rut"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="12.345.678-9" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Región</label>
+            <select formControlName="region" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+              <option value="">Seleccione una región</option>
+              <option value="Arica y Parinacota">Arica y Parinacota</option>
+              <option value="Tarapacá">Tarapacá</option>
+              <option value="Antofagasta">Antofagasta</option>
+              <option value="Atacama">Atacama</option>
+              <option value="Coquimbo">Coquimbo</option>
+              <option value="Valparaíso">Valparaíso</option>
+              <option value="Metropolitana">Metropolitana de Santiago</option>
+              <option value="O'Higgins">O'Higgins</option>
+              <option value="Maule">Maule</option>
+              <option value="Ñuble">Ñuble</option>
+              <option value="Biobío">Biobío</option>
+              <option value="Araucanía">La Araucanía</option>
+              <option value="Los Ríos">Los Ríos</option>
+              <option value="Los Lagos">Los Lagos</option>
+              <option value="Aysén">Aysén</option>
+              <option value="Magallanes">Magallanes</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Ciudad</label>
+            <input type="text" formControlName="ciudad"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" />
+          </div>
+        </div>
+
+        <!-- Después de RUT Empresa, agrega: -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Dirección de la Empresa</label>
+          <input type="text" formControlName="direccionEmpresa"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Calle, número, comuna" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Sector Industrial</label>
+            <select formControlName="sectorIndustrial"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+              <option value="">Seleccione un sector</option>
+              <option value="Tecnología">Tecnología</option>
+              <option value="Salud">Salud</option>
+              <option value="Educación">Educación</option>
+              <option value="Comercio">Comercio</option>
+              <option value="Construcción">Construcción</option>
+              <option value="Manufactura">Manufactura</option>
+              <option value="Servicios">Servicios</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Sitio Web</label>
+            <input type="url" formControlName="sitioWeb"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+              placeholder="https://www.ejemplo.cl" />
+          </div>
+        </div>
+
+        <!-- Datos de la empresa -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Nombre de la Empresa</label>
+          <input type="text" formControlName="nombreEmpresa"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700">RUT Empresa</label>
+          <input type="text" formControlName="rutEmpresa"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Descripción de la Empresa</label>
+          <textarea formControlName="descripcionEmpresa" rows="3"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"></textarea>
+        </div>
+        <!-- GÉNERO -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Género</label>
+          <select formControlName="genero" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+            <option [ngValue]="null">Seleccione un género</option>
+            <option [ngValue]="Gender.MASCULINO">Masculino</option>
+            <option [ngValue]="Gender.FEMENINO">Femenino</option>
+            <option [ngValue]="Gender.OTRO">Otro</option>
+            <option [ngValue]="Gender.NO_ESPECIFICA">Prefiero no especificar</option>
+          </select>
+        </div>
+
+        <button type="submit" [disabled]="form.invalid || loading"
+          class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed">
+          {{ loading ? "Registrando..." : "Registrar Empresa" }}
+        </button>
+      </form>
+
+
+      <div class="mt-6">
+        <div class="relative">
+          <div class="absolute inset-0 flex items-center">
+            <div class="w-full border-t border-gray-300"></div>
+          </div>
+          <div class="relative flex justify-center text-sm">
+            <span class="px-2 bg-white text-gray-500">O continúa con</span>
+          </div>
+        </div>
+        <div class="mt-3 grid grid-cols-1 gap-3">
+          <div>
+            <app-google-button (click)="submitWithGoogle()"></app-google-button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

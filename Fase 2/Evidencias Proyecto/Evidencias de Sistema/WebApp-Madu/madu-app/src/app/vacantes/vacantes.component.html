@@ -1,0 +1,25 @@
+<div class="container mx-auto p-6">
+    <ng-container *ngIf="vacante$ | async as vacante; else loading">
+        <h1 class="text-3xl font-bold">{{ vacante.titulo }}</h1>
+        <p class="text-lg text-gray-700 mt-2">{{ vacante.descripcion }}</p>
+
+        <h3 class="mt-4 text-xl font-semibold">Requisitos:</h3>
+        <ul class="list-disc pl-5">
+            <li *ngFor="let requisito of vacante.requisitos" class="text-gray-600">
+                {{ requisito }}
+            </li>
+        </ul>
+
+        <button class="bg-green-600 text-white px-6 py-2 rounded mt-4 hover:bg-green-700" (click)="postular()">
+            Postular
+        </button>
+
+        <div *ngIf="postulacionExitosa" class="text-green-500 mt-4">
+            ¡Postulación enviada exitosamente!
+        </div>
+    </ng-container>
+
+    <ng-template #loading>
+        <p>Cargando vacante...</p>
+    </ng-template>
+</div>

@@ -1,15 +1,25 @@
-<div class="flex h-screen bg-gray-100">
+<div class="min-h-screen bg-gray-50/50">
+  <!-- Overlay para móvil -->
+  <div *ngIf="(sidebarService.isOpen$ | async) && isMobile" (click)="sidebarService.closeSidebar()"
+    class="fixed inset-0 bg-gray-600 bg-opacity-50 z-20">
+  </div>
+
   <!-- Sidebar -->
-  <app-sidebar class="hidden md:flex"></app-sidebar>
+  <app-sidebar [ngClass]="{
+      'translate-x-0': sidebarService.isOpen$ | async,
+      '-translate-x-full': !(sidebarService.isOpen$ | async)
+    }" class="fixed top-0 left-0 z-30 h-screen transition-transform duration-300 ease-in-out">
+  </app-sidebar>
 
-  <div class="flex flex-col flex-1 overflow-hidden">
-    <!-- Topbar -->
-    <app-topbar></app-topbar>
-
+  <!-- Topbar -->
+  <div class="p-4 xl:ml-80">
+    <nav class="block w-full max-w-full bg-transparent text-white shadow-none rounded-xl transition-all px-0 py-1">
+      <app-topbar></app-topbar>
+    </nav>
     <!-- Main content -->
-    <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-200">
-      <div class="container mx-auto px-6 py-8">
-        <app-main-content></app-main-content>
+    <main class="flex-1 overflow-x-hidden overflow-y-auto bg-white-100">
+      <div class="mt-12">
+        <router-outlet></router-outlet>
       </div>
     </main>
   </div>
