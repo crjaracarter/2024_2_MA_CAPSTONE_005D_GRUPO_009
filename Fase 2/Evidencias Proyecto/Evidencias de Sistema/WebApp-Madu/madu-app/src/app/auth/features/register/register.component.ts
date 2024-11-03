@@ -1,27 +1,40 @@
 import { Component, inject } from '@angular/core';
-import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { hasEmailError, isRequired } from '../../utils/validators';
 import { AuthService } from '../../data-access/auth.service';
 import { toast } from 'ngx-sonner';
 import { Router, RouterLink } from '@angular/router';
 import { GoogleButtonComponent } from '../../ui/google-button/google-button.component';
+import {
+  Empleador,
+  UserRole,
+  AccountStatus,
+  Gender,
+} from '../../../core/interfaces/user.interface';
 
 @Component({
   selector: 'app-register',
   standalone: true,
   imports: [ReactiveFormsModule, RouterLink, GoogleButtonComponent],
-  providers: [AuthService], 
+  providers: [AuthService],
   templateUrl: './register.component.html',
-  styleUrl: './register.component.scss'
+  styleUrl: './register.component.scss',
 })
-
 export class RegisterComponent {
   private _formBuilder = inject(FormBuilder);
   private _authService = inject(AuthService);
   private _router = inject(Router);
 
   isRequired(field: keyof FormRegister) {
-    return this.form.get(field)?.hasError('required') && this.form.get(field)?.touched;
+    return (
+      this.form.get(field)?.hasError('required') &&
+      this.form.get(field)?.touched
+    );
   }
 
   hasEmailError() {
@@ -36,7 +49,7 @@ export class RegisterComponent {
     password: this._formBuilder.control('', [
       Validators.required,
       Validators.minLength(6),
-      Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/)
+      Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/),
     ]),
   });
 
@@ -51,7 +64,21 @@ export class RegisterComponent {
 
       if (!email || !password) return;
 
-      await this._authService.signUp({ email, password });
+      await this._authService.signUp({
+        email,
+        password,
+        nombres: '',
+        apellidos: '',
+        telefono: '',
+        region: '',
+        ciudad: '',
+        rut: '',
+        rol: UserRole.USUARIO,
+        genero: Gender.OTRO,
+        estadoCuenta: AccountStatus.ACTIVA,
+        fechaCreacion: new Date(),
+        ultimoAcceso: new Date(),
+      });
 
       toast.success('Usuario Creado Éxitosamente');
       this._router.navigateByUrl('/dashboard');

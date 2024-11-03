@@ -13,7 +13,7 @@ export class RoleGuard implements CanActivate {
     const expectedRole = route.data.expectedRole;
 
     return this.authService.getUserData().pipe(
-      map(user => user?.role === expectedRole),
+      map(user => user?.rol === expectedRole),
       tap(isAuthorized => {
         if (!isAuthorized) {
           this.router.navigate(['/unauthorized']); // Redireccionar si no tiene permisos

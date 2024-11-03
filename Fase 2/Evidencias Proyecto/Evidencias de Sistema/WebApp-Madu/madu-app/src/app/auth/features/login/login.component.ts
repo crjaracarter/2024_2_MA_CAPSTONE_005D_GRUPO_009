@@ -5,6 +5,7 @@ import { toast } from 'ngx-sonner';
 import { AuthService } from '../../data-access/auth.service';
 import { isRequired, hasEmailError } from '../../utils/validators';
 import { GoogleButtonComponent } from '../../ui/google-button/google-button.component';
+import { Empleador, UserRole, AccountStatus, Gender } from '../../../core/interfaces/user.interface';
 
 @Component({
   selector: 'app-login',
@@ -54,7 +55,22 @@ export class LoginComponent {
         return;
       }
 
-      await this._authService.signIn({ email, password });
+      await this._authService.signIn({
+        email,
+        password,
+        nombres: '',
+        apellidos: '',
+        telefono: '',
+        region: '',
+        ciudad: '',
+        rut: '',
+        rol: UserRole.USUARIO,
+        genero: Gender.OTRO,
+        estadoCuenta: AccountStatus.ACTIVA,
+        fechaCreacion: new Date(),
+        ultimoAcceso: new Date()
+      });
+
 
       toast.success('Hola nuevamente');
       this._router.navigateByUrl('/dashboard');

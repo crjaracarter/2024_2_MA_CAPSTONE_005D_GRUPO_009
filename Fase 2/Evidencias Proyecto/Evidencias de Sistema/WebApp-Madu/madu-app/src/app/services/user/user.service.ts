@@ -1,72 +1,76 @@
 import { Injectable } from '@angular/core';
-import { 
-  Firestore, 
-  collection, 
-  collectionData,
-  doc, 
-  addDoc,
-  getDoc,
+import {
+  Firestore,
+  collection,
+  getDocs,
+  doc,
   updateDoc,
   deleteDoc,
-  query,
-  where,
-  orderBy
 } from '@angular/fire/firestore';
-import { User } from '../../core/interfaces/user.interface';
-import { Observable, from } from 'rxjs';
-import { map } from 'rxjs/operators';
+
+export enum UserRole {
+  ADMIN = 'Admin',
+  EMPLEADOR = 'Empleador',
+  EMPLEADO = 'Empleado',
+  USUARIO = 'Usuario'
+}
+
+export enum Gender {
+  MASCULINO = 'Masculino',
+  FEMENINO = 'Femenino',
+  OTRO = 'Otro',
+  NO_ESPECIFICA = 'Prefiero no especificar'
+}
+
+export enum AccountStatus {
+  ACTIVA = 'Activa',
+  INACTIVA = 'Inactiva',
+  PENDIENTE = 'Pendiente',
+  BLOQUEADA = 'Bloqueada'
+}
+
+export interface User {
+  uid?: string;
+  nombres: string;
+  apellidos: string;
+  password?: string;
+  email: string;
+  telefono: string;
+  region: string;
+  ciudad: string;
+  rut: string;
+  rol: UserRole;
+  genero: Gender;
+  estadoCuenta: AccountStatus;
+  fechaCreacion: Date;
+  ultimoAcceso: Date;
+}
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UserService {
-  private readonly USERS_COLLECTION = 'users';
-
   constructor(private firestore: Firestore) {}
 
-  // Obtener todos los usuarios
-  getUsers(): Observable<User[]> {
-    const usersRef = collection(this.firestore, this.USERS_COLLECTION);
-    const q = query(usersRef, orderBy('fechaCreacion', 'desc'));
-    return collectionData(q, { idField: 'uid' }) as Observable<User[]>;
-  }
-
-  // Obtener un usuario por ID
-  etUserById(uid: string): Observable<User | undefined> {
-    const userRef = doc(this.firestore, `${this.USERS_COLLECTION}/${uid}`);
-    return from(getDoc(userRef)).pipe(
-      map(docSnap => docSnap.exists() ? { ...docSnap.data(), uid: docSnap.id } as User : undefined)
+  async getUsers(): Promise<User[]> {
+    const usersRef = collection(this.firestore, 'users');
+    const snapshot = await getDocs(usersRef);
+    return snapshot.docs.map(
+      (doc) =>
+        ({
+          uid: doc.id,
+          ...doc.data(),
+        } as User)
     );
   }
 
-  // Crear nuevo usuario
-  createUser(user: Omit<User, 'uid'>): Promise<any> {
-    const usersRef = collection(this.firestore, this.USERS_COLLECTION);
-    return addDoc(usersRef, {
-      ...user,
-      fechaCreacion: new Date(),
-      ultimoAcceso: new Date()
-    });
+  async updateUser(uid: string, data: Partial<User>): Promise<void> {
+    const userRef = doc(this.firestore, 'users', uid);
+    await updateDoc(userRef, data);
   }
 
-  // Actualizar usuario
-  updateUser(uid: string, user: Partial<User>): Promise<void> {
-    const userRef = doc(this.firestore, `${this.USERS_COLLECTION}/${uid}`);
-    return updateDoc(userRef, { ...user });
-  }
-
-  // Eliminar usuario
-  deleteUser(uid: string): Promise<void> {
-    const userRef = doc(this.firestore, `${this.USERS_COLLECTION}/${uid}`);
-    return deleteDoc(userRef);
-  }
-
-  // Actualizar estado de cuenta
-  updateAccountStatus(uid: string, status: string): Promise<void> {
-    const userRef = doc(this.firestore, `${this.USERS_COLLECTION}/${uid}`);
-    return updateDoc(userRef, { 
-      estadoCuenta: status,
-      ultimoAcceso: new Date()
-    });
+  async deleteUser(uid: string): Promise<void> {
+    const userRef = doc(this.firestore, 'users', uid);
+    await deleteDoc(userRef);
   }
 }
