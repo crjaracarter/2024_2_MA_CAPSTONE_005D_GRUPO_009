@@ -11,7 +11,7 @@ import {
   getDocs,
   getDoc,
 } from '@angular/fire/firestore';
-import { Observable, from, map } from 'rxjs';
+import { Observable, firstValueFrom, from, map } from 'rxjs';
 import { JobOffer } from '../../core/interfaces/job-offer/job-offer.interface';
 import { AuthService } from '../../auth/data-access/auth.service';
 import {
@@ -22,7 +22,6 @@ import {
 } from '../../core/interfaces/user.interface';
 import { JobApplication } from '../../core/interfaces/job-application/job-application.interface';
 
-
 @Injectable({
   providedIn: 'root',
 })
@@ -31,28 +30,27 @@ export class JobOfferService {
 
   // Crear oferta laboral con validación de rol
   async createJobOffer(jobOffer: Omit<JobOffer, 'id'>): Promise<string> {
-    return new Promise((resolve, reject) => {
-      this.authService.getUserData().subscribe(async (user) => {
-        if (user?.rol !== UserRole.EMPLEADOR) {
-          reject(new Error('Solo los empleadores pueden crear ofertas'));
-          return;
-        }
+    try {
+      const user = await firstValueFrom(this.authService.getUserData());
 
-        try {
-          const jobOffersRef = collection(this.firestore, 'jobOffers');
-          const docRef = await addDoc(jobOffersRef, {
-            ...jobOffer,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            status: 'active',
-            applicants: [],
-          });
-          resolve(docRef.id);
-        } catch (error) {
-          reject(error);
-        }
+      if (user?.rol !== UserRole.EMPLEADOR) {
+        throw new Error('Solo los empleadores pueden crear ofertas');
+      }
+
+      const jobOffersRef = collection(this.firestore, 'jobOffers');
+      const docRef = await addDoc(jobOffersRef, {
+        ...jobOffer,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        status: 'active',
+        applicants: [],
       });
-    });
+
+      return docRef.id;
+    } catch (error) {
+      console.error('Error creating job offer:', error);
+      throw error;
+    }
   }
 
   // Obtener todas las ofertas laborales
@@ -141,10 +139,12 @@ export class JobOfferService {
       const jobDoc = await getDoc(jobRef);
 
       if (jobDoc.exists()) {
-        return {
+        const jobOffer = {
           id: jobDoc.id,
           ...jobDoc.data(),
         } as JobOffer;
+        console.log('Datos de la oferta laboral:', jobOffer);
+        return jobOffer;
       }
       return null;
     } catch (error) {
@@ -155,47 +155,138 @@ export class JobOfferService {
   async getApplicationsByJobOffer(
     jobOfferId: string
   ): Promise<JobApplication[]> {
-    const applicationsRef = collection(this.firestore, 'jobApplications');
-    const q = query(applicationsRef, where('jobOfferId', '==', jobOfferId));
-    const snapshot = await getDocs(q);
+    try {
+      const applicationsRef = collection(this.firestore, 'jobApplications');
+      const q = query(applicationsRef, where('jobOfferId', '==', jobOfferId));
+      const snapshot = await getDocs(q);
 
-    return Promise.all(
-      snapshot.docs.map(async (docSnapshot) => {
-        const data = docSnapshot.data() as JobApplication;
-        const employeeDoc = await getDoc(
-          doc(this.firestore, 'users', data.employeeId)
-        );
-        const employeeData = employeeDoc.data() as User;
+      // Primero obtener la oferta laboral para tener el título
+      const jobOffer = await this.getJobOfferById(jobOfferId);
 
-        return {
-          id: docSnapshot.id,
-          ...data,
-          employeeData: {
-            nombres: employeeData?.nombres,
-            apellidos: employeeData?.apellidos,
-            email: employeeData?.email,
-          },
-        };
-      })
-    );
+      return Promise.all(
+        snapshot.docs.map(async (docSnapshot) => {
+          const data = docSnapshot.data() as JobApplication;
+          const employeeDoc = await getDoc(
+            doc(this.firestore, 'users', data.employeeId)
+          );
+          const employeeData = employeeDoc.data() as User;
+
+          return {
+            id: docSnapshot.id,
+            ...data,
+            jobTitle: jobOffer?.title || 'Sin título', // Agregar el título
+            employeeData: {
+              nombres: employeeData?.nombres,
+              apellidos: employeeData?.apellidos,
+              email: employeeData?.email,
+            },
+          };
+        })
+      );
+    } catch (error) {
+      console.error('Error getting applications:', error);
+      return [];
+    }
   }
 
   async getAllEmployerApplications(
     employerId: string
   ): Promise<JobApplication[]> {
-    const jobOffersRef = collection(this.firestore, 'jobOffers');
-    const q = query(jobOffersRef, where('employerId', '==', employerId));
-    const jobOffersSnapshot = await getDocs(q);
-    const jobOfferIds = jobOffersSnapshot.docs.map((doc) => doc.id);
+    try {
+      // Primero obtener todas las ofertas del empleador
+      const jobOffersRef = collection(this.firestore, 'jobOffers');
+      const q = query(jobOffersRef, where('employerId', '==', employerId));
+      const jobOffersSnapshot = await getDocs(q);
+      console.log('Ofertas encontradas:', jobOffersSnapshot.docs.length);
 
-    const applications: JobApplication[] = [];
+      const applications: JobApplication[] = [];
 
-    for (const jobOfferId of jobOfferIds) {
-      const jobApplications = await this.getApplicationsByJobOffer(jobOfferId);
-      applications.push(...jobApplications);
+      for (const jobOfferDoc of jobOffersSnapshot.docs) {
+        const jobOffer = {
+          id: jobOfferDoc.id,
+          ...jobOfferDoc.data(),
+        } as JobOffer;
+
+        // Buscar aplicaciones para esta oferta
+        const applicationsRef = collection(this.firestore, 'jobApplications');
+        const applicationsQuery = query(
+          applicationsRef,
+          where('jobOfferId', '==', jobOfferDoc.id)
+        );
+        const applicationsSnapshot = await getDocs(applicationsQuery);
+        console.log(
+          `Aplicaciones encontradas para oferta ${jobOffer.title}:`,
+          applicationsSnapshot.docs.length
+        );
+
+        // Procesar cada aplicación
+        for (const appDoc of applicationsSnapshot.docs) {
+          const appData = appDoc.data() as JobApplication;
+
+          // Obtener datos del empleado
+          const employeeDoc = await getDoc(
+            doc(this.firestore, 'users', appData.employeeId)
+          );
+          const employeeData = employeeDoc.data() as User;
+
+          applications.push({
+            id: appDoc.id,
+            ...appData,
+            jobTitle: jobOffer.title,
+            employeeData: {
+              nombres: employeeData?.nombres,
+              apellidos: employeeData?.apellidos,
+              email: employeeData?.email,
+            },
+          });
+        }
+      }
+
+      console.log('Total de aplicaciones procesadas:', applications.length);
+      return applications;
+    } catch (error) {
+      console.error('Error obteniendo aplicaciones:', error);
+      return [];
     }
+  }
 
-    return applications;
+  async createJobApplication(application: {
+    jobOfferId: string;
+    employeeId: string;
+    coverLetter?: string;
+    jobTitle: string;
+  }): Promise<string> {
+    try {
+      // Primero obtener la oferta de trabajo para tener el título
+      const jobOffer = await this.getJobOfferById(application.jobOfferId);
+
+      if (!jobOffer) {
+        throw new Error('Oferta de trabajo no encontrada');
+      }
+
+      const jobApplicationsRef = collection(this.firestore, 'jobApplications');
+      const newApplication: JobApplication = {
+        jobOfferId: application.jobOfferId,
+        jobTitle: application.jobTitle,
+        employeeId: application.employeeId,
+        status: 'pending',
+        appliedAt: new Date(),
+        updatedAt: new Date(),
+        coverLetter: application.coverLetter || ''
+      };
+
+      // Opcional: Actualizar la oferta de trabajo para incluir este postulante
+      const jobRef = doc(this.firestore, 'jobOffers', application.jobOfferId);
+      await updateDoc(jobRef, {
+        applicants: [...(jobOffer.applicants || []), application.employeeId],
+      });
+
+      const docRef = await addDoc(jobApplicationsRef, newApplication);
+      return docRef.id;
+    } catch (error) {
+      console.error('Error creating job application:', error);
+      throw error;
+    }
   }
 
   async updateApplicationStatus(

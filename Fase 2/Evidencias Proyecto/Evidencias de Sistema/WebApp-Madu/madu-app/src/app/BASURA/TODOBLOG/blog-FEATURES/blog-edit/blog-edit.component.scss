@@ -1,0 +1,62 @@
+// src/app/dashboard/features/blog/blog-edit/blog-edit.component.scss
+:host {
+    display: block;
+    min-height: 100vh;
+  }
+  
+  // Estilo para el editor
+  ::ng-deep {
+    .tox-tinymce {
+      border-radius: 0.5rem !important;
+    }
+  
+    .tox .tox-statusbar {
+      border-radius: 0 0 0.5rem 0.5rem !important;
+    }
+  }
+  
+  // Animaciones para los botones
+  button {
+    @apply transform transition-all duration-200;
+    
+    &:hover:not(:disabled) {
+      @apply -translate-y-0.5;
+    }
+    
+    &:active:not(:disabled) {
+      @apply translate-y-0;
+    }
+  }
+  
+  // Estilos para el dropzone
+  ngx-dropzone {
+    @apply transition-all duration-300;
+    
+    &:hover {
+      @apply border-[#5A4FCF];
+    }
+  }
+  
+  // Responsive
+  @media (max-width: 768px) {
+    .container {
+      @apply px-4;
+    }
+    
+    form {
+      @apply p-4;
+    }
+  }
+  
+  // Snackbar styles
+  ::ng-deep {
+    .success-snackbar {
+      background: #4CAF50;
+      color: white;
+    }
+    
+    .error-snackbar {
+      background: #f44336;
+      color: white;
+    }
+  }

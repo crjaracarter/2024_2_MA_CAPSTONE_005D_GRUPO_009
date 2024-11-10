@@ -1,0 +1,109 @@
+<!-- src/app/dashboard/features/blog/blog-list/blog-list.component.html -->
+<div class="container mx-auto p-4">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+        <h1 class="text-2xl font-bold text-gray-800">Gestión de Blog</h1>
+        <a routerLink="../create"
+            class="px-4 py-2 bg-[#5A4FCF] text-white rounded-lg hover:bg-[#4B0082] transition-all duration-300 flex items-center gap-2">
+            <mat-icon>add</mat-icon>
+            Nueva Entrada
+        </a>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white rounded-lg shadow-lg p-4 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Search -->
+            <div class="relative">
+                <mat-icon class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                    search
+                </mat-icon>
+                <input [formControl]="searchControl" type="text" placeholder="Buscar entradas..."
+                    class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#C2AFFF] focus:border-transparent">
+            </div>
+
+            <!-- Status Filter -->
+            <select [(ngModel)]="statusFilter" (ngModelChange)="filterPosts()"
+                class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#C2AFFF] focus:border-transparent">
+                <option value="all">Todos los estados</option>
+                <option value="published">Publicados</option>
+                <option value="draft">Borradores</option>
+            </select>
+
+            <!-- Sort -->
+            <select [(ngModel)]="sortOrder" (ngModelChange)="filterPosts()"
+                class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#C2AFFF] focus:border-transparent">
+                <option value="newest">Más recientes</option>
+                <option value="oldest">Más antiguos</option>
+                <option value="a-z">A-Z</option>
+                <option value="z-a">Z-A</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="flex justify-center py-8">
+        <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <!-- Posts List -->
+    <div *ngIf="!isLoading" [@listAnimation]="filteredPosts.length">
+        <div *ngFor="let post of filteredPosts"
+            class="bg-white rounded-lg shadow-lg mb-4 overflow-hidden hover:shadow-xl transition-shadow duration-300">
+            <div class="flex flex-col md:flex-row">
+                <!-- Image -->
+                <div class="md:w-48 h-48 relative">
+                    <img [src]="post.imageUrl || 'assets/placeholder.jpg'" [alt]="post.title"
+                        class="w-full h-full object-cover">
+                    <div class="absolute top-2 right-2">
+                        <span class="px-2 py-1 rounded-full text-xs" [ngClass]="{
+                      'bg-green-100 text-green-800': post.status === 'published',
+                      'bg-gray-100 text-gray-800': post.status === 'draft'
+                    }">
+                            {{ post.status === 'published' ? 'Publicado' : 'Borrador' }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Content -->
+                <div class="p-4 flex-grow">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h2 class="text-xl font-semibold mb-2">{{ post.title }}</h2>
+                            <p class="text-gray-600 mb-2">
+                                {{ post.content | slice:0:150 }}...
+                            </p>
+                            <!-- Tags -->
+                            <div class="flex flex-wrap gap-2 mb-2">
+                                <span *ngFor="let tag of post.tags"
+                                    class="px-2 py-1 bg-[#C2AFFF] text-[#4B0082] rounded-full text-xs">
+                                    {{ tag }}
+                                </span>
+                            </div>
+                        </div>
+                        <!-- Actions -->
+                        <div class="flex gap-2">
+                            <button [routerLink]="['../edit', post.id]"
+                                class="p-2 text-[#5A4FCF] hover:bg-[#C2AFFF] rounded-full transition-colors duration-300">
+                                <mat-icon>edit</mat-icon>
+                            </button>
+                            <button *ngIf="post.id" (click)="deletePost(post.id)"
+                                class="p-2 text-red-600 hover:bg-red-100 rounded-full transition-colors duration-300">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mt-2 text-sm text-gray-500">
+                        Creado: {{ post.createdAt | date:'medium' }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && filteredPosts.length === 0" class="text-center py-8">
+        <mat-icon class="text-6xl text-gray-300">article</mat-icon>
+        <p class="mt-2 text-gray-500">No se encontraron entradas</p>
+    </div>
+</div>

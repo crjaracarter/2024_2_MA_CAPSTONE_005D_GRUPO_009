@@ -10,7 +10,6 @@ import {
   Gender,
 } from '../../../services/user/user.service';
 
-
 @Component({
   selector: 'app-usuarios',
   standalone: true,
@@ -18,7 +17,7 @@ import {
   template: `
     <div class="max-w-7xl mx-auto py-6 px-4">
       <div class="sm:flex sm:items-center sm:justify-between mb-6">
-        <h2 class="text-2xl font-bold text-indigo-700">Gestión de Usuarios</h2>
+        <h2 class="text-2xl font-bold text-white">Gestión de Usuarios</h2>
         <div class="mt-4 sm:mt-0">
           <span class="relative z-0 inline-flex shadow-sm rounded-md">
             <button
@@ -47,19 +46,21 @@ import {
       </div>
 
       <!-- Loader -->
-      <div *ngIf="isLoading" class="flex items-center justify-center py-8">
-        <div class="inline-flex items-center px-4 py-2 space-x-3">
-          <svg
-            aria-hidden="true"
-            class="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-indigo-600"
-            viewBox="0 0 100 101"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <!-- ... SVG path del loader ... -->
-          </svg>
-          <span class="text-indigo-600 text-lg">Cargando usuarios...</span>
+      <!-- Loading State mejorado -->
+      <div
+        *ngIf="isLoading"
+        class="flex flex-col justify-center items-center h-64 space-y-4"
+      >
+        <div class="relative">
+          <div
+            class="w-16 h-16 border-4 border-[#8A8EF2] border-t-transparent rounded-full animate-spin"
+          ></div>
+          <div
+            class="w-16 h-16 border-4 border-[#C2AFFF] border-t-transparent rounded-full animate-spin absolute top-0 left-0"
+            style="animation-delay: -0.3s"
+          ></div>
         </div>
+        <p class="text-white/70 animate-pulse">Cargando Usuarios...</p>
       </div>
 
       <!-- Tabla de usuarios -->
@@ -294,9 +295,7 @@ import {
                   >
                     <option [value]="AccountStatus.ACTIVA">Activa</option>
                     <option [value]="AccountStatus.INACTIVA">Inactiva</option>
-                    <option [value]="AccountStatus.BLOQUEADA">
-                    Bloqueada
-                    </option>
+                    <option [value]="AccountStatus.BLOQUEADA">Bloqueada</option>
                   </select>
                 </div>
                 <div>
@@ -308,10 +307,10 @@ import {
                     name="rol"
                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                   >
-                  <option [value]="UserRole.ADMIN">Administrador</option>
-                  <option [value]="UserRole.EMPLEADOR">Empleador</option>
-                  <option [value]="UserRole.EMPLEADO">Empleado</option>
-                  <option [value]="UserRole.USUARIO">Usuario</option>
+                    <option [value]="UserRole.ADMIN">Administrador</option>
+                    <option [value]="UserRole.EMPLEADOR">Empleador</option>
+                    <option [value]="UserRole.EMPLEADO">Empleado</option>
+                    <option [value]="UserRole.USUARIO">Usuario</option>
                   </select>
                 </div>
               </div>

@@ -1,1 +1,275 @@
-<p>profile works!</p>
+<div class="container mx-auto px-4 py-8">
+    <!-- Header Section con animación de entrada -->
+    <div class="mb-8 flex justify-between items-center" data-aos="fade-down">
+        <div>
+            <h1 class="text-3xl font-bold text-white">Mi Perfil</h1>
+            <p class="text-white/70 mt-1">Gestiona tu información personal</p>
+        </div>
+        <button *ngIf="!isEditing" (click)="toggleEdit()"
+            class="bg-[#cecaff] hover:bg-[#a664d6] text-black px-6 py-2.5 rounded-lg flex items-center gap-2 transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+            Editar Perfil
+        </button>
+    </div>
+
+    <!-- Loading State mejorado -->
+    <div *ngIf="isLoading" class="flex flex-col justify-center items-center h-64 space-y-4">
+        <div class="relative">
+            <div class="w-16 h-16 border-4 border-[#8A8EF2] border-t-transparent rounded-full animate-spin"></div>
+            <div class="w-16 h-16 border-4 border-[#C2AFFF] border-t-transparent rounded-full animate-spin absolute top-0 left-0"
+                style="animation-delay: -0.3s"></div>
+        </div>
+        <p class="text-white/70 animate-pulse">Cargando perfil...</p>
+    </div>
+
+    <!-- Profile Form con glassmorphism -->
+    <form *ngIf="!isLoading && user" [formGroup]="profileForm" (ngSubmit)="onSubmit()"
+        class="bg-white/10 backdrop-blur-lg rounded-xl shadow-xl p-8">
+
+        <!-- Avatar Section -->
+        <div class="mb-8 flex flex-col items-center space-y-4">
+            <div class="relative group">
+                <img src="assets/img/dashboard/avatar-placeholder.png"
+                    class="w-32 h-32 rounded-full object-cover border-4 border-[#8A8EF2] transition-transform duration-300 group-hover:scale-105"
+                    alt="Profile Picture">
+                <button *ngIf="isEditing"
+                    class="absolute bottom-0 right-0 bg-[#5A4FCF] p-3 rounded-full hover:bg-[#4B0082] transition-all duration-300 transform hover:scale-110">
+                    <i class="fas fa-camera text-white"></i>
+                </button>
+            </div>
+            <div class="text-center">
+                <h2 class="text-xl font-semibold text-white">{{profileForm.get('nombres')?.value}}
+                    {{profileForm.get('apellidos')?.value}}</h2>
+                <p class="text-white/70">{{profileForm.get('email')?.value}}</p>
+            </div>
+            <div class="inline-flex items-center justify-center w-full space-x-2">
+                <span class="px-3 py-1 text-sm rounded-full" [ngClass]="{
+                        'bg-green-500/20 text-green-400': user.estadoCuenta === AccountStatus.ACTIVA,
+                        'bg-yellow-500/20 text-yellow-400': user.estadoCuenta === AccountStatus.PENDIENTE,
+                        'bg-red-500/20 text-red-400': user.estadoCuenta === AccountStatus.BLOQUEADA,
+                        'bg-gray-500/20 text-gray-400': user.estadoCuenta === AccountStatus.INACTIVA
+                      }">
+                    {{getAccountStatusLabel(user.estadoCuenta)}}
+                </span>
+                <span class="px-3 py-1 bg-[#5A4FCF]/20 text-[#C2AFFF] text-sm rounded-full">
+                    {{getRolLabel(user.rol)}}
+                </span>
+            </div>
+        </div>
+       
+
+        <!-- Grid de campos -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Nombres -->
+            <div class="form-group space-y-2">
+                <label class="block text-sm font-medium text-white/90">Nombres</label>
+                <div class="relative">
+                    <input type="text" 
+                    formControlName="nombres" 
+                    [attr.readonly]="!isEditing"
+                        [class.cursor-not-allowed]="!isEditing"
+                        class="w-full px-4 py-3 bg-white/5 border rounded-lg text-white transition-all duration-300"
+                        [ngClass]="{
+                            'border-red-500/50 focus:border-red-500 focus:ring-red-500/30': isFieldInvalid('nombres'),
+                            'border-green-500/50 focus:border-green-500 focus:ring-green-500/30': isFieldValid('nombres'),
+                            'border-white/10 focus:border-[#8A8EF2] focus:ring-[#8A8EF2]/30': !isFieldInvalid('nombres') && !isFieldValid('nombres'),
+                            'hover:bg-white/10': isEditing,
+                            'bg-white/5': !isEditing
+                        }">
+                    <i class="fas fa-user absolute right-4 top-1/2 transform -translate-y-1/2 text-white/50"></i>
+                </div>
+                <p *ngIf="isFieldInvalid('nombres')" class="text-xs text-red-400">
+                    {{getErrorMessage('nombres')}}
+                </p>
+            </div>
+
+            <!-- Apellidos -->
+            <div class="form-group space-y-2">
+                <label class="block text-sm font-medium text-white/90">Apellidos</label>
+                <div class="relative">
+                    <input type="text" formControlName="apellidos" [attr.readonly]="!isEditing"
+                        [class.cursor-not-allowed]="!isEditing"
+                        class="w-full px-4 py-3 bg-white/5 border rounded-lg text-white transition-all duration-300"
+                        [ngClass]="{
+                            'border-red-500/50 focus:border-red-500 focus:ring-red-500/30': isFieldInvalid('apellidos'),
+                            'border-green-500/50 focus:border-green-500 focus:ring-green-500/30': isFieldValid('apellidos'),
+                            'border-white/10 focus:border-[#8A8EF2] focus:ring-[#8A8EF2]/30': !isFieldInvalid('apellidos') && !isFieldValid('apellidos'),
+                            'hover:bg-white/10': isEditing,
+                            'bg-white/5': !isEditing
+                        }">
+                    <i class="fas fa-user absolute right-4 top-1/2 transform -translate-y-1/2 text-white/50"></i>
+                </div>
+                <p *ngIf="isFieldInvalid('apellidos')" class="text-xs text-red-400">
+                    {{getErrorMessage('apellidos')}}
+                </p>
+            </div>
+
+            <!-- Email -->
+            <div class="form-group space-y-2">
+                <label class="block text-sm font-medium text-white/90">Email</label>
+                <div class="relative">
+                    <input type="email" formControlName="email"
+                        class="w-full px-4 py-3 bg-white/5 border-white/10 rounded-lg text-white cursor-not-allowed">
+                    <i class="fas fa-envelope absolute right-4 top-1/2 transform -translate-y-1/2 text-white/50"></i>
+                </div>
+                <p class="text-xs text-white/50">El email no puede ser modificado</p>
+            </div>
+
+            <!-- Teléfono -->
+            <div class="form-group space-y-2">
+                <label class="block text-sm font-medium text-white/90">Teléfono</label>
+                <div class="relative">
+                    <input type="tel" formControlName="telefono" [attr.readonly]="!isEditing"
+                        [class.cursor-not-allowed]="!isEditing"
+                        class="w-full px-4 py-3 bg-white/5 border rounded-lg text-white transition-all duration-300"
+                        [ngClass]="{
+                            'border-red-500/50 focus:border-red-500 focus:ring-red-500/30': isFieldInvalid('telefono'),
+                            'border-green-500/50 focus:border-green-500 focus:ring-green-500/30': isFieldValid('telefono'),
+                            'border-white/10 focus:border-[#8A8EF2] focus:ring-[#8A8EF2]/30': !isFieldInvalid('telefono') && !isFieldValid('telefono'),
+                            'hover:bg-white/10': isEditing,
+                            'bg-white/5': !isEditing
+                        }">
+                    <i class="fas fa-phone absolute right-4 top-1/2 transform -translate-y-1/2 text-white/50"></i>
+                </div>
+                <p *ngIf="isFieldInvalid('telefono')" class="text-xs text-red-400">
+                    {{getErrorMessage('telefono')}}
+                </p>
+            </div>
+
+            <!-- Región -->
+            <div class="form-group space-y-2">
+                <label class="block text-sm font-medium text-white/90">Región</label>
+                <div class="relative">
+                    <select formControlName="region" [attr.disabled]="!isEditing"
+                        [class.cursor-not-allowed]="!isEditing"
+                        class="w-full px-4 py-3 bg-white/5 border rounded-lg text-white transition-all duration-300"
+                        [ngClass]="{
+                            'border-red-500/50 focus:border-red-500 focus:ring-red-500/30': isFieldInvalid('region'),
+                            'border-green-500/50 focus:border-green-500 focus:ring-green-500/30': isFieldValid('region'),
+                            'border-white/10 focus:border-[#8A8EF2] focus:ring-[#8A8EF2]/30': !isFieldInvalid('region') && !isFieldValid('region'),
+                            'hover:bg-white/10': isEditing,
+                            'bg-white/5': !isEditing
+                        }">
+                        <option value="" disabled>Selecciona una región</option>
+                        <option *ngFor="let region of regions" [value]="region">{{region}}</option>
+                    </select>
+                    <i
+                        class="fas fa-map-marker-alt absolute right-4 top-1/2 transform -translate-y-1/2 text-white/50"></i>
+                </div>
+                <p *ngIf="isFieldInvalid('region')" class="text-xs text-red-400">
+                    {{getErrorMessage('region')}}
+                </p>
+            </div>
+
+            <!-- Ciudad -->
+            <div class="form-group space-y-2">
+                <label class="block text-sm font-medium text-white/90">Ciudad</label>
+                <div class="relative">
+                    <input type="text" formControlName="ciudad" [attr.readonly]="!isEditing"
+                        [class.cursor-not-allowed]="!isEditing"
+                        class="w-full px-4 py-3 bg-white/5 border rounded-lg text-white transition-all duration-300"
+                        [ngClass]="{
+                            'border-red-500/50 focus:border-red-500 focus:ring-red-500/30': isFieldInvalid('ciudad'),
+                            'border-green-500/50 focus:border-green-500 focus:ring-green-500/30': isFieldValid('ciudad'),
+                            'border-white/10 focus:border-[#8A8EF2] focus:ring-[#8A8EF2]/30': !isFieldInvalid('ciudad') && !isFieldValid('ciudad'),
+                            'hover:bg-white/10': isEditing,
+                            'bg-white/5': !isEditing
+                        }">
+                    <i class="fas fa-city absolute right-4 top-1/2 transform -translate-y-1/2 text-white/50"></i>
+                </div>
+                <p *ngIf="isFieldInvalid('ciudad')" class="text-xs text-red-400">
+                    {{getErrorMessage('ciudad')}}
+                </p>
+            </div>
+
+            <!-- RUT -->
+            <div class="form-group space-y-2">
+                <label class="block text-sm font-medium text-white/90">RUT</label>
+                <div class="relative">
+                    <input type="text" formControlName="rut"
+                        class="w-full px-4 py-3 bg-white/5 border-white/10 rounded-lg text-white cursor-not-allowed">
+                    <i class="fas fa-id-card absolute right-4 top-1/2 transform -translate-y-1/2 text-white/50"></i>
+                </div>
+                <p class="text-xs text-white/50">El RUT no puede ser modificado</p>
+            </div>
+
+            <!-- Género -->
+            <div class="form-group space-y-2">
+                <label class="block text-sm font-medium text-white/90">Género</label>
+                <div class="relative">
+                    <select formControlName="genero" [attr.disabled]="!isEditing"
+                        [class.cursor-not-allowed]="!isEditing"
+                        class="w-full px-4 py-3 bg-white/5 border rounded-lg text-white transition-all duration-300"
+                        [ngClass]="{
+                            'border-red-500/50 focus:border-red-500 focus:ring-red-500/30': isFieldInvalid('genero'),
+                            'border-green-500/50 focus:border-green-500 focus:ring-green-500/30': isFieldValid('genero'),
+                            'border-white/10 focus:border-[#8A8EF2] focus:ring-[#8A8EF2]/30': !isFieldInvalid('genero') && !isFieldValid('genero'),
+                            'hover:bg-white/10': isEditing,
+                            'bg-white/5': !isEditing
+                        }">
+                        <option value="" disabled>Selecciona un género</option>
+                        <option [value]="Gender.MASCULINO">Masculino</option>
+                        <option [value]="Gender.FEMENINO">Femenino</option>
+                        <option [value]="Gender.OTRO">Otro</option>
+                        <option [value]="Gender.NO_ESPECIFICA">Prefiero no especificar</option>
+                    </select>
+                    <i class="fas fa-venus-mars absolute right-4 top-1/2 transform -translate-y-1/2 text-white/50"></i>
+                </div>
+                <p *ngIf="isFieldInvalid('genero')" class="text-xs text-red-400">
+                    {{getErrorMessage('genero')}}
+                </p>
+            </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="mt-8 flex justify-end gap-4" *ngIf="isEditing">
+            <button type="button" (click)="toggleEdit()"
+                class="px-6 py-2.5 border border-white/20 rounded-lg text-white hover:bg-white/10 transition-all duration-300 flex items-center gap-2">
+                <i class="fas fa-times"></i>
+                Cancelar
+            </button>
+            <button type="submit" [disabled]="!profileForm.valid || isLoading"
+                class="px-6 py-2.5 bg-[#5A4FCF] text-white rounded-lg transition-all duration-300 flex items-center gap-2"
+                [ngClass]="{
+                    'hover:bg-[#4B0082]': profileForm.valid && !isLoading,
+                    'opacity-50 cursor-not-allowed': !profileForm.valid || isLoading
+                }">
+                <i class="fas" [ngClass]="{
+                    'fa-save': !isLoading,
+                    'fa-spinner fa-spin': isLoading
+                }"></i>
+                {{isLoading ? 'Guardando...' : 'Guardar Cambios'}}
+            </button>
+        </div>
+
+        <!-- Información adicional -->
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-white/10">
+            <!-- Fechas 
+            <div class="space-y-4">
+                <div class="flex items-center space-x-2 text-white/70">
+                    <i class="fas fa-calendar-alt text-[#C2AFFF]"></i>
+                    <span class="text-sm">Cuenta creada: {{user.fechaCreacion | date:'dd/MM/yyyy HH:mm'}}</span>
+                </div>
+                <div class="flex items-center space-x-2 text-white/70">
+                    <i class="fas fa-clock text-[#C2AFFF]"></i>
+                    <span class="text-sm">Último acceso: {{user.ultimoAcceso | date:'dd/MM/yyyy HH:mm'}}</span>
+                </div>
+            </div> -->
+
+
+
+            <!-- Mensajes de validación general -->
+            <div *ngIf="isEditing && profileForm.touched && !profileForm.valid"
+                class="mt-4 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
+                <p class="text-sm text-red-400">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    Por favor, revisa los campos marcados en rojo antes de guardar los cambios.
+                </p>
+            </div>
+        </div>
+    </form>
+</div>

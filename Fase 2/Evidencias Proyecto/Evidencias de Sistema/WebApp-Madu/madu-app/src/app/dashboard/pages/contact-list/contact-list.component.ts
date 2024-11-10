@@ -9,7 +9,7 @@ import { ContactService, Contact } from '../../../services/contact/contact.servi
   imports: [CommonModule, FormsModule],
   template: `
     <div class="max-w-7xl mx-auto py-6 px-4">
-      <h2 class="text-2xl font-bold text-indigo-700 mb-6">
+      <h2 class="text-2xl font-bold text-white mb-6">
         Lista de Contactos
       </h2>
 

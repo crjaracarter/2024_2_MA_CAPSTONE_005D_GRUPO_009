@@ -13,32 +13,38 @@ import { SidebarService } from '../../services/dashboard/sidebar.service';
   templateUrl: './topbar.component.html',
   styleUrl: './topbar.component.scss'
 })
-export class TopbarComponent{
+export class TopbarComponent implements OnInit {
   currentRoute: string = '';
-  isMobile: boolean = false;
-
+  isOpen: boolean = false;
 
   constructor(
     private router: Router,
     public sidebarService: SidebarService
   ) {
+    this.sidebarService.isOpen$.subscribe(
+      isOpen => this.isOpen = isOpen
+    );
+    
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: any) => {
-      // Obtiene la última parte de la URL
-      this.currentRoute = event.url.split('/').pop();
-      
-      // O si prefieres puedes mapear las rutas a nombres más amigables
-      const routeNames: { [key: string]: string } = {
-        'home': 'Inicio',
-        'users': 'Usuarios',
-        'settings': 'Configuración',
-        'profile': 'Mi Perfil',
-        // ... agrega más mappings según necesites
-      };
-      this.currentRoute = routeNames[this.currentRoute] || this.currentRoute;
+      this.currentRoute = this.getRouteName(event.url);
+      if (window.innerWidth < 1275) {
+        this.sidebarService.closeSidebar();
+      }
     });
-    
   }
-  
+
+  toggleSidebar() {
+    this.sidebarService.toggleSidebar();
+  }
+
+  ngOnInit(): void {
+    this.currentRoute = this.getRouteName(this.router.url);
+  }
+
+  private getRouteName(url: string): string {
+    const segments = url.split('/');
+    return segments[segments.length - 1] || 'home';
+  }
 }

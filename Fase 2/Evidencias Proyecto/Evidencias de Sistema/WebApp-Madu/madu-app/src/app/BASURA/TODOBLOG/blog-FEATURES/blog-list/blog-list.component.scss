@@ -1,0 +1,42 @@
+// src/app/dashboard/features/blog/blog-list/blog-list.component.scss
+:host {
+    display: block;
+    background-color: #F5F7FA;
+    min-height: 100vh;
+  }
+  
+  .post-card {
+    @apply transition-all duration-300;
+    
+    &:hover {
+      transform: translateY(-2px);
+    }
+  }
+  
+  // Animación para los botones de acción
+  button {
+    @apply transition-transform duration-200;
+    
+    &:hover {
+      @apply transform scale-110;
+    }
+    
+    &:active {
+      @apply transform scale-95;
+    }
+  }
+  
+  // Responsive adjustments
+  @media (max-width: 768px) {
+    .container {
+      @apply px-2;
+    }
+    
+    .post-card {
+      @apply flex-col;
+      
+      .post-image {
+        @apply w-full;
+      }
+    }
+  }

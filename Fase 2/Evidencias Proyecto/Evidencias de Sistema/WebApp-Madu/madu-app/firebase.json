@@ -1,1 +1,10 @@
-{}
+{
+  "hosting": {
+    "public": "dist/madu-app",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  }
+}

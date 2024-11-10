@@ -1,0 +1,78 @@
+// src/app/dashboard/features/blog/blog-detail/blog-detail.component.scss
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+// Estilos para el contenido del blog
+::ng-deep .prose {
+  img {
+    @apply rounded-lg shadow-lg my-8;
+  }
+
+  h2 {
+    @apply text-2xl font-bold mt-8 mb-4;
+  }
+
+  h3 {
+    @apply text-xl font-bold mt-6 mb-3;
+  }
+
+  p {
+    @apply mb-4 leading-relaxed;
+  }
+
+  blockquote {
+    @apply border-l-4 border-[#5A4FCF] pl-4 italic my-6;
+  }
+
+  pre {
+    @apply bg-gray-100 rounded-lg p-4 my-4 overflow-x-auto;
+  }
+
+  code {
+    @apply bg-gray-100 rounded px-2 py-1;
+  }
+
+  ul,
+  ol {
+    @apply my-4 pl-6;
+  }
+
+  li {
+    @apply mb-2;
+  }
+}
+
+// Animaciones
+.animate-fade-up {
+  animation: fadeUp 0.5s ease-out forwards;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .container {
+    @apply px-4;
+  }
+
+  article {
+    .cover-image {
+      height: 250px;
+    }
+  }
+
+  .prose {
+    font-size: 1rem;
+  }
+}

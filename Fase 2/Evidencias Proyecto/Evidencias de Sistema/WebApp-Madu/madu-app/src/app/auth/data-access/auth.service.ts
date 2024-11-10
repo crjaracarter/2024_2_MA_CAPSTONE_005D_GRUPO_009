@@ -5,7 +5,9 @@ import {
   signInWithEmailAndPassword, 
   signInWithPopup, 
   GoogleAuthProvider, 
-  signOut 
+  signOut, 
+  onAuthStateChanged,
+  getAuth
 } from '@angular/fire/auth';
 import { 
   Firestore, 
@@ -162,12 +164,26 @@ export class AuthService {
   }
 
   getUserData(): Observable<User | null> {
-    return new Observable<User | null>((observer) => {
-      this._auth.onAuthStateChanged(async (firebaseUser) => {
-        if (firebaseUser) {
-          const userDocRef = doc(this._firestore, `users/${firebaseUser.uid}`);
-          const userDoc = await getDoc(userDocRef);
-          observer.next(userDoc.exists() ? (userDoc.data() as User) : null);
+    const auth = getAuth();
+    return new Observable<User | null>(observer => {
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          // Obtener datos adicionales del usuario desde Firestore
+          const userDoc = doc(this._firestore, 'users', user.uid);
+          getDoc(userDoc).then(docSnap => {
+            if (docSnap.exists()) {
+              const userData = {
+                uid: user.uid,
+                ...docSnap.data()
+              } as User;
+              observer.next(userData);
+            } else {
+              observer.next(null);
+            }
+          }).catch(error => {
+            console.error('Error al obtener datos del usuario:', error);
+            observer.error(error);
+          });
         } else {
           observer.next(null);
         }

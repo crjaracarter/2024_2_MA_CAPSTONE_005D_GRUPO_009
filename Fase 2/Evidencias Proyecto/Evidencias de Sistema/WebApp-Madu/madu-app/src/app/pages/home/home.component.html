@@ -1,67 +1,192 @@
-<main class="bg-gray-100" >
-    <!-- Hero Section -->
-    <section class="bg-[#5661fb] text-white py-20">
-        <div class="container mx-auto px-4">
-            <div class="flex flex-col md:flex-row items-center">
-                <div class="md:w-1/2 mb-8 md:mb-0">
-                    <h1 class="text-4xl md:text-6xl font-bold mb-4">Bienvenido a Madu</h1>
-                    <p class="text-xl mb-4">La solución perfecta para tu Pyme</p>
-                    <p class="text-l mb-8">y para tu mente🧠</p>
-                    <a href="#"
-                        class="bg-white text-blue-600 py-2 px-6 rounded-full text-lg font-semibold hover:bg-blue-100 transition duration-300">Comenzar</a>
-                </div>
-                <div class="md:w-1/2">
-                    <img src="assets/img/home/mockup2.png" alt="MaduApp Mockup" class="rounded-lg animate-wiggle-more animate-infinite object-contain h-80 w-96">
-                </div>
+<main class="bg-[#F5F7FA]">
+  <!-- Hero Section -->
+  <section class="relative overflow-hidden bg-gradient-to-r from-[#4B0082] to-[#5A4FCF] pt-32 pb-16 md:pt-40 md:pb-24">
+    <!-- Animated Background Elements -->
+    <div class="absolute inset-0 overflow-hidden">
+      <div class="absolute -top-1/2 -right-1/2 w-96 h-96 bg-[#8A8EF2] opacity-20 rounded-full blur-3xl animate-blob">
+      </div>
+      <div
+        class="absolute -bottom-1/2 -left-1/2 w-96 h-96 bg-[#C2AFFF] opacity-20 rounded-full blur-3xl animate-blob animation-delay-2000">
+      </div>
+    </div>
+
+    <div class="container mx-auto px-4 relative">
+      <div class="flex flex-col md:flex-row items-center justify-between">
+        <div class="md:w-1/2 text-white space-y-6">
+          <h1 class="text-4xl md:text-6xl font-bold leading-tight animate-fade-in-up">
+            Bienvenido a <span class="text-[#FFC107]">Madu</span>
+          </h1>
+          <p class="text-xl md:text-2xl text-[#C2AFFF] animate-fade-in-up animation-delay-300">
+            La solución perfecta para tu Pyme y para tu mente🧠
+          </p>
+          <div class="flex space-x-4 animate-fade-in-up animation-delay-600">
+            <a href="#"
+              class="px-8 py-3 bg-[#4CAF50] hover:bg-[#45a049] text-white font-semibold rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300">
+              Comenzar
+            </a>
+            <a href="#"
+              class="px-8 py-3 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-full backdrop-blur-sm transform hover:-translate-y-0.5 transition-all duration-300">
+              Saber más
+            </a>
+          </div>
+        </div>
+        <div class="md:w-1/2 mt-12 md:mt-0">
+          <img src="assets/img/home/char-1.png" alt="MaduApp Mockup" class="w-full max-w-lg mx-auto animate-float" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="py-20 bg-white">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl md:text-4xl font-bold text-center text-[#2C2C2C] mb-16">
+        Nuestras Características
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Feature Cards -->
+        <div
+          class="group p-6 bg-white rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-2 transition-all duration-300">
+          <div class="w-14 h-14 bg-[#5A4FCF]/10 rounded-full flex items-center justify-center mb-6">
+            <svg class="w-8 h-8 text-[#5A4FCF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold text-[#2C2C2C] mb-3">Fácil de Usar</h3>
+          <p class="text-[#7D7D7D]">Interfaz intuitiva diseñada para una experiencia de usuario fluida.</p>
+        </div>
+
+        <div
+          class="group p-6 bg-white rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-2 transition-all duration-300">
+          <div class="w-14 h-14 bg-[#4CAF50]/10 rounded-full flex items-center justify-center mb-6">
+            <svg class="w-8 h-8 text-[#4CAF50]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold text-[#2C2C2C] mb-3">Altamente Personalizable</h3>
+          <p class="text-[#7D7D7D]">Adapta la aplicación a tus necesidades específicas con facilidad.</p>
+        </div>
+
+        <div
+          class="group p-6 bg-white rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-2 transition-all duration-300">
+          <div class="w-14 h-14 bg-[#FFC107]/10 rounded-full flex items-center justify-center mb-6">
+            <svg class="w-8 h-8 text-[#FFC107]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold text-[#2C2C2C] mb-3">Soporte 24/7</h3>
+          <p class="text-[#7D7D7D]">Nuestro equipo está siempre disponible para ayudarte.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- Statistics Section -->
+  <section class="py-20 bg-gradient-to-r from-[#4B0082] to-[#5A4FCF]">
+    <div class="container mx-auto px-4">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div class="text-center">
+          <div class="text-4xl md:text-5xl font-bold text-white mb-2 animate-count">1000+</div>
+          <p class="text-[#C2AFFF]">Clientes Satisfechos</p>
+        </div>
+        <div class="text-center">
+          <div class="text-4xl md:text-5xl font-bold text-white mb-2 animate-count">24/7</div>
+          <p class="text-[#C2AFFF]">Soporte Disponible</p>
+        </div>
+        <div class="text-center">
+          <div class="text-4xl md:text-5xl font-bold text-white mb-2 animate-count">98%</div>
+          <p class="text-[#C2AFFF]">Tasa de Satisfacción</p>
+        </div>
+        <div class="text-center">
+          <div class="text-4xl md:text-5xl font-bold text-white mb-2 animate-count">50+</div>
+          <p class="text-[#C2AFFF]">Países Alcanzados</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="py-20 bg-white">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl md:text-4xl font-bold text-center text-[#2C2C2C] mb-16">
+        ¿Cómo Funciona?
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+        <!-- Connecting Lines (visible only on md screens and up) -->
+        <div
+          class="hidden md:block absolute top-1/2 left-0 w-full h-0.5 bg-gradient-to-r from-[#4B0082] to-[#5A4FCF] transform -translate-y-1/2">
+        </div>
+
+        <!-- Steps -->
+        <div class="relative z-10">
+          <div
+            class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+            <div
+              class="w-16 h-16 bg-[#4B0082] rounded-full flex items-center justify-center text-white text-2xl font-bold mb-6 mx-auto">
+              1
             </div>
-        </div>
-    </section>
-    
-  
-    <!-- Features Section -->
-    <section class="py-16">
-      <div class="container mx-auto px-4">
-        <h2 class="text-3xl font-bold text-center mb-12">Nuestras Características</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div class="bg-white p-6 rounded-lg shadow-md">
-            <h3 class="text-xl font-semibold mb-4">Fácil de Usar</h3>
-            <p>Interfaz intuitiva diseñada para una experiencia de usuario fluida.</p>
-          </div>
-          <div class="bg-white p-6 rounded-lg shadow-md">
-            <h3 class="text-xl font-semibold mb-4">Altamente Personalizable</h3>
-            <p>Adapta la aplicación a tus necesidades específicas con facilidad.</p>
-          </div>
-          <div class="bg-white p-6 rounded-lg shadow-md">
-            <h3 class="text-xl font-semibold mb-4">Soporte 24/7</h3>
-            <p>Nuestro equipo está siempre disponible para ayudarte.</p>
+            <h3 class="text-xl font-semibold text-center text-[#2C2C2C] mb-4">Regístrate</h3>
+            <p class="text-center text-[#7D7D7D]">Crea tu cuenta en minutos y accede a todas las funcionalidades.</p>
           </div>
         </div>
-      </div>
-    </section>
-  
-    <!-- Testimonials Section -->
-    <section class="bg-gray-200 py-16">
-      <div class="container mx-auto px-4">
-        <h2 class="text-3xl font-bold text-center mb-12">Lo que dicen nuestros clientes</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div class="bg-white p-6 rounded-lg shadow-md">
-            <p class="mb-4">"Madu ha transformado la forma en que hacemos negocios. ¡Altamente recomendado!"</p>
-            <p class="font-semibold">- María González, CEO de TechCorp</p>
+
+        <div class="relative z-10">
+          <div
+            class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+            <div
+              class="w-16 h-16 bg-[#5A4FCF] rounded-full flex items-center justify-center text-white text-2xl font-bold mb-6 mx-auto">
+              2
+            </div>
+            <h3 class="text-xl font-semibold text-center text-[#2C2C2C] mb-4">Configura</h3>
+            <p class="text-center text-[#7D7D7D]">Personaliza la plataforma según tus necesidades específicas.</p>
           </div>
-          <div class="bg-white p-6 rounded-lg shadow-md">
-            <p class="mb-4">"La mejor inversión que hemos hecho para nuestra empresa en años."</p>
-            <p class="font-semibold">- Carlos Rodríguez, Fundador de StartUp Inc.</p>
+        </div>
+
+        <div class="relative z-10">
+          <div
+            class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+            <div
+              class="w-16 h-16 bg-[#8A8EF2] rounded-full flex items-center justify-center text-white text-2xl font-bold mb-6 mx-auto">
+              3
+            </div>
+            <h3 class="text-xl font-semibold text-center text-[#2C2C2C] mb-4">¡Comienza!</h3>
+            <p class="text-center text-[#7D7D7D]">Empieza a optimizar tu negocio con nuestras herramientas.</p>
           </div>
         </div>
       </div>
-    </section>
-  
-    <!-- CTA Section -->
-    <section class="bg-[#5661fb] text-white py-16">
-      <div class="container mx-auto px-4 text-center">
-        <h2 class="text-3xl font-bold mb-4">¿Listo para empezar?</h2>
-        <p class="text-xl mb-8">Únete a miles de usuarios satisfechos y lleva tu negocio al siguiente nivel.</p>
-        <a href="#" class="bg-white text-blue-600 py-2 px-6 rounded-full text-lg font-semibold hover:bg-blue-100 transition duration-300">Registrarse Ahora</a>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="py-20 bg-[#F5F7FA]">
+    <div class="container mx-auto px-4">
+      <div class="bg-gradient-to-r from-[#4B0082] to-[#5A4FCF] rounded-3xl p-8 md:p-16 relative overflow-hidden">
+        <!-- Decorative Elements -->
+        <div
+          class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full transform translate-x-1/2 -translate-y-1/2">
+        </div>
+        <div
+          class="absolute bottom-0 left-0 w-64 h-64 bg-white/5 rounded-full transform -translate-x-1/2 translate-y-1/2">
+        </div>
+
+        <div class="relative z-10 text-center">
+          <h2 class="text-3xl md:text-5xl font-bold text-white mb-8">¿Listo para empezar?</h2>
+          <p class="text-xl text-[#C2AFFF] mb-12 max-w-2xl mx-auto">
+            Únete a miles de usuarios satisfechos y lleva tu negocio al siguiente nivel con Madu.
+          </p>
+          <div class="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-6">
+            <a href="#"
+              class="px-8 py-4 bg-[#4CAF50] hover:bg-[#45a049] text-white font-semibold rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300">
+              Registrarse Ahora
+            </a>
+            <a href="#"
+              class="px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-full backdrop-blur-sm transform hover:-translate-y-0.5 transition-all duration-300">
+              Programar Demo
+            </a>
+          </div>
+        </div>
       </div>
-    </section>
-  </main>
+    </div>
+  </section>
+</main>

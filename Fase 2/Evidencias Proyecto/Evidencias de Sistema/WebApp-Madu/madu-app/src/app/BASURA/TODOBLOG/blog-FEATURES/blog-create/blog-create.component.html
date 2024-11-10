@@ -1,0 +1,86 @@
+<!-- src/app/dashboard/features/blog/blog-create/blog-create.component.html -->
+<div class="container mx-auto p-4 max-w-4xl" [@fadeIn]>
+    <div class="bg-white rounded-lg shadow-lg p-6">
+        <!-- Header -->
+        <div class="mb-6 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-gray-800">Crear Nueva Entrada</h1>
+            <div class="flex gap-2">
+                <button (click)="onSubmit()" [disabled]="blogForm.invalid || isLoading"
+                    class="px-4 py-2 bg-[#5A4FCF] text-white rounded-lg hover:bg-[#4B0082] transition-all duration-300 disabled:opacity-50 flex items-center gap-2">
+                    <mat-icon>publish</mat-icon>
+                    {{ blogForm.get('isDraft')?.value ? 'Guardar borrador' : 'Publicar' }}
+                </button>
+            </div>
+        </div>
+
+        <!-- Loading Bar -->
+        <mat-progress-bar *ngIf="isLoading" mode="indeterminate" class="mb-4" color="accent">
+        </mat-progress-bar>
+
+        <!-- Form -->
+        <form [formGroup]="blogForm" class="space-y-6">
+            <!-- Title -->
+            <div class="space-y-2">
+                <label class="text-sm font-medium text-gray-700">Título</label>
+                <input type="text" formControlName="title"
+                    class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#C2AFFF] focus:border-transparent"
+                    placeholder="Ingresa el título de tu entrada">
+            </div>
+
+            <!-- Subtitle -->
+            <div class="space-y-2">
+                <label class="text-sm font-medium text-gray-700">Subtítulo</label>
+                <input type="text" formControlName="subtitle"
+                    class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#C2AFFF] focus:border-transparent"
+                    placeholder="Agrega un subtítulo (opcional)">
+            </div>
+
+            <!-- Cover Image -->
+            <div class="space-y-2">
+                <label class="text-sm font-medium text-gray-700">Imagen de portada</label>
+                <ngx-dropzone (change)="onImageSelect($event)" [multiple]="false" accept="image/*"
+                    class="border-dashed border-2 border-gray-300 rounded-lg">
+                    <ngx-dropzone-label>
+                        <div class="flex flex-col items-center p-8">
+                            <mat-icon class="text-4xl text-gray-400">cloud_upload</mat-icon>
+                            <p class="mt-2 text-gray-600">Arrastra una imagen o haz clic para seleccionar</p>
+                        </div>
+                    </ngx-dropzone-label>
+                </ngx-dropzone>
+            </div>
+
+            <!-- Tags -->
+            <div class="space-y-2">
+                <label class="text-sm font-medium text-gray-700">Etiquetas</label>
+                <mat-chip-grid #chipGrid>
+                    <mat-chip-row *ngFor="let tag of tags" 
+                                  [removable]="true" 
+                                  (removed)="removeTag(tag)">
+                      {{tag}}
+                      <button matChipRemove>
+                        <mat-icon>cancel</mat-icon>
+                      </button>
+                    </mat-chip-row>
+                    <input placeholder="Nueva etiqueta..."
+                           [matChipInputFor]="chipGrid"
+                           [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                           (matChipInputTokenEnd)="addTag($event)">
+                  </mat-chip-grid>
+            </div>
+
+            <!-- Editor -->
+            <div class="space-y-2">
+                <label class="text-sm font-medium text-gray-700">Contenido</label>
+                <editor formControlName="content" [init]="tinyMceConfig" class="min-h-[500px]">
+                </editor>
+            </div>
+
+            <!-- Draft Toggle -->
+            <div class="flex items-center space-x-2">
+                <mat-slide-toggle formControlName="isDraft" color="primary">
+                    Guardar como borrador
+                </mat-slide-toggle>
+            </div>
+        </form>
+    </div>
+</div>

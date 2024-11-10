@@ -1,11 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { JobOfferService } from '../../../../services/job-offer/job-offer.service';
 import { AuthService } from '../../../../auth/data-access/auth.service';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UserRole, Empleador, User } from '../../../../core/interfaces/user.interface';
+import { firstValueFrom } from 'rxjs';
 
 
 @Component({
@@ -66,49 +67,86 @@ import { UserRole, Empleador, User } from '../../../../core/interfaces/user.inte
     </div>
   `
 })
-export class JobOfferCreateComponent {
-  jobOfferForm: FormGroup;
+export class JobOfferCreateComponent implements OnInit {
+  jobOfferForm!: FormGroup;
+  currentUser: Empleador | null = null;
+  private router = inject(Router);
 
   constructor(
     private fb: FormBuilder,
     private jobOfferService: JobOfferService,
     private authService: AuthService,
-    private router: Router
   ) {
+    this.initForm();
+  }
+
+  ngOnInit() {
+    this.loadUserData();
+  }
+
+  private initForm() {
     this.jobOfferForm = this.fb.group({
-      title: ['', Validators.required],
-      description: ['', Validators.required],
-      location: ['', Validators.required],
-      type: ['full-time', Validators.required],
-      requirements: [[]],
+      title: ['', [Validators.required]],
+      description: ['', [Validators.required]],
+      location: ['', [Validators.required]],
+      type: ['full-time', [Validators.required]],
       salary: this.fb.group({
-        min: [null],
-        max: [null],
-        currency: ['USD']
-      })
+        min: [0],
+        max: [0],
+        currency: ['CLP']
+      }),
+      requirements: ['']
     });
+  }
+
+  private async loadUserData() {
+    try {
+      this.currentUser = await this.authService.getEmpleadorData();
+      console.log('Usuario empleador cargado:', this.currentUser);
+    } catch (error) {
+      console.error('Error al cargar datos del usuario:', error);
+      this.router.navigate(['/dashboard']);
+    }
   }
 
   async onSubmit() {
     if (this.jobOfferForm.valid) {
       try {
-        const empleador = await this.authService.getEmpleadorData();
-        
-        if (empleador) {
-          const jobOffer = {
-            ...this.jobOfferForm.value,
-            employerId: empleador.uid,
-            company: empleador.nombreEmpresa || 'Empresa no especificada',
-            status: 'active'
-          };
+        await this.loadUserData();
   
-          await this.jobOfferService.createJobOffer(jobOffer);
-          this.router.navigate(['/dashboard/job-offers']);
+        if (!this.currentUser) {
+          throw new Error('Usuario no disponible');
         }
+  
+        if (!this.currentUser.nombreEmpresa) {
+          throw new Error('Nombre de empresa no disponible');
+        }
+  
+        const jobOfferData = {
+          ...this.jobOfferForm.value,
+          employerId: this.currentUser.uid,
+          company: this.currentUser.nombreEmpresa,
+          status: 'active',
+          requirements: this.jobOfferForm.value.requirements
+            ? this.jobOfferForm.value.requirements.split(',').map((r: string) => r.trim())
+            : [],
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          applicants: []
+        };
+  
+        console.log('Datos a enviar:', jobOfferData);
+  
+        await this.jobOfferService.createJobOffer(jobOfferData);
+        console.log('Oferta creada exitosamente');
+        this.router.navigate(['/dashboard/job-offers']);
       } catch (error) {
-        console.error('Error creating job offer:', error);
-        // Implementar manejo de errores
+        console.error('Error detallado al crear la oferta:', error);
+        // Aquí podrías mostrar un mensaje de error al usuario
       }
+    } else {
+      console.error('Formulario inválido');
+      console.error('Errores en el formulario:', this.jobOfferForm.errors);
     }
   }
 

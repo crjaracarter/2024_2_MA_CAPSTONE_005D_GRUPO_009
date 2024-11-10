@@ -1,0 +1,76 @@
+// settings.component.scss
+:host {
+  @apply block w-full;
+}
+
+.settings-card {
+  @apply bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6;
+
+  h3 {
+    @apply text-lg font-medium mb-4 text-[#2C2C2C] dark:text-white;
+  }
+}
+
+.toggle-switch {
+  @apply relative inline-flex items-center cursor-pointer;
+
+  input:checked + .slider {
+    @apply bg-[#5A4FCF];
+  }
+}
+
+.form-input {
+  @apply mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#5A4FCF] focus:ring focus:ring-[#8A8EF2] focus:ring-opacity-50;
+}
+
+// Animaciones personalizadas
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+// Estilos para hover cards
+.hover-card {
+  @apply transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg;
+}
+
+// Estilos para scrollbar personalizado
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-white/10;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-[#8A8EF2] rounded-full;
+}
+
+// Efectos de glassmorphism
+.glass-effect {
+  @apply backdrop-filter backdrop-blur-lg bg-white/10;
+}

@@ -13,6 +13,22 @@ module.exports = {
       ...defaultTheme.screens,
     },
     extend: {
+      colors: {
+        primary: {
+          DEFAULT: '#5A4FCF',
+          dark: '#4B0082',
+          light: '#8A8EF2',
+        },
+        accent: {
+          lavender: '#C2AFFF',
+          emerald: '#4CAF50',
+          gold: '#FFC107',
+        },
+        background: {
+          light: '#F5F7FA',
+          dark: '#1A1A1A',
+        }
+      },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
       },

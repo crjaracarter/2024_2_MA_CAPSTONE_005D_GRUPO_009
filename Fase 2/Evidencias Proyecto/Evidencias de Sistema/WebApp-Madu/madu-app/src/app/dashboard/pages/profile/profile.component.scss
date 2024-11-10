@@ -1,0 +1,58 @@
+:host {
+    display: block;
+    min-height: 100%;
+}
+
+// Estilos para inputs
+.form-group {
+
+    input,
+    select {
+        @apply bg-white/5 border border-white/10 rounded-lg text-white transition-all duration-300;
+
+        &:not([readonly]):not([disabled]) {
+            @apply hover:bg-white/10 focus:ring-2 focus:ring-[#8A8EF2] focus:border-transparent;
+        }
+
+        &[readonly],
+        &[disabled] {
+            @apply opacity-75 cursor-not-allowed;
+        }
+    }
+}
+
+// Animaciones
+.fade-enter {
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.fade-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+    transition: all 300ms ease-out;
+}
+
+// Estilos para estados de validación
+.field-invalid {
+    @apply border-red-500/50 focus:border-red-500 focus:ring-red-500/30;
+}
+
+.field-valid {
+    @apply border-green-500/50 focus:border-green-500 focus:ring-green-500/30;
+}
+
+// Hover effects
+.hover-card {
+    @apply transition-all duration-300 transform;
+
+    &:hover {
+        @apply -translate-y-1 shadow-lg;
+    }
+}
+
+// Loading spinner
+.loading-spinner {
+    @apply animate-spin rounded-full border-4 border-white/10;
+    border-top-color: theme('colors.indigo.500');
+}
