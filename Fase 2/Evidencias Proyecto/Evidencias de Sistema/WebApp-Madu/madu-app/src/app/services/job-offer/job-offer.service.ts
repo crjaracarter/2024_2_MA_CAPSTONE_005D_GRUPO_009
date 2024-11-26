@@ -21,6 +21,7 @@ import {
   Empleado,
 } from '../../core/interfaces/user.interface';
 import { JobApplication } from '../../core/interfaces/job-application/job-application.interface';
+import { JobApplicationRequest } from '../../core/interfaces/job-application/job-application-request.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -88,19 +89,33 @@ export class JobOfferService {
 
   async getJobOffersByEmployerId(employerId: string): Promise<JobOffer[]> {
     try {
+      console.log('Service: Buscando ofertas para empleador:', employerId);
+      
+      // Primero, verificar si existe el empleador
+      const empleadorRef = doc(this.firestore, `empleador/${employerId}`);
+      const empleadorDoc = await getDoc(empleadorRef);
+      
+      if (!empleadorDoc.exists()) {
+        console.log('No se encontró el documento del empleador');
+        return [];
+      }
+  
+      // Luego buscar las ofertas
       const jobOffersRef = collection(this.firestore, 'jobOffers');
       const q = query(jobOffersRef, where('employerId', '==', employerId));
       const querySnapshot = await getDocs(q);
-
-      return querySnapshot.docs.map(
-        (doc) =>
-          ({
-            id: doc.id,
-            ...doc.data(),
-          } as JobOffer)
-      );
+      
+      console.log('Documentos encontrados:', querySnapshot.size);
+  
+      const offers = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      } as JobOffer));
+      
+      console.log('Ofertas encontradas:', offers);
+      return offers;
     } catch (error) {
-      console.error('Error fetching employer job offers:', error);
+      console.error('Error obteniendo ofertas:', error);
       return [];
     }
   }
@@ -250,12 +265,7 @@ export class JobOfferService {
     }
   }
 
-  async createJobApplication(application: {
-    jobOfferId: string;
-    employeeId: string;
-    coverLetter?: string;
-    jobTitle: string;
-  }): Promise<string> {
+  async createJobApplication(application: JobApplicationRequest): Promise<string> {
     try {
       // Primero obtener la oferta de trabajo para tener el título
       const jobOffer = await this.getJobOfferById(application.jobOfferId);
@@ -302,5 +312,32 @@ export class JobOfferService {
       status,
       updatedAt: new Date(),
     });
+  }
+
+  async getJobApplicationById(applicationId: string): Promise<JobApplication | null> {
+    try {
+      const applicationRef = doc(this.firestore, 'jobApplications', applicationId);
+      const applicationDoc = await getDoc(applicationRef);
+  
+      if (!applicationDoc.exists()) {
+        return null;
+      }
+  
+      const application = {
+        id: applicationDoc.id,
+        ...applicationDoc.data()
+      } as JobApplication;
+  
+      // Obtener datos adicionales de la oferta
+      const jobOffer = await this.getJobOfferById(application.jobOfferId);
+      if (jobOffer) {
+        application.jobTitle = jobOffer.title;
+      }
+  
+      return application;
+    } catch (error) {
+      console.error('Error getting application:', error);
+      return null;
+    }
   }
 }

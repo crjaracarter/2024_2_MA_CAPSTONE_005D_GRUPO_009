@@ -1,0 +1,283 @@
+// Variables usando la paleta de colores Madu
+$color-primary: #4B0082;
+$color-primary-medium: #5A4FCF;
+$color-primary-light: #8A8EF2;
+$color-accent: #C2AFFF;
+$color-success: #4CAF50;
+$color-warning: #FFC107;
+$color-background: #F5F7FA;
+$color-surface: #FFFFFF;
+
+// Mixins útiles
+@mixin glassmorphism {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+@mixin card-hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba($color-primary, 0.1);
+  }
+}
+
+// Estilos generales
+.dashboard-container {
+  min-height: 100vh;
+  background-color: $color-background;
+}
+
+// Animaciones
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+// Componentes específicos
+.stats-card {
+  @include card-hover;
+  animation: slideIn 0.5s ease-out;
+  
+  .stats-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, $color-primary-light, $color-primary-medium);
+    
+    svg {
+      width: 24px;
+      height: 24px;
+      color: white;
+    }
+  }
+}
+
+// Tabla personalizada
+.users-table {
+  th {
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+    
+    &:after {
+      content: '';
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 0;
+      height: 0;
+      border-left: 4px solid transparent;
+      border-right: 4px solid transparent;
+    }
+    
+    &.sort-asc:after {
+      border-bottom: 4px solid currentColor;
+    }
+    
+    &.sort-desc:after {
+      border-top: 4px solid currentColor;
+    }
+    
+    &:hover {
+      background-color: rgba($color-primary, 0.9);
+    }
+  }
+
+  tbody tr {
+    transition: background-color 0.2s ease;
+    
+    &:hover {
+      background-color: rgba($color-primary-light, 0.05);
+    }
+  }
+}
+
+// Status badges
+.status-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  
+  &.active {
+    background-color: rgba($color-success, 0.1);
+    color: darken($color-success, 10%);
+  }
+  
+  &.inactive {
+    background-color: rgba($color-warning, 0.1);
+    color: darken($color-warning, 15%);
+  }
+  
+  &.blocked {
+    background-color: rgba(#DC2626, 0.1);
+    color: #DC2626;
+  }
+}
+
+// Modal personalizado
+.modal-overlay {
+  @include glassmorphism;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modal-content {
+  animation: slideIn 0.3s ease-out;
+  max-height: 90vh;
+  overflow-y: auto;
+  
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba($color-primary-light, 0.1);
+    border-radius: 4px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: $color-primary-medium;
+    border-radius: 4px;
+    
+    &:hover {
+      background: $color-primary;
+    }
+  }
+}
+
+// Formularios personalizados
+.form-control {
+  @apply rounded-lg border border-gray-300 focus:ring-2 focus:ring-[$color-primary-medium] focus:border-transparent;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    border-color: $color-primary-light;
+  }
+}
+
+// Botones personalizados
+.btn {
+  @apply px-4 py-2 rounded-lg transition-all duration-200;
+  
+  &-primary {
+    @apply bg-[$color-primary-medium] text-white;
+    &:hover {
+      @apply bg-[$color-primary];
+      transform: translateY(-1px);
+    }
+  }
+  
+  &-danger {
+    @apply bg-red-600 text-white;
+    &:hover {
+      @apply bg-red-700;
+      transform: translateY(-1px);
+    }
+  }
+}
+
+// Loading Spinner
+.spinner-container {
+  .spinner {
+    width: 50px;
+    height: 50px;
+    border: 3px solid rgba($color-primary-light, 0.3);
+    border-radius: 50%;
+    border-top-color: $color-primary;
+    animation: spin 1s linear infinite;
+  }
+  
+  .spinner-text {
+    @apply mt-4 text-white text-sm;
+    animation: pulse 1.5s ease infinite;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .stats-card {
+    margin-bottom: 1rem;
+  }
+  
+  .users-table {
+    thead {
+      @apply hidden;
+    }
+    
+    tbody {
+      tr {
+        @apply block border-b border-gray-200 py-4;
+        
+        td {
+          @apply block text-right py-2;
+          
+          &:before {
+            content: attr(data-label);
+            @apply float-left font-medium text-gray-700;
+          }
+        }
+      }
+    }
+  }
+  
+  .modal-content {
+    width: 95%;
+    margin: 1rem auto;
+  }
+}
+
+// Utilidades de animación
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+// Mejoras de accesibilidad
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

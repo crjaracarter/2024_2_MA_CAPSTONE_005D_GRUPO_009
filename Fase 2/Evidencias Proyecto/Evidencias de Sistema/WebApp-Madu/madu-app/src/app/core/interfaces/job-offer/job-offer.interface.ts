@@ -13,6 +13,7 @@ export interface JobOffer {
     location: string;
     type: 'full-time' | 'part-time' | 'remote' | 'hybrid';
     employerId: string;
+    formTemplateId?: string;
     createdAt: Date;
     updatedAt: Date;
     status: 'active' | 'closed';

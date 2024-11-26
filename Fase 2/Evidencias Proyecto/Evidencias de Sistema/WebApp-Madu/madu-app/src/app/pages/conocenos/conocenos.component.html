@@ -1,56 +1,143 @@
-<div class="bg-gradient-to-r from-indigo-500 to-purple-500 py-20">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center">
-            <h1 class="text-4xl font-bold text-white mb-4">Conócenos</h1>
-            <p class="text-lg text-gray-200">Somos un equipo comprometido en brindar soluciones innovadoras para
-                mejorar la gestión de personas.</p>
+<!-- Hero Section con Three.js -->
+<div class="relative h-screen overflow-hidden">
+
+    <!-- Overlay con gradiente y contenido -->
+    <div class="relative z-10 flex items-center justify-center h-full 
+                bg-gradient-to-br from-indigo-900 via-[#5A4FCF] to-[#4B0082] 
+                ">
+        <div id="hero-3d" class="absolute inset-0 z-0 transition-opacity duration-700 ease-in-out opacity-0"
+            [ngClass]="{'opacity-100': isLoaded}">
         </div>
-
-        <!-- Sección del equipo -->
-        <div class="mt-12">
-            <h2 class="text-3xl font-bold text-gray-800 text-center mb-8">Nuestro Equipo</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-
-                <!-- Miembro del equipo 1 -->
-                <div class="bg-white shadow-lg rounded-lg p-6">
-                    <img class="w-32 h-32 mx-auto rounded-full border-4 border-[#5661fb]"
-                        src="https://via.placeholder.com/150" alt="Foto de perfil">
-                    <h3 class="mt-6 text-xl font-bold text-gray-800 text-center">Ana Pérez</h3>
-                    <p class="mt-2 text-gray-600 text-center">CEO & Founder</p>
-                    <p class="mt-4 text-gray-500 text-center">Con más de 10 años de experiencia en gestión
-                        empresarial, Ana ha liderado equipos de alto rendimiento.</p>
-                </div>
-
-                <!-- Miembro del equipo 2 -->
-                <div class="bg-white shadow-lg rounded-lg p-6">
-                    <img class="w-32 h-32 mx-auto rounded-full border-4 border-[#5661fb]"
-                        src="https://via.placeholder.com/150" alt="Foto de perfil">
-                    <h3 class="mt-6 text-xl font-bold text-gray-800 text-center">Carlos Gómez</h3>
-                    <p class="mt-2 text-gray-600 text-center">Director de Tecnología</p>
-                    <p class="mt-4 text-gray-500 text-center">Especialista en tecnología con amplia experiencia en
-                        sistemas de información y desarrollo de software.</p>
-                </div>
-
-                <!-- Miembro del equipo 3 -->
-                <div class="bg-white shadow-lg rounded-lg p-6">
-                    <img class="w-32 h-32 mx-auto rounded-full border-4 border-[#5661fb]"
-                        src="https://via.placeholder.com/150" alt="Foto de perfil">
-                    <h3 class="mt-6 text-xl font-bold text-gray-800 text-center">Laura Martínez</h3>
-                    <p class="mt-2 text-gray-600 text-center">Directora de Recursos Humanos</p>
-                    <p class="mt-4 text-gray-500 text-center">Laura se especializa en la gestión de personas,
-                        ayudando a construir ambientes laborales felices y productivos.</p>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- CTA -->
-        <div class="mt-16 bg-[#5661fb] py-10 rounded-lg text-center text-white">
-            <h2 class="text-2xl font-bold">¿Quieres saber más?</h2>
-            <p class="mt-4 text-lg">Contáctanos y descubre cómo podemos ayudarte a mejorar la gestión de tu equipo.
+        <!-- Contenido del hero -->
+        <div class="text-center text-white px-4 hero-content backdrop-blur-xs">
+            <h1 class="text-5xl md:text-7xl font-bold mb-6 hero-title 
+                       tracking-tight leading-tight" data-aos="fade-down">
+                Transformando la <br class="hidden md:block">
+                <span class="text-[#FFC107]">Gestión de Personas</span>
+            </h1>
+            <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto hero-subtitle 
+                      leading-relaxed" data-aos="fade-up">
+                Potenciando el éxito de las PYMES a través de soluciones
+                innovadoras en gestión de recursos humanos
             </p>
-            <a href="/contact"
-                class="mt-6 inline-block bg-white text-[#5661fb] font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-gray-100 transition">Contáctanos</a>
+            <!-- Opcional: Botón CTA 
+            <div class="mt-8 backdrop-blur-xs" data-aos="fade-up" data-aos-delay="200">
+                <a routerLink="/contact" class="inline-block px-8 py-3 text-lg font-semibold 
+                          bg-gradient-to-r from-emerald-500 to-emerald-600 
+                          hover:from-emerald-600 hover:to-emerald-700 
+                          text-white rounded-full transition-all duration-300 
+                          transform hover:scale-105 hover:shadow-lg">
+                    Comenzar Ahora
+                </a>
+            </div>-->
+
+        </div>
+        <!-- Scroll indicator fuera del hero-content -->
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-3 z-20">
+            <span class="text-white/80 text-sm font-light">Descubre más</span>
+            <div class="scroll-mouse-indicator">
+                <div class="scroll-wheel-container">
+                    <div class="scroll-wheel"></div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+<main class="conocenos-content">
+    <!-- Sección Nuestra Misión -->
+    <section class="mission-section py-20 bg-gradient-to-r from-indigo-50 to-purple-50">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div data-aos="fade-right" class="mission-image">
+                    <img src="../../../assets/img/conocenos/mission.svg" alt="Nuestra Misión"
+                        class="w-full max-w-md mx-auto">
+                </div>
+                <div data-aos="fade-left" class="mission-content">
+                    <h2 class="text-4xl font-bold text-indigo-900 mb-6">Nuestra Misión</h2>
+                    <p class="text-gray-700 text-lg leading-relaxed">
+                        En Madu, nos dedicamos a empoderar a las PYMES con herramientas integrales para la gestión de
+                        personal,
+                        permitiéndoles optimizar sus procesos de recursos humanos y focalizarse en lo que mejor saben
+                        hacer:
+                        hacer crecer sus negocios.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección Valores -->
+    <section class="values-section py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center text-indigo-900 mb-16">Nuestros Valores</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="value-card p-6 rounded-lg bg-white shadow-lg" data-aos="zoom-in">
+                    <div class="value-icon text-emerald-500 text-4xl mb-4">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-indigo-900 mb-4">Innovación</h3>
+                    <p class="text-gray-600">
+                        Buscamos constantemente nuevas formas de mejorar y simplificar la gestión de recursos humanos.
+                    </p>
+                </div>
+
+                <div class="value-card p-6 rounded-lg bg-white shadow-lg" data-aos="zoom-in" data-aos-delay="100">
+                    <div class="value-icon text-emerald-500 text-4xl mb-4">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-indigo-900 mb-4">Colaboración</h3>
+                    <p class="text-gray-600">
+                        Trabajamos junto a nuestros clientes para crear soluciones que realmente importen.
+                    </p>
+                </div>
+
+                <div class="value-card p-6 rounded-lg bg-white shadow-lg" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="value-icon text-emerald-500 text-4xl mb-4">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-indigo-900 mb-4">Confiabilidad</h3>
+                    <p class="text-gray-600">
+                        Garantizamos la seguridad y eficiencia en cada aspecto de nuestro servicio.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección Estadísticas -->
+    <section class="stats-section py-20 bg-gradient-to-b from-indigo-50 to-white">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
+                <div class="stat-card" data-aos="fade-up">
+                    <div class="stat-number text-4xl font-bold text-indigo-900 mb-2">500+</div>
+                    <div class="stat-label text-gray-600">Empresas Confían en Nosotros</div>
+                </div>
+                <div class="stat-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="stat-number text-4xl font-bold text-indigo-900 mb-2">10k+</div>
+                    <div class="stat-label text-gray-600">Empleados Gestionados</div>
+                </div>
+                <div class="stat-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="stat-number text-4xl font-bold text-indigo-900 mb-2">98%</div>
+                    <div class="stat-label text-gray-600">Satisfacción del Cliente</div>
+                </div>
+                <div class="stat-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="stat-number text-4xl font-bold text-indigo-900 mb-2">24/7</div>
+                    <div class="stat-label text-gray-600">Soporte Disponible</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección CTA -->
+    <section class="cta-section py-20 bg-indigo-900 text-white">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-4xl font-bold mb-8">¿Listo para transformar tu gestión de personal?</h2>
+            <p class="text-xl mb-8">Únete a las empresas que ya están optimizando sus procesos con Madu</p>
+            <a routerLink="/contact"
+                class="cta-button inline-block bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-full transition-all duration-300">
+                Comenzar Ahora
+            </a>
+        </div>
+    </section>
+</main>

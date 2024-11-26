@@ -1,0 +1,354 @@
+// reclutamiento.component.scss
+// @import 'tailwindcss/base';
+// @import 'tailwindcss/components';
+// @import 'tailwindcss/utilities';
+
+// Variables
+$indigo-dark: #4B0082;
+$indigo-medium: #5A4FCF;
+$indigo-light: #8A8EF2;
+$lavender: #C2AFFF;
+$transition-base: 300ms ease;
+
+// Animations
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.8); opacity: 0.5; }
+  50% { transform: scale(1.2); opacity: 0.3; }
+  100% { transform: scale(0.8); opacity: 0.5; }
+}
+
+@keyframes scroll-down {
+  0%, 20% {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+  60%, 80% {
+    transform: translate(-50%, 10px);
+    opacity: 0;
+  }
+  81% {
+    transform: translate(-50%, -10px);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+}
+
+// Mixins
+@mixin glass-effect {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+// Custom Classes
+.hero-section {
+  position: relative;
+  min-height: calc(100vh - 80px);
+  background: linear-gradient(to bottom, 
+    rgba(75, 0, 130, 1) 0%,
+    rgba(90, 79, 207, 1) 100%
+  );
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      rgba($indigo-dark, 0.3) 50%,
+      rgba($indigo-dark, 0.8) 100%
+    );
+    z-index: 1;
+  }
+
+  .scroll-indicator {
+    @apply fixed left-1/2 z-20;
+    bottom: 2rem; // Ajustamos la posición
+    transform: translateX(-50%);
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+
+    &:hover {
+      opacity: 1;
+      .mouse {
+        border-color: rgba(255, 255, 255, 0.5);
+      }
+    }
+
+    .mouse {
+      width: 26px;
+      height: 42px;
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      border-radius: 13px;
+      position: relative;
+      transition: border-color 0.3s ease;
+      
+      &::before {
+        content: '';
+        width: 4px;
+        height: 8px;
+        background: white;
+        position: absolute;
+        top: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-radius: 2px;
+        animation: scroll-down 2s infinite;
+      }
+    }
+  }
+}
+
+.hero-section {
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 150px; // Ajusta según necesites
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      rgba(75, 0, 130, 1) // Color que coincida con la siguiente sección
+    );
+    pointer-events: none;
+  }
+}
+
+.feature-card {
+  @apply transition-all duration-300;
+
+  .card-content {
+    @include glass-effect;
+    @apply rounded-xl p-8 transition-all duration-300;
+    
+    &:hover {
+      @apply transform scale-105;
+      box-shadow: 0 20px 40px rgba($indigo-dark, 0.2);
+    }
+  }
+
+  .icon-container {
+    @apply w-16 h-16 rounded-lg flex items-center justify-center mb-6;
+    background: linear-gradient(135deg, $lavender, $indigo-light);
+    transition: transform $transition-base;
+
+    &:hover {
+      transform: scale(1.1) rotate(5deg);
+    }
+  }
+}
+
+.process-point {
+  position: relative;
+  z-index: 2;
+
+  .point {
+    @apply w-8 h-8 rounded-full border-4;
+    background: linear-gradient(135deg, $indigo-dark, $indigo-medium);
+    border-color: $lavender;
+    position: relative;
+    z-index: 2;
+  }
+
+  .pulse-ring {
+    @apply absolute w-16 h-16 rounded-full;
+    background: rgba($lavender, 0.2);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: pulse-ring 2s infinite;
+  }
+}
+
+.timeline {
+  @apply hidden md:block absolute left-1/2 transform -translate-x-1/2 h-full w-1;
+  background: linear-gradient(
+    to bottom,
+    $indigo-dark,
+    $indigo-medium,
+    $indigo-light
+  );
+
+  &::before,
+  &::after {
+    content: '';
+    @apply absolute w-3 h-3 rounded-full;
+    background: $indigo-dark;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  &::before { top: 0; }
+  &::after { bottom: 0; }
+}
+
+// Custom Scrollbar
+::-webkit-scrollbar {
+  width: 12px;
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient($indigo-dark, $indigo-medium);
+  border-radius: 6px;
+  border: 3px solid #f1f1f1;
+
+  &:hover {
+    background: linear-gradient($indigo-medium, $indigo-light);
+  }
+}
+
+// Utilities
+.bg-gradient-custom {
+  background: linear-gradient(135deg, $indigo-dark, $indigo-medium);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, $lavender, white);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .process-point {
+    margin: 2rem 0;
+  }
+
+  .feature-card {
+    margin-bottom: 2rem;
+  }
+}
+
+// Sección de funcionalidades
+.features-section { // Asegúrate de agregar esta clase en tu HTML
+  margin-top: -2px; // Elimina cualquier gap
+  background: linear-gradient(
+    145deg,
+    rgba(75, 0, 130, 1) 0%,
+    rgba(90, 79, 207, 1) 50%,
+    rgba(138, 142, 242, 1) 100%
+  );
+  position: relative;
+  z-index: 1;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    background: linear-gradient(
+      to bottom,
+      rgba(75, 0, 130, 1),
+      transparent
+    );
+  }
+}
+
+@media (max-height: 700px) {
+  .hero-section {
+    .scroll-indicator {
+      bottom: 1rem;
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .features-section {
+    margin-top: -4px; // Ajuste para pantallas más grandes
+  }
+}
+
+.scroll-mouse-indicator {
+  width: 24px;
+  height: 40px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden; // Importante: esto mantiene el contenido dentro
+  
+  .scroll-wheel-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 4px; // Espacio para el wheel
+    
+    .scroll-wheel {
+      width: 4px;
+      height: 8px;
+      background-color: white;
+      border-radius: 2px;
+      margin: 0 auto;
+      opacity: 0.8;
+      animation: scrollWheel 1.5s ease-in-out infinite;
+    }
+  }
+}
+
+@keyframes scrollWheel {
+  0% {
+    transform: translateY(4px);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(20px);
+    opacity: 0.2;
+  }
+  100% {
+    transform: translateY(4px);
+    opacity: 1;
+  }
+}
+
+// Hover effects
+.scroll-mouse-indicator {
+  transition: border-color 0.3s ease;
+  
+  &:hover {
+    border-color: rgba(255, 255, 255, 0.5);
+    
+    .scroll-wheel {
+      opacity: 1;
+    }
+  }
+}
+
+::ng-deep {
+  #tsparticles {
+    canvas {
+      position: absolute !important;
+      height: 100% !important;
+    }
+  }
+}
+
+
+[data-aos] {
+  pointer-events: none; // Durante la animación
+  &.aos-animate {
+    pointer-events: auto; // Después de la animación
+  }
+}
+
+.feature-card {
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}

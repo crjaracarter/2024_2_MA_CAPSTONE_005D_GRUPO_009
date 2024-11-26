@@ -1,0 +1,62 @@
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-8 text-white">Mi Empresa</h1>
+
+    <!-- Estado de Error -->
+    <div *ngIf="error" class="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+        {{ error }}
+    </div>
+
+    <!-- Tabs Container con scroll en móvil -->
+    <div class="relative">
+        <div class="overflow-x-auto hide-scrollbar">
+            <nav class="flex whitespace-nowrap border-b border-indigo-100 min-w-full" aria-label="Tabs">
+                <div class="flex space-x-1 px-2">
+                    <button *ngFor="let tab of tabs" [class]="getTabClasses(tab.id)" (click)="setActiveTab(tab.id)"
+                        [disabled]="loading"
+                        class="group relative min-w-0 flex-1 overflow-hidden px-4 py-3 text-sm font-medium text-center focus:z-10 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 rounded-lg transition-all duration-200 ease-in-out">
+                        <span class="relative z-10 transition-colors duration-200 text-indigo-200">
+                            {{ tab.label }}
+                        </span>
+                        <span class="absolute inset-x-0 bottom-0 h-0.5 transition-all duration-200 ease-out"
+                            [class]="tab.id === activeTab ? 'bg-[#5A4FCF] scale-x-100' : 'bg-transparent scale-x-0 group-hover:bg-[#C2AFFF] group-hover:scale-x-100'">
+                        </span>
+                    </button>
+                </div>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="flex justify-center items-center py-12">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500"></div>
+    </div>
+
+    <!-- No Data State -->
+    <div *ngIf="!loading && !empresa && !error" class="text-center py-12">
+        <p class="text-gray-500">No se encontró información de la empresa.</p>
+    </div>
+
+    <!-- Tab Content con fade in/out -->
+    <div *ngIf="!loading && empresa" class="mt-8 transition-opacity duration-200 ease-in-out"
+        [class.opacity-0]="loading" [class.opacity-100]="!loading">
+        <ng-container [ngSwitch]="activeTab">
+            <app-informacion-general *ngSwitchCase="'info'" [empresa]="empresa" (updated)="onEmpresaUpdated($event)">
+            </app-informacion-general>
+
+            <app-empleados *ngSwitchCase="'empleados'" [empresa]="empresa">
+            </app-empleados>
+
+            <app-estadisticas *ngSwitchCase="'stats'" [empresa]="empresa">
+            </app-estadisticas>
+
+            <app-documentos *ngSwitchCase="'docs'" [empresa]="empresa">
+            </app-documentos>
+
+            <app-ofertas *ngSwitchCase="'ofertas'" [empresa]="empresa">
+            </app-ofertas>
+
+            <app-configuracion *ngSwitchCase="'config'" [empresa]="empresa">
+            </app-configuracion>
+        </ng-container>
+    </div>
+</div>

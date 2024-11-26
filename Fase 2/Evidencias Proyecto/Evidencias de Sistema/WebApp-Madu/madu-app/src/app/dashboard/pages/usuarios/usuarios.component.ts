@@ -1,7 +1,11 @@
-// src/app/dashboard/pages/usuarios/usuarios.component.ts
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+} from '@angular/forms';
 import {
   UserService,
   User,
@@ -9,596 +13,336 @@ import {
   AccountStatus,
   Gender,
 } from '../../../services/user/user.service';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { animate, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'app-usuarios',
   standalone: true,
-  imports: [CommonModule, FormsModule],
-  template: `
-    <div class="max-w-7xl mx-auto py-6 px-4">
-      <div class="sm:flex sm:items-center sm:justify-between mb-6">
-        <h2 class="text-2xl font-bold text-white">Gestión de Usuarios</h2>
-        <div class="mt-4 sm:mt-0">
-          <span class="relative z-0 inline-flex shadow-sm rounded-md">
-            <button
-              (click)="filterByStatus(AccountStatus.ACTIVA)"
-              [class.bg-indigo-50]="currentFilter === AccountStatus.ACTIVA"
-              class="relative inline-flex items-center px-4 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
-            >
-              Activos
-            </button>
-            <button
-              (click)="filterByStatus(AccountStatus.INACTIVA)"
-              [class.bg-indigo-50]="currentFilter === AccountStatus.INACTIVA"
-              class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
-            >
-              Inactivos
-            </button>
-            <button
-              (click)="filterByStatus(AccountStatus.BLOQUEADA)"
-              [class.bg-indigo-50]="currentFilter === AccountStatus.BLOQUEADA"
-              class="relative inline-flex items-center px-4 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
-            >
-              Suspendidos
-            </button>
-          </span>
-        </div>
-      </div>
-
-      <!-- Loader -->
-      <!-- Loading State mejorado -->
-      <div
-        *ngIf="isLoading"
-        class="flex flex-col justify-center items-center h-64 space-y-4"
-      >
-        <div class="relative">
-          <div
-            class="w-16 h-16 border-4 border-[#8A8EF2] border-t-transparent rounded-full animate-spin"
-          ></div>
-          <div
-            class="w-16 h-16 border-4 border-[#C2AFFF] border-t-transparent rounded-full animate-spin absolute top-0 left-0"
-            style="animation-delay: -0.3s"
-          ></div>
-        </div>
-        <p class="text-white/70 animate-pulse">Cargando Usuarios...</p>
-      </div>
-
-      <!-- Tabla de usuarios -->
-      <div
-        *ngIf="!isLoading"
-        class="overflow-x-auto bg-white shadow-md rounded-lg"
-      >
-        <table class="min-w-full table-auto">
-          <thead class="bg-gray-50">
-            <tr>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Usuario
-              </th>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Contacto
-              </th>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Rol
-              </th>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Estado
-              </th>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Último Acceso
-              </th>
-              <th
-                class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Acciones
-              </th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            <tr *ngFor="let user of filteredUsers" class="hover:bg-gray-50">
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="flex items-center">
-                  <div class="ml-4">
-                    <div class="text-sm font-medium text-gray-900">
-                      {{ user.nombres }} {{ user.apellidos }}
-                    </div>
-                    <div class="text-sm text-gray-500">
-                      {{ user.rut }}
-                    </div>
-                  </div>
-                </div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">{{ user.email }}</div>
-                <div class="text-sm text-gray-500">{{ user.telefono }}</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <select
-                  [(ngModel)]="user.rol"
-                  (change)="updateUserRole(user)"
-                  class="text-sm rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                >
-                  <option [value]="UserRole.ADMIN">Administrador</option>
-                  <option [value]="UserRole.EMPLEADOR">Empleador</option>
-                  <option [value]="UserRole.EMPLEADO">Empleado</option>
-                  <option [value]="UserRole.USUARIO">Usuario</option>
-                </select>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span [class]="getStatusBadgeClass(user.estadoCuenta)">
-                  {{ user.estadoCuenta }}
-                </span>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ user.ultimoAcceso | date : 'short' }}
-              </td>
-              <td
-                class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2"
-              >
-                <button
-                  (click)="showDetails(user)"
-                  class="text-indigo-600 hover:text-indigo-900"
-                >
-                  Ver
-                </button>
-                <button
-                  (click)="editUser(user)"
-                  class="text-blue-600 hover:text-blue-900"
-                >
-                  Editar
-                </button>
-                <button
-                  (click)="confirmDelete(user)"
-                  class="text-red-600 hover:text-red-900"
-                >
-                  Eliminar
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Modal de detalles/edición -->
-      <div
-        *ngIf="selectedUser"
-        class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50"
-        (click)="closeModal()"
-      >
-        <div
-          class="relative top-20 mx-auto p-5 border w-[600px] shadow-lg rounded-md bg-white"
-          (click)="$event.stopPropagation()"
-        >
-          <div class="mt-3">
-            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
-              {{ isEditing ? 'Editar Usuario' : 'Detalles del Usuario' }}
-            </h3>
-
-            <!-- Formulario de edición -->
-            <form *ngIf="isEditing" (submit)="saveEdit()" class="space-y-4">
-              <div class="grid grid-cols-2 gap-4">
-                <!-- Datos personales -->
-                <div>
-                  <label class="block text-sm font-medium text-gray-700"
-                    >Nombres</label
-                  >
-                  <input
-                    type="text"
-                    [(ngModel)]="editingUser.nombres"
-                    name="nombres"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                  />
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700"
-                    >Apellidos</label
-                  >
-                  <input
-                    type="text"
-                    [(ngModel)]="editingUser.apellidos"
-                    name="apellidos"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                  />
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700"
-                    >Email</label
-                  >
-                  <input
-                    type="email"
-                    [(ngModel)]="editingUser.email"
-                    name="email"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                  />
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700"
-                    >Teléfono</label
-                  >
-                  <input
-                    type="tel"
-                    [(ngModel)]="editingUser.telefono"
-                    name="telefono"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                  />
-                </div>
-
-                <!-- Ubicación -->
-                <div>
-                  <label class="block text-sm font-medium text-gray-700"
-                    >Región</label
-                  >
-                  <input
-                    type="text"
-                    [(ngModel)]="editingUser.region"
-                    name="region"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                  />
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700"
-                    >Ciudad</label
-                  >
-                  <input
-                    type="text"
-                    [(ngModel)]="editingUser.ciudad"
-                    name="ciudad"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                  />
-                </div>
-
-                <!-- Datos adicionales -->
-                <div>
-                  <label class="block text-sm font-medium text-gray-700"
-                    >RUT</label
-                  >
-                  <input
-                    type="text"
-                    [(ngModel)]="editingUser.rut"
-                    name="rut"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                  />
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700"
-                    >Género</label
-                  >
-                  <select
-                    [(ngModel)]="editingUser.genero"
-                    name="genero"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                  >
-                    <option [value]="Gender.MASCULINO">Masculino</option>
-                    <option [value]="Gender.FEMENINO">Femenino</option>
-                    <option [value]="Gender.OTRO">Otro</option>
-                  </select>
-                </div>
-
-                <!-- Estado y Rol -->
-                <div>
-                  <label class="block text-sm font-medium text-gray-700"
-                    >Estado de cuenta</label
-                  >
-                  <select
-                    [(ngModel)]="editingUser.estadoCuenta"
-                    name="estadoCuenta"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                  >
-                    <option [value]="AccountStatus.ACTIVA">Activa</option>
-                    <option [value]="AccountStatus.INACTIVA">Inactiva</option>
-                    <option [value]="AccountStatus.BLOQUEADA">Bloqueada</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700"
-                    >Rol</label
-                  >
-                  <select
-                    [(ngModel)]="editingUser.rol"
-                    name="rol"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                  >
-                    <option [value]="UserRole.ADMIN">Administrador</option>
-                    <option [value]="UserRole.EMPLEADOR">Empleador</option>
-                    <option [value]="UserRole.EMPLEADO">Empleado</option>
-                    <option [value]="UserRole.USUARIO">Usuario</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="mt-5 flex justify-end space-x-3">
-                <button
-                  type="button"
-                  (click)="closeModal()"
-                  class="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  class="px-4 py-2 text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
-                >
-                  Guardar
-                </button>
-              </div>
-            </form>
-
-            <!-- Vista de detalles -->
-            <div *ngIf="!isEditing" class="space-y-4">
-              <div class="grid grid-cols-2 gap-4">
-                <div>
-                  <p class="text-sm font-medium text-gray-500">
-                    Nombre completo
-                  </p>
-                  <p class="mt-1 text-sm text-gray-900">
-                    {{ selectedUser.nombres }} {{ selectedUser.apellidos }}
-                  </p>
-                </div>
-                <div>
-                  <p class="text-sm font-medium text-gray-500">RUT</p>
-                  <p class="mt-1 text-sm text-gray-900">
-                    {{ selectedUser.rut }}
-                  </p>
-                </div>
-                <div>
-                  <p class="text-sm font-medium text-gray-500">Email</p>
-                  <p class="mt-1 text-sm text-gray-900">
-                    {{ selectedUser.email }}
-                  </p>
-                </div>
-                <div>
-                  <p class="text-sm font-medium text-gray-500">Teléfono</p>
-                  <p class="mt-1 text-sm text-gray-900">
-                    {{ selectedUser.telefono }}
-                  </p>
-                </div>
-                <div>
-                  <p class="text-sm font-medium text-gray-500">Ubicación</p>
-                  <p class="mt-1 text-sm text-gray-900">
-                    {{ selectedUser.ciudad }}, {{ selectedUser.region }}
-                  </p>
-                </div>
-                <div>
-                  <p class="text-sm font-medium text-gray-500">Género</p>
-                  <p class="mt-1 text-sm text-gray-900">
-                    {{ selectedUser.genero }}
-                  </p>
-                </div>
-                <div>
-                  <p class="text-sm font-medium text-gray-500">Rol</p>
-                  <p class="mt-1 text-sm text-gray-900">
-                    {{ selectedUser.rol }}
-                  </p>
-                </div>
-                <div>
-                  <p class="text-sm font-medium text-gray-500">
-                    Estado de cuenta
-                  </p>
-                  <p class="mt-1">
-                    <span
-                      [class]="getStatusBadgeClass(selectedUser.estadoCuenta)"
-                    >
-                      {{ selectedUser.estadoCuenta }}
-                    </span>
-                  </p>
-                </div>
-                <div>
-                  <p class="text-sm font-medium text-gray-500">
-                    Fecha de creación
-                  </p>
-                  <p class="mt-1 text-sm text-gray-900">
-                    {{ selectedUser.fechaCreacion | date : 'medium' }}
-                  </p>
-                </div>
-                <div>
-                  <p class="text-sm font-medium text-gray-500">Último acceso</p>
-                  <p class="mt-1 text-sm text-gray-900">
-                    {{ selectedUser.ultimoAcceso | date : 'medium' }}
-                  </p>
-                </div>
-              </div>
-
-              <div class="mt-5 flex justify-end">
-                <button
-                  (click)="closeModal()"
-                  class="px-4 py-2 text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
-                >
-                  Cerrar
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Modal de confirmación de eliminación -->
-      <div
-        *ngIf="showDeleteConfirm"
-        class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50"
-        (click)="showDeleteConfirm = false"
-      >
-        <div
-          class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white"
-          (click)="$event.stopPropagation()"
-        >
-          <h3 class="text-lg font-medium text-gray-900 mb-4">
-            Confirmar eliminación
-          </h3>
-          <p class="text-sm text-gray-500">
-            ¿Estás seguro de que deseas eliminar este usuario? Esta acción no se
-            puede deshacer.
-          </p>
-          <div class="mt-4 flex justify-end space-x-3">
-            <button
-              (click)="showDeleteConfirm = false"
-              class="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"
-            >
-              Cancelar
-            </button>
-            <button
-              (click)="deleteUser()"
-              class="px-4 py-2 text-white bg-red-600 rounded-md hover:bg-red-700"
-            >
-              Eliminar
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  `,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  templateUrl: './usuarios.component.html',
+  styleUrls: ['./usuarios.component.scss'],
+  animations: [
+    trigger('fadeInOut', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('300ms ease-out', style({ opacity: 1 })),
+      ]),
+      transition(':leave', [animate('300ms ease-in', style({ opacity: 0 }))]),
+    ]),
+  ],
 })
 export class UsuariosComponent implements OnInit {
-  users: User[] = [];
-  filteredUsers: User[] = [];
-  selectedUser: User | null = null;
-  editingUser: Partial<User> = {};
-  isEditing = false;
-  isLoading = false;
-  showDeleteConfirm = false;
-  userToDelete: User | null = null;
-  currentFilter: AccountStatus | 'ALL' = 'ALL';
-  UserRole = UserRole; // Para usar en el template
-  Gender = Gender; // Añadir esta línea
-  AccountStatus = AccountStatus; // Añadir esta línea
+  private fb = inject(FormBuilder);
+  private userService = inject(UserService);
 
-  constructor(private userService: UserService) {}
+  // Signals y estados
+  users = signal<User[]>([]);
+  filteredUsers = signal<User[]>([]);
+  selectedUser = signal<User | null>(null);
+  editingUser = signal<Partial<User>>({});
+  isEditing = signal<boolean>(false);
+  isLoading = signal<boolean>(false);
+  showDeleteConfirm = signal<boolean>(false);
+  userToDelete = signal<User | null>(null);
+  currentFilter = signal<AccountStatus | 'ALL'>('ALL');
+
+  // Enums para el template
+  UserRole = UserRole;
+  Gender = Gender;
+  AccountStatus = AccountStatus;
+
+  // Formulario de búsqueda y filtros
+  searchForm: FormGroup = this.fb.group({
+    searchTerm: [''],
+    role: ['ALL'],
+    status: ['ALL'],
+    sortBy: ['nombres'],
+    sortDirection: ['asc'],
+  });
+
+  // Estadísticas de usuarios
+  stats = signal({
+    total: 0,
+    active: 0,
+    inactive: 0,
+    blocked: 0,
+    roleDistribution: {
+      [UserRole.ADMIN]: 0,
+      [UserRole.EMPLEADOR]: 0,
+      [UserRole.EMPLEADO]: 0,
+      [UserRole.USUARIO]: 0,
+    },
+  });
+
+  // Opciones de ordenamiento
+  sortOptions = [
+    { value: 'nombres', label: 'Nombre' },
+    { value: 'email', label: 'Email' },
+    { value: 'fechaCreacion', label: 'Fecha de creación' },
+    { value: 'ultimoAcceso', label: 'Último acceso' },
+  ];
 
   ngOnInit() {
     this.loadUsers();
+    this.setupSearch();
+    this.setupSorting();
+  }
+
+  private setupSearch() {
+    this.searchForm
+      .get('searchTerm')
+      ?.valueChanges.pipe(debounceTime(300), distinctUntilChanged())
+      .subscribe(() => this.applyFilters());
+
+    // Observar cambios en filtros
+    ['role', 'status'].forEach((control) => {
+      this.searchForm
+        .get(control)
+        ?.valueChanges.subscribe(() => this.applyFilters());
+    });
+  }
+
+  private setupSorting() {
+    ['sortBy', 'sortDirection'].forEach((control) => {
+      this.searchForm
+        .get(control)
+        ?.valueChanges.subscribe(() => this.sortUsers());
+    });
   }
 
   async loadUsers() {
-    this.isLoading = true;
+    this.isLoading.set(true);
     try {
-      this.users = await this.userService.getUsers();
-      this.applyFilter();
+      const users = await this.userService.getUsers();
+      this.users.set(users);
+      this.calculateStats();
+      this.applyFilters();
     } catch (error) {
       console.error('Error loading users:', error);
+      // Aquí podrías implementar un sistema de notificaciones para errores
     } finally {
-      this.isLoading = false;
+      this.isLoading.set(false);
     }
   }
 
-  filterByStatus(status: AccountStatus | 'ALL') {
-    this.currentFilter = status;
-    this.applyFilter();
+  private calculateStats() {
+    const currentUsers = this.users();
+    this.stats.set({
+      total: currentUsers.length,
+      active: currentUsers.filter(
+        (u) => u.estadoCuenta === AccountStatus.ACTIVA
+      ).length,
+      inactive: currentUsers.filter(
+        (u) => u.estadoCuenta === AccountStatus.INACTIVA
+      ).length,
+      blocked: currentUsers.filter(
+        (u) => u.estadoCuenta === AccountStatus.BLOQUEADA
+      ).length,
+      roleDistribution: {
+        [UserRole.ADMIN]: currentUsers.filter((u) => u.rol === UserRole.ADMIN)
+          .length,
+        [UserRole.EMPLEADOR]: currentUsers.filter(
+          (u) => u.rol === UserRole.EMPLEADOR
+        ).length,
+        [UserRole.EMPLEADO]: currentUsers.filter(
+          (u) => u.rol === UserRole.EMPLEADO
+        ).length,
+        [UserRole.USUARIO]: currentUsers.filter(
+          (u) => u.rol === UserRole.USUARIO
+        ).length,
+      },
+    });
   }
 
-  applyFilter() {
-    if (this.currentFilter === 'ALL') {
-      this.filteredUsers = this.users;
-    } else {
-      this.filteredUsers = this.users.filter(
-        (user) => user.estadoCuenta === this.currentFilter
-      );
-    }
+  private applyFilters() {
+    const searchTerm = this.searchForm.get('searchTerm')?.value.toLowerCase();
+    const role = this.searchForm.get('role')?.value;
+    const status = this.searchForm.get('status')?.value;
+
+    let filtered = this.users().filter((user) => {
+      const matchesSearch =
+        !searchTerm ||
+        user.nombres.toLowerCase().includes(searchTerm) ||
+        user.apellidos.toLowerCase().includes(searchTerm) ||
+        user.email.toLowerCase().includes(searchTerm) ||
+        user.rut.toLowerCase().includes(searchTerm);
+
+      const matchesRole = role === 'ALL' || user.rol === role;
+      const matchesStatus = status === 'ALL' || user.estadoCuenta === status;
+
+      return matchesSearch && matchesRole && matchesStatus;
+    });
+
+    this.sortUsers(filtered);
   }
 
-  getStatusBadgeClass(status: AccountStatus): string {
-    const baseClasses =
-      'px-2 inline-flex text-xs leading-5 font-semibold rounded-full';
-    switch (status) {
-      case AccountStatus.ACTIVA:
-        return `${baseClasses} bg-green-100 text-green-800`;
-      case AccountStatus.INACTIVA:
-        return `${baseClasses} bg-yellow-100 text-yellow-800`;
-      case AccountStatus.BLOQUEADA:
-        return `${baseClasses} bg-red-100 text-red-800`;
-      default:
-        return baseClasses;
-    }
+  private sortUsers(users: User[] = this.filteredUsers()) {
+    const sortBy = this.searchForm.get('sortBy')?.value;
+    const sortDirection = this.searchForm.get('sortDirection')?.value;
+
+    const sorted = [...users].sort((a, b) => {
+      let comparison = 0;
+
+      if (sortBy === 'nombres') {
+        comparison = (a.nombres + ' ' + a.apellidos).localeCompare(
+          b.nombres + ' ' + b.apellidos
+        );
+      } else if (sortBy === 'fechaCreacion' || sortBy === 'ultimoAcceso') {
+        comparison =
+          new Date(a[sortBy as keyof User] as string).getTime() -
+          new Date(b[sortBy as keyof User] as string).getTime();
+      } else {
+        comparison = String(a[sortBy as keyof User]).localeCompare(
+          String(b[sortBy as keyof User])
+        );
+      }
+
+      return sortDirection === 'asc' ? comparison : -comparison;
+    });
+
+    this.filteredUsers.set(sorted);
   }
 
+  // Métodos de gestión de usuarios
   async updateUserRole(user: User) {
-    if (!user.uid) return;
+    if (!user.uid || user.rol === UserRole.ADMIN) return;
 
-    this.isLoading = true;
+    this.isLoading.set(true);
     try {
       await this.userService.updateUser(user.uid, { rol: user.rol });
       await this.loadUsers();
     } catch (error) {
       console.error('Error updating user role:', error);
     } finally {
-      this.isLoading = false;
+      this.isLoading.set(false);
     }
   }
 
   showDetails(user: User) {
-    this.selectedUser = user;
-    this.isEditing = false;
+    this.selectedUser.set(user);
+    this.isEditing.set(false);
   }
 
   editUser(user: User) {
-    this.selectedUser = user;
-    this.editingUser = { ...user };
-    this.isEditing = true;
+    this.selectedUser.set(user);
+    this.editingUser.set({ ...user });
+    this.isEditing.set(true);
   }
 
   async saveEdit() {
-    if (!this.selectedUser?.uid || !this.editingUser) return;
+    const currentSelectedUser = this.selectedUser();
+    const currentEditingUser = this.editingUser();
 
-    this.isLoading = true;
+    if (!currentSelectedUser?.uid || !currentEditingUser) return;
+
+    this.isLoading.set(true);
     try {
       await this.userService.updateUser(
-        this.selectedUser.uid,
-        this.editingUser
+        currentSelectedUser.uid,
+        currentEditingUser
       );
       await this.loadUsers();
       this.closeModal();
     } catch (error) {
       console.error('Error updating user:', error);
     } finally {
-      this.isLoading = false;
+      this.isLoading.set(false);
     }
   }
 
   confirmDelete(user: User) {
-    this.userToDelete = user;
-    this.showDeleteConfirm = true;
+    this.userToDelete.set(user);
+    this.showDeleteConfirm.set(true);
   }
 
   async deleteUser() {
-    if (!this.userToDelete?.uid) return;
+    const userToDelete = this.userToDelete();
+    if (!userToDelete?.uid) return;
 
-    this.isLoading = true;
+    this.isLoading.set(true);
     try {
-      await this.userService.deleteUser(this.userToDelete.uid);
-      this.showDeleteConfirm = false;
-      this.userToDelete = null;
+      await this.userService.deleteUser(userToDelete.uid);
+      this.showDeleteConfirm.set(false);
+      this.userToDelete.set(null);
       await this.loadUsers();
     } catch (error) {
       console.error('Error deleting user:', error);
     } finally {
-      this.isLoading = false;
+      this.isLoading.set(false);
     }
   }
 
   async updateAccountStatus(user: User, status: AccountStatus) {
     if (!user.uid) return;
 
-    this.isLoading = true;
+    this.isLoading.set(true);
     try {
       await this.userService.updateUser(user.uid, { estadoCuenta: status });
       await this.loadUsers();
     } catch (error) {
       console.error('Error updating account status:', error);
     } finally {
-      this.isLoading = false;
+      this.isLoading.set(false);
     }
   }
 
   closeModal() {
-    this.selectedUser = null;
-    this.isEditing = false;
-    this.editingUser = {};
+    this.selectedUser.set(null);
+    this.isEditing.set(false);
+    this.editingUser.set({});
+  }
+
+  // Utilidades
+  getStatusBadgeClass(status: AccountStatus): string {
+    const baseClasses = 'status-badge';
+    switch (status) {
+      case AccountStatus.ACTIVA:
+        return `${baseClasses} active`;
+      case AccountStatus.INACTIVA:
+        return `${baseClasses} inactive`;
+      case AccountStatus.BLOQUEADA:
+        return `${baseClasses} blocked`;
+      default:
+        return baseClasses;
+    }
+  }
+
+  // Exportar usuarios a CSV
+  exportToCSV() {
+    const users = this.filteredUsers();
+    if (users.length === 0) return;
+
+    const headers = [
+      'Nombre',
+      'Email',
+      'RUT',
+      'Rol',
+      'Estado',
+      'Último Acceso',
+    ];
+    const csvData = users.map((user) => [
+      `${user.nombres} ${user.apellidos}`,
+      user.email,
+      user.rut,
+      user.rol,
+      user.estadoCuenta,
+      new Date(user.ultimoAcceso).toLocaleDateString(),
+    ]);
+
+    const csv = [
+      headers.join(','),
+      ...csvData.map((row) => row.join(',')),
+    ].join('\n');
+
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.setAttribute('hidden', '');
+    a.setAttribute('href', url);
+    a.setAttribute('download', 'usuarios.csv');
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   }
 }

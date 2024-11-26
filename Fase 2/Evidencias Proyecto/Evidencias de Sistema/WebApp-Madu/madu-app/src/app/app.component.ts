@@ -4,7 +4,7 @@ import { HomeComponent } from './pages/home/home.component';
 import { OnInit } from '@angular/core';
 import { initFlowbite } from 'flowbite';
 import { NgxSonnerToaster } from 'ngx-sonner';
-
+import Scrollbar from 'smooth-scrollbar';
 
 @Component({
   selector: 'app-root',

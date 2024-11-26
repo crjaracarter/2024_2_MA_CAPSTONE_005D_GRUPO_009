@@ -16,18 +16,12 @@ import {
 } from '../../../../core/interfaces/user.interface';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { JobApplicationRequest } from '../../../../core/interfaces/job-application/job-application-request.interface';
 
 @Component({
   selector: 'app-job-offer-detail',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-
-
-
-  ],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   template: `
     <div class="max-w-4xl mx-auto p-6" *ngIf="jobOffer">
       <div class="bg-white rounded-lg shadow-lg p-6">
@@ -180,13 +174,17 @@ export class JobOfferDetailComponent implements OnInit {
   async applyToJob() {
     if (this.jobOffer?.id && this.currentUserId) {
       try {
-        // Crear la postulación
-        await this.jobOfferService.createJobApplication({
+        const applicationData: JobApplicationRequest = {
           jobOfferId: this.jobOffer.id,
           employeeId: this.currentUserId,
-          coverLetter: this.coverLetter,
-          jobTitle: this.jobOffer.title, // Agregar el título
-        });
+          coverLetter: this.coverLetter || '', // Asegúrate de que coverLetter esté definido en tu componente
+          responses: [], // Array vacío si no hay respuestas en este punto
+          cvUrl: '', // Puede ser vacío si no requieres CV en este punto
+          jobTitle: this.jobOffer.title,
+        };
+
+        // Crear la postulación
+        await this.jobOfferService.createJobApplication(applicationData);
 
         // Actualizar el estado de la oferta
         await this.jobOfferService.applyToJob(

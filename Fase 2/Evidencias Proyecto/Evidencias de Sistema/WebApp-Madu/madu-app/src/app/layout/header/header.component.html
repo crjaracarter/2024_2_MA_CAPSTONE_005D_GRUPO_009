@@ -3,7 +3,7 @@
     <div class="flex justify-between h-20">
       <!-- Logo Section -->
       <div class="flex-shrink-0 flex items-center">
-        <a href="/home" class="flex items-center space-x-2">
+        <a routerLink="/home" class="flex items-center space-x-2">
           <img src="assets/img/logos/madu_blanco.png"
             class="h-12 w-auto transform hover:scale-105 transition-transform duration-300" alt="Madu Logo" />
         </a>
@@ -23,7 +23,7 @@
             class="absolute left-0 mt-2 w-48 rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top scale-95 group-hover:scale-100">
             <div class="rounded-xl shadow-lg ring-1 ring-black ring-opacity-5 overflow-hidden">
               <div class="relative bg-white py-2">
-                <a href="/reclutamiento"
+                <a routerLink="/reclutamiento"
                   class="block px-4 py-2 text-sm text-[#2C2C2C] hover:bg-[#F5F7FA] hover:text-[#4B0082] transition-colors duration-300">
                   Reclutamiento
                 </a>
@@ -32,18 +32,19 @@
           </div>
         </div>
 
-        <a href="/conocenos" class="text-white hover:text-[#C2AFFF] transition-colors duration-300">Conócenos</a>
-        <a href="/precios" class="text-white hover:text-[#C2AFFF] transition-colors duration-300">Precios</a>
-        <a href="/blog" class="text-white hover:text-[#C2AFFF] transition-colors duration-300">Blog</a>
+        <a routerLink="/conocenos" class="text-white hover:text-[#C2AFFF] transition-colors duration-300">Conócenos</a>
+        <a routerLink="/precios" class="text-white hover:text-[#C2AFFF] transition-colors duration-300">Precios</a>
+        <!-- <a routerLink="/blog" class="text-white hover:text-[#C2AFFF] transition-colors duration-300">Blog</a> -->
 
         <div class="flex items-center space-x-4">
-          <a href="/contact"
+          <a routerLink="/contact"
             class="px-6 py-2.5 bg-[#4CAF50] hover:bg-[#45a049] text-white font-medium rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300">
             Comienza Aquí
           </a>
-          <a href="/auth/login"
-            class="px-6 py-2.5 bg-white text-[#4B0082] font-medium rounded-full hover:bg-[#F5F7FA] transform hover:-translate-y-0.5 transition-all duration-300">
-            Iniciar Sesión
+          <a (click)="handleLoginClick()"
+            class="px-6 py-2.5 bg-white text-[#4B0082] font-medium rounded-full hover:bg-[#F5F7FA] transform hover:-translate-y-0.5 transition-all duration-300"
+            style="cursor: pointer;">
+            {{ (authService.isAuthenticated$ | async) ? 'Ir a Dashboard' : 'Iniciar Sesión' }}
           </a>
         </div>
       </div>
@@ -70,28 +71,28 @@
   <div class="md:hidden" [ngClass]="{'block': isMobileMenuOpen, 'hidden': !isMobileMenuOpen}" @slideInOut>
     <!-- Requiere configurar la animación -->
     <div class="px-4 pt-2 pb-3 space-y-2 bg-[#5A4FCF] shadow-xl">
-      <a href="#" (click)="closeMobileMenu()"
+      <a routerLink="/reclutamiento" (click)="closeMobileMenu()"
         class="block px-4 py-2 text-white hover:bg-[#4B0082] rounded-lg transition-colors duration-300">
         Servicios
       </a>
-      <a href="#" (click)="closeMobileMenu()"
+      <a routerLink="/conocenos" (click)="closeMobileMenu()"
         class="block px-4 py-2 text-white hover:bg-[#4B0082] rounded-lg transition-colors duration-300">
         Conócenos
       </a>
-      <a href="#" (click)="closeMobileMenu()"
+      <a routerLink="/precios" (click)="closeMobileMenu()"
         class="block px-4 py-2 text-white hover:bg-[#4B0082] rounded-lg transition-colors duration-300">
         Precios
       </a>
-      <a href="#" (click)="closeMobileMenu()"
+      <!-- <a routerLink="/blog" (click)="closeMobileMenu()"
         class="block px-4 py-2 text-white hover:bg-[#4B0082] rounded-lg transition-colors duration-300">
         Blog
-      </a>
+      </a> -->
       <div class="space-y-2 pt-4">
-        <a href="/contact" (click)="closeMobileMenu()"
+        <a routerLink="/contact" (click)="closeMobileMenu()"
           class="block text-center px-4 py-2 bg-[#4CAF50] text-white rounded-full hover:bg-[#45a049] transition-colors duration-300">
           Comienza Aquí
         </a>
-        <a href="/auth/login" (click)="closeMobileMenu()"
+        <a routerLink="/auth/login" (click)="closeMobileMenu()"
           class="block text-center px-4 py-2 bg-white text-[#4B0082] rounded-full hover:bg-[#F5F7FA] transition-colors duration-300">
           Iniciar Sesión
         </a>

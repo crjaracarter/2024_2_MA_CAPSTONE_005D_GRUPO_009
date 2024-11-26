@@ -9,9 +9,10 @@ import { ReclutamientoComponent } from './pages/reclutamiento/reclutamiento.comp
 import { PreciosComponent } from './pages/precios/precios.component';
 import { BlogComponent } from './pages/blog/blog.component';
 
-import { EmpresaComponent } from './empresa/empresa.component';
-import { VacantesComponent } from './vacantes/vacantes.component';
-import { PostulacionComponent } from './postulacion/postulacion.component';
+import { JobsCompanyComponent } from './pages/jobs/jobs-company/jobs-company.component';
+import { JobDetailComponent } from './pages/jobs/job-detail/job-detail.component';
+import { JobApplicationFormComponent } from './pages/jobs/job-application-form/job-application-form.component';
+import { ApplicationSuccessComponent } from './pages/jobs/application-success/application-success.component';
 
 export const routes: Routes = [
   {
@@ -24,33 +25,56 @@ export const routes: Routes = [
     component: MainLayoutComponent,
     children: [
       { path: 'home', component: HomeComponent, pathMatch: 'full' },
-      { path: 'contact', component: ContactComponent, pathMatch: 'full'},
-      { path: 'conocenos', component: ConocenosComponent, pathMatch: 'full'},
-      { path: 'reclutamiento', component: ReclutamientoComponent, pathMatch: 'full'},
-      { path: 'precios', component: PreciosComponent, pathMatch: 'full'},
-      { path: 'blog', component: BlogComponent, pathMatch: 'full'},
-      
+      { path: 'contact', component: ContactComponent, pathMatch: 'full' },
+      { path: 'conocenos', component: ConocenosComponent, pathMatch: 'full' },
+      {
+        path: 'reclutamiento',
+        component: ReclutamientoComponent,
+        
+      },
+      { path: 'precios', component: PreciosComponent, pathMatch: 'full' },
+      { path: 'blog', component: BlogComponent, pathMatch: 'full' },
+
+      {
+        path: 'company/:employerId/jobs',
+        component: JobsCompanyComponent,
+      },
+      {
+        path: 'jobs/application-success/:id',
+        component: ApplicationSuccessComponent,
+        canActivate: [privateGuard()],
+        data: { requiresAuth: true }
+      },
+      {
+        path: 'jobs/:id/apply',
+        component: JobApplicationFormComponent,
+        canActivate: [privateGuard()],
+        data: { requiresAuth: true }
+      },
+      {
+        path: 'jobs/:id',
+        component: JobDetailComponent,
+      },
+   
+    
     ],
   },
   {
     path: 'auth',
-    loadChildren: () => import('./auth/features/auth.routes').then(m => m.routes),
+    loadChildren: () =>
+      import('./auth/features/auth.routes').then((m) => m.routes),
   },
   {
     path: 'dashboard',
-    loadChildren: () => import('./dashboard/dashboard.routes').then(m => m.DASHBOARD_ROUTES),
+    loadChildren: () =>
+      import('./dashboard/dashboard.routes').then((m) => m.DASHBOARD_ROUTES),
     canActivate: [privateGuard()],
   },
-  {
-    path: 'tasks',
-    canActivateChild: [privateGuard()],
-    loadChildren: () => import('./task/features/task.routes').then(m => m.default),
-  },
 
-  { path: 'empresa/:id', component: EmpresaComponent },
-  { path: 'vacantes/:id', component: VacantesComponent },
-  { path: 'postulacion/:id', component: PostulacionComponent },
-  { path: 'empresa/:empresaId/vacantes/:id', component: VacantesComponent },
 
+
+  
+
+  
   { path: '**', redirectTo: 'home', pathMatch: 'full' }, // Cambiar redirección 404 a /home
 ];

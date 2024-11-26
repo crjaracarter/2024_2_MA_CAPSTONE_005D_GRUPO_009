@@ -3,6 +3,9 @@
 @tailwind components;
 @tailwind utilities;
 @import 'ngx-toastr/toastr';
+@import 'swiper/scss';
+@import 'swiper/scss/pagination';
+
 
 // Animaciones personalizadas
 @keyframes fadeIn {
@@ -36,22 +39,22 @@
     animation: slideIn 0.4s ease-out;
 }
 
-// Scroll personalizado
+// Scroll personalizado (mantengo tu estilo pero actualizo los colores según la paleta Madu)
 ::-webkit-scrollbar {
     width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(194, 175, 255, 0.1); // Lavanda suave
     border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(90, 79, 207, 0.3); // Índigo medio
     border-radius: 4px;
 
     &:hover {
-        background: rgba(255, 255, 255, 0.3);
+        background: rgba(75, 0, 130, 0.5); // Índigo oscuro
     }
 }
 
@@ -61,4 +64,6 @@
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
+
+
 

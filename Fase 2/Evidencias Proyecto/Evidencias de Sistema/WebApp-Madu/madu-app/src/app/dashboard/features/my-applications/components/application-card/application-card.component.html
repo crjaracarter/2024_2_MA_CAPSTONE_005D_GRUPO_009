@@ -1,0 +1,24 @@
+<div class="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
+    <div class="flex justify-between items-start">
+        <div>
+            <h3 class="text-lg font-semibold text-gray-900">{{application.jobTitle}}</h3>
+            <p class="text-sm text-gray-600">
+                Postulado el {{application.appliedAt | date:'dd/MM/yyyy'}}
+            </p>
+        </div>
+        <span [class]="'px-3 py-1 rounded-full text-sm font-medium ' + getStatusClass(application.status)"
+            [title]="getStatusTranslation(application.status)">
+            {{getStatusTranslation(application.status)}}
+        </span>
+    </div>
+
+    <div class="mt-4 flex gap-4">
+        <button (click)="onViewDetails()" 
+                class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-2">
+            <span>Ver detalles</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+        </button>
+    </div>
+</div>

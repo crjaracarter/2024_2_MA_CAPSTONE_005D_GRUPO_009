@@ -1,7 +1,6 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { TopbarComponent } from './topbar/topbar.component';
-import { MainContentComponent } from './main-content/main-content.component';
 import { RouterModule, Routes } from '@angular/router';
 import { SidebarService } from '../services/dashboard/sidebar.service';
 import { CommonModule } from '@angular/common';
@@ -17,7 +16,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
   imports: [
     SidebarComponent,
     TopbarComponent,
-    MainContentComponent,
     RouterModule,
     CommonModule,
   ],

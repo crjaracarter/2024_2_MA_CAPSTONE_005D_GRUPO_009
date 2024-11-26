@@ -19,12 +19,13 @@
       <div class="p-2 rounded-xl bg-white/10">
         <!-- Logo -->
         <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
+          
           <!-- Aquí tu logo SVG -->
         </svg>
       </div>
       <div>
         <h2 class="text-lg font-bold text-white">Madu</h2>
-        <p class="text-xs text-white/70">Admin Dashboard</p>
+        <p class="text-xs text-white/70">Dashboard</p>
       </div>
     </div>
     <!-- Botón cerrar mobile -->
@@ -64,6 +65,17 @@
         </div>
         <span class="font-medium">Mi Perfil</span>
       </a>
+      <!-- Mi Empresa -->
+      <a routerLink="/dashboard/mi-empresa" routerLinkActive="bg-white/20"
+        class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 text-white transition-colors group">
+        <div class="p-2 rounded-lg bg-white/10 group-hover:bg-white/20 transition-colors">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+        </div>
+        <span class="font-medium">Mi Empresa</span>
+      </a>
 
       <!-- Separador -->
       <div class="py-4">
@@ -81,7 +93,7 @@
         </div>
         <span class="font-medium">Usuarios</span>
       </a>
-      <!-- Reclutamiento -->
+      <!-- Vacantes -->
       <a routerLink="/dashboard/job-offers" routerLinkActive="bg-white/20"
         class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 text-white transition-colors group">
         <div class="p-2 rounded-lg bg-white/10 group-hover:bg-white/20 transition-colors">
@@ -92,7 +104,7 @@
               clip-rule="evenodd" />
           </svg>
         </div>
-        <span class="font-medium">Reclutamiento</span>
+        <span class="font-medium">Ofertas Laborales</span>
       </a>
       <!-- Postulaciones -->
       <a routerLink="/dashboard/job-applications" routerLinkActive="bg-white/20"
@@ -107,6 +119,19 @@
           </svg>
         </div>
         <span class="font-medium">Postulaciones</span>
+      </a>
+      <!-- Mis Postulaciones -->
+      <a routerLink="/dashboard/my-applications" routerLinkActive="bg-white/20"
+        class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 text-white transition-colors group">
+        <div class="p-2 rounded-lg bg-white/10 group-hover:bg-white/20 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+            <path fill-rule="evenodd"
+              d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z"
+              clip-rule="evenodd" />
+          </svg>
+        </div>
+        <span class="font-medium">Mis postulaciones</span>
       </a>
       <!-- Contactos -->
       <a routerLink="/dashboard/contact-list" routerLinkActive="bg-white/20"

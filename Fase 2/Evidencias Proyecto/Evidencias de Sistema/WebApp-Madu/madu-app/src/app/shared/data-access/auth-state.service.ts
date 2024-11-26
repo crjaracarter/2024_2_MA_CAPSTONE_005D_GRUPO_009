@@ -1,6 +1,7 @@
+// auth-state.service.ts
 import { inject, Injectable } from '@angular/core';
-import { Auth, authState, getAuth, signOut } from '@angular/fire/auth';
-import { Observable } from 'rxjs';
+import { Auth, authState, getAuth, signOut, User } from '@angular/fire/auth';
+import { Observable, map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -8,12 +9,24 @@ import { Observable } from 'rxjs';
 export class AuthStateService {
   private _auth = inject(Auth);
 
-  get authState$(): Observable<any> {
+  // Tipamos correctamente el Observable
+  get authState$(): Observable<User | null> {
     return authState(this._auth);
+  }
+
+  // Agregamos un método para verificar si el usuario está autenticado
+  get isAuthenticated$(): Observable<boolean> {
+    return this.authState$.pipe(
+      map(user => !!user)
+    );
   }
 
   get currentUser() {
     return getAuth().currentUser;
+  }
+
+  getCurrentUserId(): string | null {
+    return this.currentUser?.uid ?? null;
   }
 
   logOut() {

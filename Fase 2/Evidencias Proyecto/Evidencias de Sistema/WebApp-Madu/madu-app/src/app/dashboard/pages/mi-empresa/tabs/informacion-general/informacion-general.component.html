@@ -1,0 +1,146 @@
+<!-- src/app/dashboard/pages/mi-empresa/tabs/informacion-general/informacion-general.component.html -->
+
+<div class="bg-white p-6 rounded-lg shadow-sm">
+    <!-- Vista modo lectura -->
+    <div *ngIf="!isEditing && empresa" class="space-y-6">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-semibold text-gray-900">Información de la Empresa</h2>
+            <button (click)="toggleEdit()"
+                class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors">
+                Editar Información
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <h3 class="text-sm font-medium text-gray-500">Nombre de la Empresa</h3>
+                <p class="mt-1 text-lg text-gray-900">{{empresa.nombreEmpresa}}</p>
+            </div>
+
+            <div>
+                <h3 class="text-sm font-medium text-gray-500">RUT Empresa</h3>
+                <p class="mt-1 text-lg text-gray-900">{{empresa.rutEmpresa}}</p>
+            </div>
+
+            <div>
+                <h3 class="text-sm font-medium text-gray-500">Dirección</h3>
+                <p class="mt-1 text-lg text-gray-900">{{empresa.direccionEmpresa}}</p>
+            </div>
+
+            <div>
+                <h3 class="text-sm font-medium text-gray-500">Sector Industrial</h3>
+                <p class="mt-1 text-lg text-gray-900">{{empresa.sectorIndustrial}}</p>
+            </div>
+
+            <div>
+                <h3 class="text-sm font-medium text-gray-500">Sitio Web</h3>
+                <p class="mt-1 text-lg text-gray-900">
+                    <a [href]="empresa.sitioWeb" target="_blank" class="text-indigo-600 hover:text-indigo-800">
+                        {{empresa.sitioWeb || 'No especificado'}}
+                    </a>
+                </p>
+            </div>
+        </div>
+
+        <div class="mt-6">
+            <h3 class="text-sm font-medium text-gray-500">Descripción de la Empresa</h3>
+            <p class="mt-1 text-gray-900">{{empresa.descripcionEmpresa}}</p>
+        </div>
+    </div>
+
+    <!-- Vista modo edición -->
+    <form *ngIf="isEditing" [formGroup]="empresaForm" (ngSubmit)="onSubmit()" class="space-y-6">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-semibold text-gray-900">Editar Información</h2>
+            <div class="space-x-3">
+                <button type="button" (click)="toggleEdit()"
+                    class="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors">
+                    Cancelar
+                </button>
+                <button type="submit" [disabled]="!empresaForm.valid"
+                    class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors disabled:bg-gray-400">
+                    Guardar Cambios
+                </button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-700">
+                    Nombre de la Empresa
+                </label>
+                <input type="text" formControlName="nombreEmpresa"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                <p *ngIf="empresaForm.get('nombreEmpresa')?.invalid && empresaForm.get('nombreEmpresa')?.touched"
+                    class="text-sm text-red-600">
+                    {{getErrorMessage('nombreEmpresa')}}
+                </p>
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-700">
+                    RUT Empresa
+                </label>
+                <input type="text" formControlName="rutEmpresa"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                <p *ngIf="empresaForm.get('rutEmpresa')?.invalid && empresaForm.get('rutEmpresa')?.touched"
+                    class="text-sm text-red-600">
+                    {{getErrorMessage('rutEmpresa')}}
+                </p>
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-700">
+                    Dirección
+                </label>
+                <input type="text" formControlName="direccionEmpresa"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                <p *ngIf="empresaForm.get('direccionEmpresa')?.invalid && empresaForm.get('direccionEmpresa')?.touched"
+                    class="text-sm text-red-600">
+                    {{getErrorMessage('direccionEmpresa')}}
+                </p>
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-700">
+                    Sector Industrial
+                </label>
+                <select formControlName="sectorIndustrial"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                    <option value="">Seleccione un sector</option>
+                    <option *ngFor="let sector of sectoresIndustriales" [value]="sector">
+                        {{sector}}
+                    </option>
+                </select>
+                <p *ngIf="empresaForm.get('sectorIndustrial')?.invalid && empresaForm.get('sectorIndustrial')?.touched"
+                    class="text-sm text-red-600">
+                    {{getErrorMessage('sectorIndustrial')}}
+                </p>
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-700">
+                    Sitio Web
+                </label>
+                <input type="url" formControlName="sitioWeb" placeholder="https://ejemplo.com"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                <p *ngIf="empresaForm.get('sitioWeb')?.invalid && empresaForm.get('sitioWeb')?.touched"
+                    class="text-sm text-red-600">
+                    {{getErrorMessage('sitioWeb')}}
+                </p>
+            </div>
+        </div>
+
+        <div class="space-y-2">
+            <label class="block text-sm font-medium text-gray-700">
+                Descripción de la Empresa
+            </label>
+            <textarea formControlName="descripcionEmpresa" rows="4"
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"></textarea>
+            <p *ngIf="empresaForm.get('descripcionEmpresa')?.invalid && empresaForm.get('descripcionEmpresa')?.touched"
+                class="text-sm text-red-600">
+                {{getErrorMessage('descripcionEmpresa')}}
+            </p>
+        </div>
+    </form>
+</div>

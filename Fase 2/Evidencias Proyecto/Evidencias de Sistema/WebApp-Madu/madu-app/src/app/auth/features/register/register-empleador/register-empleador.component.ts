@@ -98,22 +98,19 @@ export class RegisterEmpleadorComponent {
   loading = false;
 
   async submit() {
-    console.log('Submit iniciado');
-
     if (this.form.invalid || this.loading) {
       console.log('Formulario inválido o loading:', {
         invalid: this.form.invalid,
-        loading: this.loading,
+        loading: this.loading
       });
+      toast.error('Por favor, complete todos los campos requeridos');
       return;
     }
-    if (this.form.invalid || this.loading) return;
-
+  
     this.loading = true;
     try {
-      console.log('Intentando registrar empleador...', this.form.value);
       const formValue = this.form.value;
-      await this._authService.signUpEmpleador({
+      const result = await this._authService.signUpEmpleador({
         email: formValue.email!,
         password: formValue.password!,
         nombres: formValue.nombres!,
@@ -134,13 +131,13 @@ export class RegisterEmpleadorComponent {
         sitioWeb: formValue.sitioWeb || undefined,
         descripcionEmpresa: formValue.descripcionEmpresa!,
       });
-
-      console.log('Registro exitoso');
+  
+      console.log('Registro exitoso:', result);
       toast.success('Empresa registrada exitosamente');
       this._router.navigateByUrl('/dashboard');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error en el registro:', error);
-      toast.error('Ocurrió un error en el registro');
+      toast.error(error.message || 'Ocurrió un error en el registro');
     } finally {
       this.loading = false;
     }

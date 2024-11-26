@@ -1,0 +1,102 @@
+<!-- src/app/dashboard/pages/mi-empresa/tabs/estadisticas/estadisticas.component.html -->
+
+<div class="bg-white p-6 rounded-lg shadow-sm">
+    <h2 class="text-2xl font-semibold text-gray-900 mb-6">Estadísticas de la Empresa</h2>
+  
+    <!-- Tarjetas de Métricas -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <!-- Total Empleados -->
+      <div class="bg-indigo-50 p-6 rounded-lg">
+        <div class="flex items-center">
+          <div class="p-3 bg-indigo-500 rounded-full">
+            <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-indigo-600">Total Empleados</p>
+            <p class="text-2xl font-semibold text-gray-900">{{formatNumber(totalEmpleados)}}</p>
+          </div>
+        </div>
+        <div class="mt-2">
+          <p class="text-sm text-gray-600">
+            {{calcularPorcentajeActivos()}}% activos
+          </p>
+        </div>
+      </div>
+  
+      <!-- Empleados Activos -->
+      <div class="bg-green-50 p-6 rounded-lg">
+        <div class="flex items-center">
+          <div class="p-3 bg-green-500 rounded-full">
+            <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-green-600">Empleados Activos</p>
+            <p class="text-2xl font-semibold text-gray-900">{{formatNumber(empleadosActivos)}}</p>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Ofertas Activas -->
+      <div class="bg-blue-50 p-6 rounded-lg">
+        <div class="flex items-center">
+          <div class="p-3 bg-blue-500 rounded-full">
+            <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-blue-600">Ofertas Activas</p>
+            <p class="text-2xl font-semibold text-gray-900">{{formatNumber(ofertasActivas)}}</p>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Postulaciones -->
+      <div class="bg-purple-50 p-6 rounded-lg">
+        <div class="flex items-center">
+          <div class="p-3 bg-purple-500 rounded-full">
+            <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-purple-600">Postulaciones</p>
+            <p class="text-2xl font-semibold text-gray-900">{{formatNumber(postulacionesRecibidas)}}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Gráficas -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Gráfica de Contrataciones -->
+      <div class="bg-white p-6 rounded-lg border border-gray-200">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">Contrataciones Mensuales</h3>
+        <canvas id="graficaContrataciones"></canvas>
+      </div>
+  
+      <!-- Gráfica de Postulaciones -->
+      <div class="bg-white p-6 rounded-lg border border-gray-200">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">Postulaciones Recibidas</h3>
+        <canvas id="graficaPostulaciones"></canvas>
+      </div>
+    </div>
+  
+    <!-- Gráfica de Distribución por Departamentos -->
+    <div class="mt-6">
+      <div class="bg-white p-6 rounded-lg border border-gray-200">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">Distribución por Departamentos</h3>
+        <div class="max-w-md mx-auto">
+          <canvas id="graficaDepartamentos"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>

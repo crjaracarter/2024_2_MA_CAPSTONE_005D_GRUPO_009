@@ -1,0 +1,181 @@
+// precios.component.scss
+
+// Variables usando la paleta de colores proporcionada
+$indigo-dark: #4B0082;
+$indigo-medium: #5A4FCF;
+$indigo-light: #8A8EF2;
+$lavender: #C2AFFF;
+$emerald: #4CAF50;
+$golden: #FFC107;
+$bg-light: #F5F7FA;
+$gray-soft: #E0E3E7;
+$text-primary: #2C2C2C;
+$text-secondary: #7D7D7D;
+
+.pricing-section {
+  background: linear-gradient(135deg, $bg-light 0%, $gray-soft 100%);
+  min-height: 100vh;
+}
+
+.tab-button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  background: white;
+  border: 2px solid $indigo-medium;
+  color: $indigo-medium;
+
+  &.active {
+    background: $indigo-medium;
+    color: white;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+}
+
+.pricing-card {
+  background: white;
+  border-radius: 1rem;
+  padding: 2rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+
+  &.recommended {
+    transform: scale(1.05);
+    border: 2px solid $indigo-medium;
+
+    &::before {
+      content: '¡Más Popular!';
+      position: absolute;
+      top: 1rem;
+      right: -2rem;
+      background: $emerald;
+      color: white;
+      padding: 0.5rem 3rem;
+      transform: rotate(45deg);
+      font-size: 0.8rem;
+    }
+  }
+
+  &:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+  }
+}
+
+.card-header {
+  text-align: center;
+  margin-bottom: 2rem;
+
+  .price {
+    font-size: 2.5rem;
+    color: $indigo-dark;
+    font-weight: bold;
+
+    .currency {
+      font-size: 1rem;
+      vertical-align: super;
+    }
+
+    .period {
+      font-size: 1rem;
+      color: $text-secondary;
+    }
+  }
+}
+
+.features-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    padding: 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    i {
+      color: $emerald;
+    }
+  }
+}
+
+.pricing-button {
+  width: 100%;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  background: $indigo-medium;
+  color: white;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: $indigo-dark;
+    transform: translateY(-2px);
+  }
+}
+
+.custom-plan-section {
+  .feature-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+
+    &.selected {
+      border-color: $indigo-medium;
+      background: rgba($indigo-light, 0.1);
+    }
+
+    &:hover {
+      transform: translateY(-2px);
+    }
+
+    .feature-price {
+      display: block;
+      margin-top: 0.5rem;
+      color: $indigo-medium;
+      font-weight: 600;
+    }
+  }
+
+  .calculator-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 1rem;
+    position: sticky;
+    top: 2rem;
+
+    .employee-counter {
+      margin: 1.5rem 0;
+
+      input {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid $gray-soft;
+        border-radius: 0.5rem;
+      }
+    }
+
+    .price-summary {
+      text-align: center;
+      margin: 2rem 0;
+
+      .total-price {
+        font-size: 2.5rem;
+        color: $indigo-dark;
+        font-weight: bold;
+      }
+    }
+  }
+}

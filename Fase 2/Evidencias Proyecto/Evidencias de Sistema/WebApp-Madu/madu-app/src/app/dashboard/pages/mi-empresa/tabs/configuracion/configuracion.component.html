@@ -1,0 +1,269 @@
+<!-- src/app/dashboard/pages/mi-empresa/tabs/configuracion/configuracion.component.html -->
+
+<div class="bg-white p-6 rounded-lg shadow-sm">
+    <h2 class="text-2xl font-semibold text-gray-900 mb-6">Configuración de la Empresa</h2>
+
+    <!-- Mensajes de éxito/error -->
+    <div *ngIf="mensajeExito" class="mb-4">
+        <div class="bg-green-50 p-4 rounded-md">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm font-medium text-green-800">{{mensajeExito}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="mensajeError" class="mb-4">
+        <div class="bg-red-50 p-4 rounded-md">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm font-medium text-red-800">{{mensajeError}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formulario de configuración -->
+    <form [formGroup]="configForm" (ngSubmit)="guardarConfiguracion()" class="space-y-8">
+
+        <!-- Sección de Notificaciones -->
+        <div class="space-y-6">
+            <div>
+                <h3 class="text-lg font-medium leading-6 text-gray-900">Notificaciones</h3>
+                <p class="mt-1 text-sm text-gray-500">
+                    Decide cómo y cuándo quieres recibir notificaciones.
+                </p>
+            </div>
+
+            <div formGroupName="notificaciones" class="space-y-4">
+                <div class="space-y-4">
+                    <div *ngFor="let notificacion of notificacionesConfig"
+                        class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                        <div class="flex-1">
+                            <h4 class="text-sm font-medium text-gray-900">{{notificacion.titulo}}</h4>
+                            <p class="text-sm text-gray-500">{{notificacion.descripcion}}</p>
+                        </div>
+                        <div class="ml-4">
+                            <button type="button" (click)="toggleNotificacion(notificacion)"
+                                [class]="notificacion.habilitado ? 
+                    'bg-indigo-600 relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2' :
+                    'bg-gray-200 relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'">
+                                <span
+                                    [class]="notificacion.habilitado ?
+                      'translate-x-5 inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out' :
+                      'translate-x-0 inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out'">
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <label class="block text-sm font-medium text-gray-700">Frecuencia de notificaciones</label>
+                    <select formControlName="frecuencia"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        <option value="inmediata">Inmediata</option>
+                        <option value="diaria">Resumen diario</option>
+                        <option value="semanal">Resumen semanal</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de Privacidad -->
+        <div class="space-y-6">
+            <div>
+                <h3 class="text-lg font-medium leading-6 text-gray-900">Privacidad</h3>
+                <p class="mt-1 text-sm text-gray-500">
+                    Controla qué información de tu empresa es visible para otros.
+                </p>
+            </div>
+
+            <div formGroupName="privacidad" class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">Perfil público</label>
+                        <p class="text-sm text-gray-500">Permite que tu empresa aparezca en búsquedas públicas</p>
+                    </div>
+                    <div>
+                        <input type="checkbox" formControlName="perfilPublico"
+                            class="rounded text-indigo-600 focus:ring-indigo-500">
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">Mostrar estadísticas</label>
+                        <p class="text-sm text-gray-500">Permite ver estadísticas de tu empresa a visitantes</p>
+                    </div>
+                    <div>
+                        <input type="checkbox" formControlName="mostrarEstadisticas"
+                            class="rounded text-indigo-600 focus:ring-indigo-500">
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">Mostrar empleados</label>
+                        <p class="text-sm text-gray-500">Permite ver la lista de empleados a visitantes</p>
+                    </div>
+                    <div>
+                        <input type="checkbox" formControlName="mostrarEmpleados"
+                            class="rounded text-indigo-600 focus:ring-indigo-500">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de Reclutamiento -->
+        <div class="space-y-6">
+            <div>
+                <h3 class="text-lg font-medium leading-6 text-gray-900">Reclutamiento</h3>
+                <p class="mt-1 text-sm text-gray-500">
+                    Configura las opciones de reclutamiento y postulaciones.
+                </p>
+            </div>
+
+            <div formGroupName="reclutamiento" class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">Permitir postulaciones externas</label>
+                        <p class="text-sm text-gray-500">Permite que usuarios no registrados postulen a ofertas</p>
+                    </div>
+                    <div>
+                        <input type="checkbox" formControlName="permitirPostulacionesExternas"
+                            class="rounded text-indigo-600 focus:ring-indigo-500">
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">Requerir CV</label>
+                        <p class="text-sm text-gray-500">Exige CV para todas las postulaciones</p>
+                    </div>
+                    <div>
+                        <input type="checkbox" formControlName="requerirCV"
+                            class="rounded text-indigo-600 focus:ring-indigo-500">
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">Preguntas personalizadas</label>
+                        <p class="text-sm text-gray-500">Permite agregar preguntas específicas en las ofertas</p>
+                    </div>
+                    <div>
+                        <input type="checkbox" formControlName="preguntasPersonalizadas"
+                            class="rounded text-indigo-600 focus:ring-indigo-500">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+            <button type="button" (click)="cargarConfiguracion()"
+                class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                Restaurar valores
+            </button>
+
+            <button type="submit" [disabled]="configForm.invalid || guardando"
+                class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400 disabled:cursor-not-allowed">
+                <span *ngIf="!guardando">Guardar cambios</span>
+                <span *ngIf="guardando">Guardando...</span>
+            </button>
+        </div>
+    </form>
+
+    <!-- Sección de Zona de Peligro -->
+    <div class="mt-10 pt-6 border-t border-gray-200">
+        <h3 class="text-lg font-medium leading-6 text-red-700">Zona de Peligro</h3>
+        <div class="mt-4 space-y-4">
+            <div class="bg-red-50 p-4 rounded-md">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h4 class="text-sm font-medium text-red-800">Eliminar empresa</h4>
+                        <p class="mt-1 text-sm text-red-700">
+                            Esta acción es permanente y no se puede deshacer. Se eliminarán todos los datos asociados.
+                        </p>
+                    </div>
+                    <button type="button"
+                        class="px-4 py-2 border border-red-300 rounded-md text-sm font-medium text-red-700 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                        Eliminar empresa
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-yellow-50 p-4 rounded-md">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h4 class="text-sm font-medium text-yellow-800">Exportar datos</h4>
+                        <p class="mt-1 text-sm text-yellow-700">
+                            Descarga una copia de seguridad de todos los datos de tu empresa
+                        </p>
+                    </div>
+                    <button type="button"
+                        class="px-4 py-2 border border-yellow-300 rounded-md text-sm font-medium text-yellow-700 hover:bg-yellow-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
+                        Exportar datos
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-orange-50 p-4 rounded-md">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h4 class="text-sm font-medium text-orange-800">Desactivar cuenta</h4>
+                        <p class="mt-1 text-sm text-orange-700">
+                            Tu empresa no será visible para otros usuarios pero podrás reactivarla más tarde
+                        </p>
+                    </div>
+                    <button type="button"
+                        class="px-4 py-2 border border-orange-300 rounded-md text-sm font-medium text-orange-700 hover:bg-orange-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
+                        Desactivar cuenta
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Información del sistema -->
+    <div class="mt-10 pt-6 border-t border-gray-200">
+        <h3 class="text-lg font-medium leading-6 text-gray-900">Información del Sistema</h3>
+        <dl class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div class="bg-gray-50 px-4 py-5 rounded-lg">
+                <dt class="text-sm font-medium text-gray-500">Versión del sistema</dt>
+                <dd class="mt-1 text-sm text-gray-900">1.0.0</dd>
+            </div>
+            <div class="bg-gray-50 px-4 py-5 rounded-lg">
+                <dt class="text-sm font-medium text-gray-500">Última actualización</dt>
+                <dd class="mt-1 text-sm text-gray-900">{{empresa?.fechaActualizacion | date:'medium'}}</dd>
+            </div>
+            <div class="bg-gray-50 px-4 py-5 rounded-lg">
+                <dt class="text-sm font-medium text-gray-500">ID de empresa</dt>
+                <dd class="mt-1 text-sm text-gray-900">{{empresa?.id}}</dd>
+            </div>
+            <div class="bg-gray-50 px-4 py-5 rounded-lg">
+                <dt class="text-sm font-medium text-gray-500">Estado del sistema</dt>
+                <dd class="mt-1">
+                    <span
+                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                        Activo
+                    </span>
+                </dd>
+            </div>
+        </dl>
+    </div>
+</div>

@@ -1,0 +1,42 @@
+// src/styles/shared/_buttons.scss
+// Estilos base para todos los botones
+.btn-base {
+    @apply px-6 py-3 rounded-lg font-medium transition-all duration-300 
+           flex items-center justify-center gap-2 
+           hover:transform hover:scale-105 shadow-md hover:shadow-lg;
+  }
+  
+  // Botón primario
+  .btn-primary {
+    @apply btn-base bg-gradient-to-r from-[#4B0082] to-[#5A4FCF] text-white;
+    
+    &:hover {
+      @apply shadow-[#5A4FCF]/20;
+    }
+  }
+  
+  // Botón secundario
+  .btn-secondary {
+    @apply btn-base border-2 border-[#5A4FCF] text-[#4B0082] bg-white/90;
+    
+    &:hover {
+      @apply bg-[#5A4FCF] text-white;
+    }
+  }
+  
+  // Botón de error/alerta
+  .btn-error {
+    @apply btn-base bg-gradient-to-r from-red-500 to-red-600 text-white;
+    
+    &:hover {
+      @apply shadow-red-500/20;
+    }
+  }
+  
+  // Botón deshabilitado
+  .btn-disabled {
+    @apply btn-base bg-gray-300 text-gray-500 cursor-not-allowed;
+    &:hover {
+      @apply transform-none shadow-none;
+    }
+  }

@@ -1,22 +1,49 @@
 import { Component} from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { trigger, transition, style, animate } from '@angular/animations';
+import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
+import { AuthService } from '../../auth/data-access/auth.service';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './header.component.html',
-  styleUrl: './header.component.scss'
+  styleUrl: './header.component.scss',
+  animations: [
+    trigger('slideInOut', [
+      transition(':enter', [
+        style({ transform: 'translateY(-100%)' }),
+        animate('200ms ease-in', style({ transform: 'translateY(0%)' }))
+      ]),
+      transition(':leave', [
+        animate('200ms ease-out', style({ transform: 'translateY(-100%)' }))
+      ])
+    ])
+  ]
 })
 export class HeaderComponent {
   isMobileMenuOpen = false;
   isScrolled = false;
+  isSubMenuOpen = false;
 
-  constructor() {
+  constructor(
+    public authService: AuthService,
+    private router: Router) {
     // Detectar scroll para cambiar estilos del header
     window.addEventListener('scroll', () => {
       this.isScrolled = window.scrollY > 20;
     });
+  }
+  async handleLoginClick() {
+    if (this.authService.isLoggedIn()) {
+      // Si el usuario ya está autenticado, redirigir al dashboard
+      await this.router.navigate(['/dashboard']);
+    } else {
+      // Si no está autenticado, ir a la página de login
+      await this.router.navigate(['/auth/login']);
+    }
   }
 
   toggleMobileMenu() {
@@ -45,6 +72,10 @@ export class HeaderComponent {
     // Limpiar event listeners
     window.removeEventListener('scroll', () => {});
     window.removeEventListener('resize', () => {});
+  }
+
+  toggleSubMenu() {
+    this.isSubMenuOpen = !this.isSubMenuOpen;
   }
 }
 

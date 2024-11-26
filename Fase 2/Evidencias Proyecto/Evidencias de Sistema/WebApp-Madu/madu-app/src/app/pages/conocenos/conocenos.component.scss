@@ -1,5 +1,398 @@
-:host {
-    background-color: #949496;
-    min-height: 100vh; /* Asegura que el fondo cubra toda la altura de la página */
+// Variables
+$indigo-dark: #4b0082;
+$indigo-medium: #5a4fcf;
+$indigo-light: #8a8ef2;
+$lavender: #c2afff;
+$emerald: #4caf50;
+$golden: #ffc107;
+
+// Animaciones
+@keyframes float {
+  0% {
+    transform: translateY(0px);
   }
+
+  50% {
+    transform: translateY(-20px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+// Estilos Hero
+// .hero-title {
+//   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+//   animation: float 6s ease-in-out infinite;
+// }
+
+.hero-subtitle {
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+// Estilos Misión
+.mission-section {
+  .mission-image {
+    img {
+      transition: transform 0.3s ease;
+
+      &:hover {
+        transform: scale(1.05);
+      }
+    }
+  }
+
+  .mission-content {
+    h2 {
+      position: relative;
+
+      &::after {
+        content: "";
+        position: absolute;
+        bottom: -10px;
+        left: 0;
+        width: 60px;
+        height: 4px;
+        background: linear-gradient(to right, $indigo-medium, $indigo-light);
+        border-radius: 2px;
+      }
+    }
+  }
+}
+
+// Estilos Valores
+.value-card {
+  transition: all 0.3s ease;
+  border: 1px solid rgba($indigo-light, 0.1);
+
+  &:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 25px -5px rgba($indigo-dark, 0.1),
+      0 10px 10px -5px rgba($indigo-dark, 0.04);
+
+    .value-icon {
+      animation: pulse 1s ease-in-out;
+    }
+  }
+
+  .value-icon {
+    background: linear-gradient(135deg, $indigo-light, $indigo-medium);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+// Estilos Estadísticas
+.stat-card {
+  padding: 2rem;
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgba($indigo-dark, 0.1);
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px -3px rgba($indigo-dark, 0.1);
+  }
+
+  .stat-number {
+    background: linear-gradient(135deg, $indigo-medium, $indigo-dark);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+// Estilos CTA
+.cta-section {
+  background-image: linear-gradient(135deg, $indigo-dark, $indigo-medium);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("../../../assets/img/conocenos/pattern.svg");
+    opacity: 0.1;
+  }
+
+  .cta-button {
+    position: relative;
+    overflow: hidden;
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: rgba(255, 255, 255, 0.1);
+      transform: rotate(45deg);
+      transition: all 0.3s ease;
+    }
+
+    &:hover::after {
+      transform: rotate(45deg) translate(50%, 50%);
+    }
+  }
+}
+
+// Media Queries
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2.5rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1.2rem;
+  }
+
+  .stat-card {
+    margin-bottom: 1rem;
+  }
+}
+
+// Optimizaciones para dispositivos de alta resolución
+@media (min-width: 2000px) {
+  .container {
+    max-width: 1600px;
+  }
+}
+
+// Soporte para modo oscuro
+@media (prefers-color-scheme: dark) {
+  .value-card {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .stat-card {
+    background: rgba(255, 255, 255, 0.05);
+  }
+}
+
+// Responsive utilities
+.responsive-container {
+  width: 100%;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+
+  @media (min-width: 576px) {
+    max-width: 540px;
+  }
+
+  @media (min-width: 768px) {
+    max-width: 720px;
+  }
+
+  @media (min-width: 992px) {
+    max-width: 960px;
+  }
+
+  @media (min-width: 1200px) {
+    max-width: 1140px;
+  }
+
+  @media (min-width: 1400px) {
+    max-width: 1320px;
+  }
+}
+
+// Hero section responsive
+#hero-3d {
+  canvas {
+    width: 100% !important;
+    height: 100vh !important;
+    touch-action: none; // Mejor manejo táctil
+  }
+}
+
+// Responsive typography
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2.5rem !important;
+    line-height: 1.2;
+  }
+
+  h2 {
+    font-size: 2rem !important;
+  }
+
+  p {
+    font-size: 1rem !important;
+  }
+}
+
+// Responsive grid adjustments
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+
+  .value-card,
+  .stat-card {
+    margin-bottom: 1rem;
+  }
+}
+
+// Touch device optimizations
+@media (hover: none) {
+  .value-card,
+  .stat-card {
+    transform: none !important;
+
+    &:hover {
+      transform: none !important;
+    }
+  }
+}
+
+// Landscape mode adjustments
+@media (max-height: 500px) and (orientation: landscape) {
+  .hero-section {
+    height: auto;
+    min-height: 100vh;
+    padding: 2rem 0;
+  }
+}
+
+// Loading state
+.loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba($indigo-dark, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+
+  &__spinner {
+    width: 50px;
+    height: 50px;
+    border: 3px solid $indigo-light;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+#hero-3d {
+  canvas {
+    filter: blur(0.5px); // Suaviza ligeramente los bordes
+  }
+}
+
+.backdrop-blur-sm {
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.hero-title {
+  text-shadow: 0 0 30px rgba(90, 79, 207, 0.5);
+  animation: glow 4s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from {
+    text-shadow: 0 0 20px rgba(90, 79, 207, 0.5);
+  }
+  to {
+    text-shadow: 0 0 30px rgba(90, 79, 207, 0.8),
+      0 0 40px rgba(138, 142, 242, 0.3);
+  }
+}
+
+.scroll-indicator {
+  @apply fixed left-1/2 z-20;
+  bottom: 2rem; // Ajustamos la posición
+  transform: translateX(-50%);
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+
+  &:hover {
+    opacity: 1;
+    .mouse {
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+  }
+
+  .mouse {
+    width: 26px;
+    height: 42px;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-radius: 13px;
+    position: relative;
+    transition: border-color 0.3s ease;
+    
+    &::before {
+      content: '';
+      width: 4px;
+      height: 8px;
+      background: white;
+      position: absolute;
+      top: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 2px;
+      animation: scroll-down 2s infinite;
+    }
+  }
+}
+.scroll-mouse-indicator {
+  width: 24px;
+  height: 40px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden; // Importante: esto mantiene el contenido dentro
   
+  .scroll-wheel-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 4px; // Espacio para el wheel
+    
+    .scroll-wheel {
+      width: 4px;
+      height: 8px;
+      background-color: white;
+      border-radius: 2px;
+      margin: 0 auto;
+      opacity: 0.8;
+      animation: scrollWheel 1.5s ease-in-out infinite;
+    }
+  }
+}
+

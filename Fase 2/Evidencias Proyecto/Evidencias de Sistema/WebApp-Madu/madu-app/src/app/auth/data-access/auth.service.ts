@@ -1,36 +1,57 @@
 import { inject, Injectable } from '@angular/core';
-import { 
-  Auth, 
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword, 
-  signInWithPopup, 
-  GoogleAuthProvider, 
-  signOut, 
+import {
+  Auth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+  signOut,
   onAuthStateChanged,
-  getAuth
+  getAuth,
 } from '@angular/fire/auth';
-import { 
-  Firestore, 
-  collection, 
-  doc, 
-  setDoc, 
-  getDoc 
+import {
+  Firestore,
+  collection,
+  doc,
+  setDoc,
+  getDoc,
+  addDoc,
 } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
-import { 
-  User, 
-  Empleador, 
-  Empleado, 
-  UserRole, 
-  AccountStatus 
+import {
+  User,
+  Empleador,
+  Empleado,
+  UserRole,
+  AccountStatus,
+  Gender,
 } from '../../core/interfaces/user.interface';
 
 @Injectable({
   providedIn: 'root',
 })
+
 export class AuthService {
   private _auth = inject(Auth);
   private _firestore = inject(Firestore);
+  isAuthenticated$: Observable<boolean>;
+
+  constructor() {
+    // Inicializar isAuthenticated$ en el constructor
+    this.isAuthenticated$ = new Observable<boolean>((observer) => {
+      return onAuthStateChanged(this._auth, (user) => {
+        observer.next(!!user);
+      });
+    });
+  }
+
+  getCurrentUser() {
+    return this._auth.currentUser;
+  }
+
+  isLoggedIn(): boolean {
+    return !!this._auth.currentUser;
+  }
 
   logout() {
     return signOut(this._auth);
@@ -44,27 +65,29 @@ export class AuthService {
         user.password!
       );
 
-      const newUser: User = {
+      // 2. Preparar los datos para Firestore (excluyendo la contraseña)
+      const userForFirestore: Partial<User> = {
         uid: credential.user.uid,
         email: user.email,
         nombres: user.nombres,
         apellidos: user.apellidos,
-        telefono: user.telefono,
-        region: user.region,
-        ciudad: user.ciudad,
-        rut: user.rut,
-        rol: user.rol || UserRole.USUARIO,
-        genero: user.genero,
+        telefono: user.telefono || '',
+        region: user.region || '',
+        ciudad: user.ciudad || '',
+        rut: user.rut || '',
+        rol: user.rol,
+        genero: user.genero || Gender.NO_ESPECIFICA,
         estadoCuenta: AccountStatus.ACTIVA,
         fechaCreacion: new Date(),
-        ultimoAcceso: new Date()
+        ultimoAcceso: new Date(),
       };
 
-      const userDocRef = doc(this._firestore, `users/${newUser.uid}`);
-      await setDoc(userDocRef, newUser);
+      const userDocRef = doc(this._firestore, `users/${credential.user.uid}`);
+      await setDoc(userDocRef, userForFirestore);
 
       return credential;
     } catch (error) {
+      console.error('Error en signUp:', error);
       throw error;
     }
   }
@@ -73,24 +96,61 @@ export class AuthService {
     try {
       const credential = await this.signUp({
         ...empleador,
-        rol: UserRole.EMPLEADOR
+        rol: UserRole.EMPLEADOR,
       });
-
+  
       if (credential.user) {
-        const empresaDocRef = doc(this._firestore, `empresas/${credential.user.uid}`);
-        await setDoc(empresaDocRef, {
+        // Crear documento en la colección 'empleador'
+        const empleadorDocRef = doc(
+          this._firestore,
+          `empleador/${credential.user.uid}`
+        );
+  
+        // Extraer los datos específicos del empleador
+        const empleadorData = {
           uid: credential.user.uid,
           nombreEmpresa: empleador.nombreEmpresa,
           rutEmpresa: empleador.rutEmpresa,
           direccionEmpresa: empleador.direccionEmpresa,
           sectorIndustrial: empleador.sectorIndustrial,
-          sitioWeb: empleador.sitioWeb,
-          descripcionEmpresa: empleador.descripcionEmpresa
-        });
+          sitioWeb: empleador.sitioWeb || null,
+          descripcionEmpresa: empleador.descripcionEmpresa,
+          fechaCreacion: new Date(),
+          ultimaActualizacion: new Date(),
+        };
+  
+        // Guardar en la colección empleador
+        await setDoc(empleadorDocRef, empleadorData);
+  
+        // Crear documento en la colección 'empresas'
+        const empresasRef = collection(this._firestore, 'empresas');
+        const empresaData = {
+          empleadorId: credential.user.uid,
+          nombreEmpresa: empleador.nombreEmpresa,
+          rutEmpresa: empleador.rutEmpresa,
+          direccionEmpresa: empleador.direccionEmpresa,
+          sectorIndustrial: empleador.sectorIndustrial,
+          sitioWeb: empleador.sitioWeb || null,
+          descripcionEmpresa: empleador.descripcionEmpresa,
+          logo: null,
+          empleados: [],
+          documentos: [],
+          fechaCreacion: new Date(),
+          fechaActualizacion: new Date()
+        };
+  
+        // Usar addDoc para crear un nuevo documento con ID autogenerado
+        await addDoc(empresasRef, empresaData);
+  
+        return {
+          ...credential,
+          empleadorData,
+        };
       }
-
+  
       return credential;
     } catch (error) {
+      console.error('Error en signUpEmpleador:', error);
       throw error;
     }
   }
@@ -99,18 +159,21 @@ export class AuthService {
     try {
       const credential = await this.signUp({
         ...empleado,
-        rol: UserRole.EMPLEADO
+        rol: UserRole.EMPLEADO,
       });
 
       if (credential.user) {
-        const empleadoDocRef = doc(this._firestore, `empleados/${credential.user.uid}`);
+        const empleadoDocRef = doc(
+          this._firestore,
+          `empleados/${credential.user.uid}`
+        );
         await setDoc(empleadoDocRef, {
           uid: credential.user.uid,
           curriculum: empleado.curriculum,
           experienciaLaboral: empleado.experienciaLaboral,
           educacion: empleado.educacion,
           habilidades: empleado.habilidades,
-          disponibilidadInmediata: empleado.disponibilidadInmediata
+          disponibilidadInmediata: empleado.disponibilidadInmediata,
         });
       }
 
@@ -120,17 +183,43 @@ export class AuthService {
     }
   }
 
-  signIn(user: User) {
-    return signInWithEmailAndPassword(this._auth, user.email, user.password!);
+  async signIn(user: User) {
+    try {
+      const result = await signInWithEmailAndPassword(
+        this._auth,
+        user.email,
+        user.password!
+      );
+
+      // Verificar si hay una URL guardada para redirección
+      const redirectUrl = localStorage.getItem('redirectAfterLogin');
+      if (redirectUrl) {
+        localStorage.removeItem('redirectAfterLogin'); // Limpiar después de usar
+        window.location.href = redirectUrl; // Usar window.location para una recarga completa
+      }
+
+      return result;
+    } catch (error) {
+      throw error;
+    }
   }
 
   async signInWithGoogle() {
     try {
       const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(this._auth, provider);
+      const result = await signInWithPopup(
+        this._auth,
+        new GoogleAuthProvider()
+      );
       const user = result.user;
       const userDocRef = doc(this._firestore, `users/${user.uid}`);
       const userDoc = await getDoc(userDocRef);
+
+      const redirectUrl = localStorage.getItem('redirectAfterLogin');
+      if (redirectUrl) {
+        localStorage.removeItem('redirectAfterLogin');
+        window.location.href = redirectUrl;
+      }
 
       if (!userDoc.exists()) {
         const newUser: User = {
@@ -146,17 +235,21 @@ export class AuthService {
           genero: null!,
           estadoCuenta: AccountStatus.ACTIVA,
           fechaCreacion: new Date(),
-          ultimoAcceso: new Date()
+          ultimoAcceso: new Date(),
         };
-        
+
         await setDoc(userDocRef, newUser);
       } else {
         // Actualizar último acceso
-        await setDoc(userDocRef, { 
-          ultimoAcceso: new Date() 
-        }, { merge: true });
+        await setDoc(
+          userDocRef,
+          {
+            ultimoAcceso: new Date(),
+          },
+          { merge: true }
+        );
       }
-      
+
       return result;
     } catch (error) {
       throw error;
@@ -165,25 +258,27 @@ export class AuthService {
 
   getUserData(): Observable<User | null> {
     const auth = getAuth();
-    return new Observable<User | null>(observer => {
+    return new Observable<User | null>((observer) => {
       onAuthStateChanged(auth, (user) => {
         if (user) {
           // Obtener datos adicionales del usuario desde Firestore
           const userDoc = doc(this._firestore, 'users', user.uid);
-          getDoc(userDoc).then(docSnap => {
-            if (docSnap.exists()) {
-              const userData = {
-                uid: user.uid,
-                ...docSnap.data()
-              } as User;
-              observer.next(userData);
-            } else {
-              observer.next(null);
-            }
-          }).catch(error => {
-            console.error('Error al obtener datos del usuario:', error);
-            observer.error(error);
-          });
+          getDoc(userDoc)
+            .then((docSnap) => {
+              if (docSnap.exists()) {
+                const userData = {
+                  uid: user.uid,
+                  ...docSnap.data(),
+                } as User;
+                observer.next(userData);
+              } else {
+                observer.next(null);
+              }
+            })
+            .catch((error) => {
+              console.error('Error al obtener datos del usuario:', error);
+              observer.error(error);
+            });
         } else {
           observer.next(null);
         }
@@ -193,16 +288,26 @@ export class AuthService {
 
   async getEmpleadorData(): Promise<Empleador | null> {
     return new Promise((resolve) => {
-      this.getUserData().subscribe(async user => {
+      this.getUserData().subscribe(async (user) => {
         if (user && user.rol === UserRole.EMPLEADOR) {
-          const empresaDocRef = doc(this._firestore, `empresas/${user.uid}`);
-          const empresaDoc = await getDoc(empresaDocRef);
-          if (empresaDoc.exists()) {
-            resolve({
-              ...user,
-              ...empresaDoc.data()
-            } as Empleador);
-          } else {
+          try {
+            const empleadorDocRef = doc(
+              this._firestore,
+              `empleador/${user.uid}`
+            );
+            const empleadorDoc = await getDoc(empleadorDocRef);
+
+            if (empleadorDoc.exists()) {
+              resolve({
+                ...user,
+                ...empleadorDoc.data(),
+              } as Empleador);
+            } else {
+              console.warn('Documento de empleador no encontrado');
+              resolve(null);
+            }
+          } catch (error) {
+            console.error('Error al obtener datos del empleador:', error);
             resolve(null);
           }
         } else {

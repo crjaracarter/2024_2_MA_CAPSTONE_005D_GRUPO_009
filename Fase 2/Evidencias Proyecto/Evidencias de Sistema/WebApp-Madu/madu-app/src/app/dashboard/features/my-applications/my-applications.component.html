@@ -1,0 +1,43 @@
+<div class="container mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+        <h1 class="text-2xl font-bold text-white">Mis Postulaciones</h1>
+        <p class="text-gray-200">Gestiona y da seguimiento a tus postulaciones laborales</p>
+    </div>
+
+    <!-- Filtros -->
+    <div class="mb-6">
+        <div class="flex gap-4">
+            <button *ngFor="let status of applicationStatuses" (click)="onStatusFilterChange(status)"
+                [class.bg-indigo-600]="selectedStatus === status" [class.text-white]="selectedStatus === status"
+                class="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                [class.bg-gray-100]="selectedStatus !== status" [class.text-gray-700]="selectedStatus !== status">
+                {{getStatusTranslation(status)}}
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="flex justify-center items-center py-8">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error" class="bg-red-100 text-red-700 p-4 rounded-lg mb-6">
+        {{error}}
+    </div>
+
+    <!-- Lista de Postulaciones -->
+    <div *ngIf="!isLoading && !error" class="grid gap-6">
+        <app-application-card
+            *ngFor="let application of filteredApplications"
+            [application]="application"
+            (viewDetails)="onViewApplicationDetails($event)">
+        </app-application-card>
+    </div>
+
+    <!-- Estado vacío -->
+    <div *ngIf="!isLoading && !error && filteredApplications.length === 0" class="text-center py-12">
+        <p class="text-gray-600">No hay postulaciones para mostrar</p>
+    </div>
+</div>

@@ -1,0 +1,39 @@
+:host {
+  display: block;
+}
+
+/* Ocultar scrollbar pero mantener funcionalidad */
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
+  
+  &::-webkit-scrollbar {
+    display: none;           /* Chrome, Safari and Opera */
+  }
+}
+
+/* Animación suave para cambios de tab */
+.transition-opacity {
+  transition: opacity 200ms ease-in-out;
+}
+
+/* Asegurar que el contenedor de tabs sea responsive */
+.overflow-x-auto {
+  -webkit-overflow-scrolling: touch;
+  &::-webkit-scrollbar {
+    height: 0;
+    width: 0;
+    background: transparent;
+  }
+}
+
+/* Mejorar la accesibilidad del focus */
+button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(90, 79, 207, 0.2);
+}
+
+/* Animación suave para el indicador de tab activa */
+.transform {
+  transition: transform 0.2s ease-in-out;
+}
