@@ -19,6 +19,8 @@ import { FormsModule } from '@angular/forms';
 import { SidebarService } from '../../services/dashboard/sidebar.service';
 import { DeviceService } from '../../services/dashboard/device/device.service';
 import { Subscription } from 'rxjs';
+import { AuthStateService } from '../../shared/data-access/auth-state.service';
+import { UserRole } from '../../core/interfaces/user.interface';
 
 interface NavItem {
   label: string;
@@ -45,8 +47,11 @@ export class SidebarComponent implements OnInit, OnDestroy {
   isMobile: boolean = window.innerWidth < 768;
   isOpen: boolean = false;
   private subscription: Subscription;
-
-  constructor(public sidebarService: SidebarService) {
+  UserRole = UserRole;
+  
+  constructor(
+    public sidebarService: SidebarService,
+    public authState: AuthStateService) {
     this.subscription = this.sidebarService.isOpen$.subscribe(
       (isOpen) => (this.isOpen = isOpen)
     );

@@ -1,0 +1,181 @@
+// custom-questions-builder.component.scss
+
+// Variables
+$transition-speed: 0.2s;
+$drag-border-color: #4B0082;  // Índigo oscuro de la paleta
+$hover-bg: rgba(90, 79, 207, 0.05);  // Índigo medio con opacidad
+
+// Estilos para el drag & drop
+.cdk-drag-preview {
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  border-radius: 0.5rem;
+  background-color: white;
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.3;
+}
+
+.cdk-drag-animating {
+  transition: transform $transition-speed cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.question-list.cdk-drop-list-dragging .question-item:not(.cdk-drag-placeholder) {
+  transition: transform $transition-speed cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+// Estilos para las preguntas en la lista
+.question-item {
+  position: relative;
+  transition: all $transition-speed ease;
+  
+  &:hover {
+    background-color: $hover-bg;
+  }
+  
+  &.dragging {
+    cursor: grabbing;
+    border: 2px dashed $drag-border-color;
+  }
+
+  // Indicador de arrastre
+  .drag-handle {
+    cursor: move;
+    opacity: 0;
+    transition: opacity $transition-speed ease;
+  }
+
+  &:hover .drag-handle {
+    opacity: 1;
+  }
+}
+
+// Estilos para el formulario
+.form-section {
+  position: relative;
+  
+  // Animación de carga
+  &.loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+  }
+}
+
+// Estilos para los campos de formulario
+.form-field {
+  &.has-error {
+    .input-wrapper {
+      border-color: #DC2626;  // Rojo error
+    }
+    
+    .error-message {
+      @apply text-red-600 text-sm mt-1;
+      animation: slideIn 0.2s ease-out;
+    }
+  }
+}
+
+// Estilos para las opciones
+.options-list {
+  .option-item {
+    position: relative;
+    padding-right: 2.5rem;  // Espacio para el botón de eliminar
+    
+    .remove-option {
+      position: absolute;
+      right: 0.5rem;
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 0;
+      transition: opacity $transition-speed ease;
+    }
+    
+    &:hover .remove-option {
+      opacity: 1;
+    }
+  }
+}
+
+// Animaciones
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// Estilos para los estados de validación
+.validation-section {
+  .validation-item {
+    transition: all $transition-speed ease;
+    
+    &.active {
+      background-color: rgba(90, 79, 207, 0.1);  // Índigo medio con opacidad
+      border-left: 3px solid #5A4FCF;  // Índigo medio
+    }
+  }
+}
+
+// Estilos para los botones de acción
+.action-buttons {
+  .action-button {
+    position: relative;
+    overflow: hidden;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.3s ease, height 0.3s ease;
+    }
+    
+    &:active::after {
+      width: 200%;
+      height: 200%;
+    }
+  }
+}
+
+// Media queries para responsividad
+@media (max-width: 640px) {
+  .options-list {
+    .option-item {
+      padding-right: 0;
+      
+      .remove-option {
+        position: static;
+        transform: none;
+        opacity: 1;
+        margin-top: 0.5rem;
+      }
+    }
+  }
+}

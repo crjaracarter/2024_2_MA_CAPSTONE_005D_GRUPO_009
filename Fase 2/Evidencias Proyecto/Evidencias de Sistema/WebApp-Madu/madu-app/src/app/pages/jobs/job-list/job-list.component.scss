@@ -1,0 +1,57 @@
+:host {
+    display: block;
+    min-height: 100vh;
+  }
+  
+  // Animations
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  // Card hover effects
+  .job-card {
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: translateY(-5px);
+    }
+  }
+  
+  // Custom scrollbar for the description
+  .description {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(90, 79, 207, 0.5) transparent;
+    
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background-color: rgba(90, 79, 207, 0.5);
+      border-radius: 3px;
+    }
+  }
+  
+  // Gradient text effect
+  .gradient-text {
+    background: linear-gradient(90deg, #4B0082, #5A4FCF);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  // Loading animation
+  .loader {
+    border-top-color: #5A4FCF;
+  }

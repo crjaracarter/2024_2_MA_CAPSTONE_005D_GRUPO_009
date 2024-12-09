@@ -1,210 +1,319 @@
 // src/app/dashboard/pages/mi-empresa/tabs/ofertas/ofertas.component.ts
 
-import { Component, Input, OnInit, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+
+// Servicios
+import { JobOfferService } from '../../../../../services/job-offer/job-offer.service';
+import { AuthService } from '../../../../../auth/data-access/auth.service';
+import { NotificationService } from '../../../../../core/notification/notification.service';
+import { EmpresaService } from '../../../../../services/empresa/empresa.service';
+
+// Interfaces
+import { JobOffer, JobOfferStatus, JobType, WorkModality } from '../../../../../core/interfaces/job-offer/job-offer.interface';
+import { User } from '../../../../../core/interfaces/user.interface';
 import { Empresa } from '../../../../../core/interfaces/empresa.interface';
 
-interface OfertaLaboral {
-  id: string;
-  titulo: string;
-  descripcion: string;
-  departamento: string;
-  tipoContrato: string;
-  modalidad: string;
-  salario: {
-    rango: {
-      min: number;
-      max: number;
-    };
-    moneda: string;
-    periodo: string;
-  };
-  requisitos: string[];
-  estado: 'activa' | 'pausada' | 'cerrada';
-  fechaPublicacion: Date;
-  fechaCierre?: Date;
-  ubicacion: string;
-  postulaciones: number;
-  destacada: boolean;
-}
-
+// Componentes
+import { JobOfferFormComponent } from './components/job-offer-form/job-offer-form.component';
+import { CustomQuestionsBuilderComponent } from './components/custom-questions-builder/custom-questions-builder.component';
+import { JobPreviewComponent } from './components/job-preview/job-preview.component';
+import { JobOfferCardComponent } from './components/job-offer-card/job-offer-card.component';
+import { ApplicantsTrackingComponent } from './components/applicants-tracking/applicants-tracking.component';
+import { RouterModule } from '@angular/router';
 @Component({
   selector: 'app-ofertas',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    FormsModule,
+    ReactiveFormsModule,
+    JobOfferFormComponent,
+    CustomQuestionsBuilderComponent,
+    JobPreviewComponent,
+    JobOfferCardComponent,
+    ApplicantsTrackingComponent,
+    MatIconModule,
+    MatButtonModule
+  ],
   templateUrl: './ofertas.component.html',
   styleUrls: ['./ofertas.component.scss']
 })
-export class OfertasComponent implements OnInit {
+export class OfertasComponent implements OnInit, OnDestroy {
   @Input() empresa: Empresa | null = null;
+  private destroy$ = new Subject<void>();
+  private router = inject(Router);
+  private jobOfferService = inject(JobOfferService);
+  private authService = inject(AuthService);
+  private notificationService = inject(NotificationService);
+  private empresaService = inject(EmpresaService);
+  
 
-  ofertas: OfertaLaboral[] = [];
-  filtroEstado: string = 'todas';
-  filtroDepartamento: string = 'todos';
-  ordenarPor: string = 'fecha';
-  busqueda: string = '';
-  cargando: boolean = false;
-  mostrarModal: boolean = false;
-  ofertaSeleccionada: OfertaLaboral | null = null;
+  // Estados del componente
+  isLoading = false;
+  showCreateModal = false;
+  showEditModal = false;
+  showDeleteConfirm = false;
+  selectedOffer: JobOffer | null = null;
+  currentUser: User | null = null;
+  empresaActual: Empresa | null = null;
+  empresaId: string = '';
 
-  departamentos = [
+  // Datos y filtros
+  jobOffers: JobOffer[] = [];
+  filteredOffers: JobOffer[] = [];
+  searchTerm = '';
+  selectedStatus: JobOfferStatus | 'all' = 'all';
+  selectedDepartment = 'all';
+  sortBy: 'date' | 'applications' | 'status' = 'date';
+
+  // Estadísticas
+  statistics = {
+    total: 0,
+    active: 0,
+    paused: 0,
+    closed: 0,
+    totalApplications: 0
+  };
+
+  // Filtros y opciones
+  statusOptions = Object.values(JobOfferStatus);
+  departmentOptions = [
     'Todos',
     'Tecnología',
-    'Recursos Humanos',
-    'Ventas',
     'Marketing',
+    'Ventas',
+    'Recursos Humanos',
     'Operaciones',
     'Finanzas',
     'Administración'
   ];
 
-  estadosOferta = [
-    { valor: 'todas', etiqueta: 'Todas' },
-    { valor: 'activa', etiqueta: 'Activas' },
-    { valor: 'pausada', etiqueta: 'Pausadas' },
-    { valor: 'cerrada', etiqueta: 'Cerradas' }
-  ];
-
-  opcionesOrden = [
-    { valor: 'fecha', etiqueta: 'Fecha de publicación' },
-    { valor: 'postulaciones', etiqueta: 'Número de postulaciones' },
-    { valor: 'titulo', etiqueta: 'Título' }
-  ];
-
-  ngOnInit() {
-    this.cargarOfertas();
+  ngOnInit(): void {
+    this.loadCurrentUser();
+    this.loadJobOffers();
   }
 
-  async cargarOfertas() {
-    try {
-      this.cargando = true;
-      // Aquí iría la lógica para cargar ofertas desde Firebase
-      // Por ahora usamos datos de ejemplo
-      this.ofertas = [
-        {
-          id: '1',
-          titulo: 'Desarrollador Full Stack',
-          descripcion: 'Buscamos desarrollador full stack con experiencia en Angular y Node.js',
-          departamento: 'Tecnología',
-          tipoContrato: 'Indefinido',
-          modalidad: 'Remoto',
-          salario: {
-            rango: {
-              min: 1500000,
-              max: 2500000
-            },
-            moneda: 'CLP',
-            periodo: 'mensual'
-          },
-          requisitos: [
-            '3+ años de experiencia en desarrollo web',
-            'Conocimientos en Angular',
-            'Experiencia con bases de datos SQL y NoSQL'
-          ],
-          estado: 'activa',
-          fechaPublicacion: new Date(),
-          ubicacion: 'Santiago, Chile',
-          postulaciones: 12,
-          destacada: true
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private loadCurrentUser(): void {
+    console.log('Iniciando loadCurrentUser');
+    this.authService.getUserData()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (user) => {
+          console.log('Usuario cargado:', user);
+          this.currentUser = user;
+          if (user?.uid) {
+            // Cargar la empresa del usuario
+            this.empresaService.getEmpresaByEmpleadorId(user.uid)
+              .then(empresa => {
+                if (empresa?.id) {
+                  this.empresaActual = empresa;
+                  // Ahora puedes declarar empresaId como propiedad de la clase
+                  this.empresaId = empresa.id;
+                  this.loadJobOffers();
+                }
+              })
+              .catch(error => {
+                console.error('Error al cargar empresa:', error);
+                this.notificationService.error('Error al cargar datos de la empresa');
+              });
+          }
+        },
+        error: (error) => {
+          console.error('Error en loadCurrentUser:', error);
+          this.notificationService.error('Error al cargar datos del usuario');
         }
-        // Aquí irían más ofertas
-      ];
-    } catch (error) {
-      console.error('Error al cargar ofertas:', error);
-    } finally {
-      this.cargando = false;
+      });
+  }
+
+  private loadJobOffers(): void {
+    console.log('Iniciando loadJobOffers');
+    if (!this.currentUser?.uid) {
+      console.log('No hay UID de usuario disponible');
+      return;
     }
+
+    this.isLoading = true;
+    console.log('Buscando ofertas para UID:', this.currentUser.uid);
+
+    this.jobOfferService.getJobOffersByEmployer(this.currentUser.uid)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (offers) => {
+          console.log('Ofertas recibidas:', offers);
+          this.jobOffers = offers;
+          this.updateStatistics();
+          this.applyFilters();
+          console.log('Ofertas filtradas:', this.filteredOffers);
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error en loadJobOffers:', error);
+          this.notificationService.error('Error al cargar ofertas laborales');
+          this.isLoading = false;
+        }
+      });
   }
 
-  filtrarOfertas(): OfertaLaboral[] {
-    return this.ofertas.filter(oferta => {
-      const cumpleFiltroEstado = this.filtroEstado === 'todas' || oferta.estado === this.filtroEstado;
-      const cumpleFiltroDepartamento = this.filtroDepartamento === 'todos' || 
-                                     oferta.departamento === this.filtroDepartamento;
-      const cumpleBusqueda = oferta.titulo.toLowerCase().includes(this.busqueda.toLowerCase()) ||
-                            oferta.descripcion.toLowerCase().includes(this.busqueda.toLowerCase());
-      return cumpleFiltroEstado && cumpleFiltroDepartamento && cumpleBusqueda;
-    }).sort((a, b) => this.ordenarOfertas(a, b));
+  private updateStatistics(): void {
+    this.statistics = {
+      total: this.jobOffers.length,
+      active: this.jobOffers.filter(o => o.status === JobOfferStatus.PUBLISHED).length,
+      paused: this.jobOffers.filter(o => o.status === JobOfferStatus.PAUSED).length,
+      closed: this.jobOffers.filter(o => o.status === JobOfferStatus.CLOSED).length,
+      totalApplications: this.jobOffers.reduce((acc, curr) => acc + (curr.metrics?.applications || 0), 0)
+    };
   }
 
-  ordenarOfertas(a: OfertaLaboral, b: OfertaLaboral): number {
-    switch (this.ordenarPor) {
-      case 'fecha':
-        return b.fechaPublicacion.getTime() - a.fechaPublicacion.getTime();
-      case 'postulaciones':
-        return b.postulaciones - a.postulaciones;
-      case 'titulo':
-        return a.titulo.localeCompare(b.titulo);
-      default:
-        return 0;
-    }
+  applyFilters(): void {
+    this.filteredOffers = this.jobOffers.filter(offer => {
+      const matchesSearch = this.searchTerm ? 
+        offer.title.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+        offer.description.toLowerCase().includes(this.searchTerm.toLowerCase()) : 
+        true;
+
+      const matchesStatus = this.selectedStatus === 'all' ? 
+        true : 
+        offer.status === this.selectedStatus;
+
+      const matchesDepartment = this.selectedDepartment === 'all' ? 
+        true : 
+        offer.department === this.selectedDepartment;
+
+      return matchesSearch && matchesStatus && matchesDepartment;
+    });
+
+    this.sortOffers();
   }
 
-  async toggleEstadoOferta(oferta: OfertaLaboral) {
-    const nuevoEstado = oferta.estado === 'activa' ? 'pausada' : 'activa';
-    try {
-      // Aquí iría la lógica para actualizar en Firebase
-      oferta.estado = nuevoEstado;
-    } catch (error) {
-      console.error('Error al actualizar estado de la oferta:', error);
-    }
-  }
-
-  async destacarOferta(oferta: OfertaLaboral) {
-    try {
-      // Aquí iría la lógica para actualizar en Firebase
-      oferta.destacada = !oferta.destacada;
-    } catch (error) {
-      console.error('Error al destacar oferta:', error);
-    }
-  }
-
-  async eliminarOferta(oferta: OfertaLaboral) {
-    if (confirm('¿Estás seguro de que deseas eliminar esta oferta?')) {
-      try {
-        // Aquí iría la lógica para eliminar en Firebase
-        this.ofertas = this.ofertas.filter(o => o.id !== oferta.id);
-      } catch (error) {
-        console.error('Error al eliminar oferta:', error);
+  private sortOffers(): void {
+    this.filteredOffers.sort((a, b) => {
+      switch (this.sortBy) {
+        case 'date':
+          return (b.updatedAt?.getTime() || 0) - (a.updatedAt?.getTime() || 0);
+        case 'applications':
+          return (b.metrics?.applications || 0) - (a.metrics?.applications || 0);
+        case 'status':
+          return a.status.localeCompare(b.status);
+        default:
+          return 0;
       }
-    }
-  }
-
-  abrirDetalles(oferta: OfertaLaboral) {
-    this.ofertaSeleccionada = oferta;
-    this.mostrarModal = true;
-  }
-
-  cerrarModal() {
-    this.mostrarModal = false;
-    this.ofertaSeleccionada = null;
-  }
-
-  formatearFecha(fecha: Date): string {
-    return fecha.toLocaleDateString('es-CL', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
     });
   }
 
-  formatearSalario(salario: OfertaLaboral['salario']): string {
-    const formatearNumero = (num: number) => 
-      new Intl.NumberFormat('es-CL', { 
-        style: 'currency', 
-        currency: salario.moneda 
-      }).format(num);
-
-    return `${formatearNumero(salario.rango.min)} - ${formatearNumero(salario.rango.max)} ${salario.periodo}`;
+  // Acciones de ofertas
+  openCreateModal(): void {
+    this.showCreateModal = true;
   }
 
-  obtenerColorEstado(estado: string): string {
-    const colores = {
-      'activa': 'bg-green-100 text-green-800',
-      'pausada': 'bg-yellow-100 text-yellow-800',
-      'cerrada': 'bg-red-100 text-red-800'
-    };
-    return colores[estado as keyof typeof colores] || 'bg-gray-100 text-gray-800';
+  openEditModal(event: {id: string, offer: JobOffer}): void {
+    this.selectedOffer = event.offer;
+    this.showEditModal = true;
+  }
+
+  confirmDelete(event: {id: string, offer: JobOffer}): void {
+    this.selectedOffer = event.offer;
+    this.showDeleteConfirm = true;
+    // Aquí podrías mostrar un diálogo de confirmación
+  }
+
+  async deleteOffer(): Promise<void> {
+    if (!this.selectedOffer?.id) return;
+  
+    try {
+      await this.jobOfferService.deleteJobOffer(this.selectedOffer.id);
+      this.notificationService.success('Oferta eliminada exitosamente');
+      this.loadJobOffers();
+    } catch (error) {
+      this.notificationService.error('Error al eliminar la oferta');
+      console.error('Error deleting offer:', error);
+    } finally {
+      this.showDeleteConfirm = false;
+      this.selectedOffer = null;
+    }
+  }
+
+  async toggleOfferStatus(event: {id: string, offer: JobOffer, status: JobOfferStatus}): Promise<void> {
+    try {
+      await this.jobOfferService.updateJobOffer(event.id, { status: event.status });
+      this.notificationService.success('Estado de la oferta actualizado');
+      this.loadJobOffers();
+    } catch (error) {
+      this.notificationService.error('Error al actualizar el estado');
+      console.error('Error updating offer status:', error);
+    }
+  }
+
+  // Manejadores de modales
+  handleCreateSuccess(): void {
+    this.showCreateModal = false;
+    
+    this.loadJobOffers();
+    this.notificationService.success('Oferta creada exitosamente');
+  }
+
+  handleEditSuccess(): void {
+    this.showEditModal = false;
+    this.selectedOffer = null;
+    this.loadJobOffers();
+    this.notificationService.success('Oferta actualizada exitosamente');
+  }
+
+  closeModals(): void {
+    this.showCreateModal = false;
+    this.showEditModal = false;
+    this.showDeleteConfirm = false;
+    this.selectedOffer = null;
+  }
+
+  openPreview(jobOfferId: string): void {
+    this.router.navigate(['/dashboard/mi-empresa/ofertas', jobOfferId, 'preview']);
+  }
+
+  viewApplications(jobOfferId: string): void {
+    this.router.navigate(['/dashboard/mi-empresa/ofertas', jobOfferId, 'applications']);
+  }
+
+  async onDuplicate(jobOfferId: string): Promise<void> {
+    try {
+      const originalOffer = await this.jobOfferService.getJobOfferById(jobOfferId);
+      if (originalOffer && this.empresaActual) {
+        if (!this.empresaActual?.id) {
+          throw new Error('No se encontró una empresa actual válida');
+        }
+        const duplicatedOffer = {
+          ...originalOffer,
+          title: `${originalOffer.title} (Copia)`,
+          empresaId: this.empresaActual.id,
+          status: JobOfferStatus.DRAFT,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          metrics: {
+            views: 0,
+            applications: 0,
+            shares: 0
+          }
+        };
+        delete (duplicatedOffer as any).id;
+        
+        await this.jobOfferService.createJobOffer(duplicatedOffer);
+        this.notificationService.success('Oferta duplicada exitosamente');
+        this.loadJobOffers();
+      }
+    } catch (error) {
+      console.error('Error al duplicar oferta:', error);
+      this.notificationService.error('Error al duplicar la oferta');
+    }
   }
 }

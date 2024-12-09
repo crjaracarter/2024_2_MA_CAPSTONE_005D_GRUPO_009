@@ -9,10 +9,12 @@ import { ReclutamientoComponent } from './pages/reclutamiento/reclutamiento.comp
 import { PreciosComponent } from './pages/precios/precios.component';
 import { BlogComponent } from './pages/blog/blog.component';
 
-import { JobsCompanyComponent } from './pages/jobs/jobs-company/jobs-company.component';
-import { JobDetailComponent } from './pages/jobs/job-detail/job-detail.component';
+import { JobListComponent } from './pages/jobs/job-list/job-list.component';
+import { JobDetailComponent } from './pages/jobs//job-detail/job-detail.component';
 import { JobApplicationFormComponent } from './pages/jobs/job-application-form/job-application-form.component';
 import { ApplicationSuccessComponent } from './pages/jobs/application-success/application-success.component';
+import { RoleGuard } from './core/guards/role.guard';
+import { ApplicationSuccessGuard } from './core/guards/application-success.guard';
 
 export const routes: Routes = [
   {
@@ -30,33 +32,34 @@ export const routes: Routes = [
       {
         path: 'reclutamiento',
         component: ReclutamientoComponent,
-        
       },
       { path: 'precios', component: PreciosComponent, pathMatch: 'full' },
       { path: 'blog', component: BlogComponent, pathMatch: 'full' },
-
       {
-        path: 'company/:employerId/jobs',
-        component: JobsCompanyComponent,
+        path: 'empresa/:empresaId/trabajos',
+        component: JobListComponent
       },
+      
       {
-        path: 'jobs/application-success/:id',
-        component: ApplicationSuccessComponent,
-        canActivate: [privateGuard()],
-        data: { requiresAuth: true }
+        path: 'trabajos',
+        children: [
+          {
+            path: 'detalle/:id',
+            component: JobDetailComponent
+          },
+          {
+            path: 'postular/:id',
+            component: JobApplicationFormComponent,
+            canActivate: [() => privateGuard(), RoleGuard],
+            data: { roles: ['Usuario'] }
+          },
+          {
+            path: 'postulacion-exitosa/:jobOfferId/:applicationId', 
+            component: ApplicationSuccessComponent,
+            canActivate: [() => privateGuard(), ApplicationSuccessGuard],
+          }
+        ]
       },
-      {
-        path: 'jobs/:id/apply',
-        component: JobApplicationFormComponent,
-        canActivate: [privateGuard()],
-        data: { requiresAuth: true }
-      },
-      {
-        path: 'jobs/:id',
-        component: JobDetailComponent,
-      },
-   
-    
     ],
   },
   {
@@ -71,10 +74,5 @@ export const routes: Routes = [
     canActivate: [privateGuard()],
   },
 
-
-
-  
-
-  
   { path: '**', redirectTo: 'home', pathMatch: 'full' }, // Cambiar redirección 404 a /home
 ];

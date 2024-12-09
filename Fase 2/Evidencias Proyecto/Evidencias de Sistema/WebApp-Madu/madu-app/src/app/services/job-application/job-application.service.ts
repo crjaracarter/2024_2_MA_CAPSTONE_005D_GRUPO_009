@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collection, query, where, getDocs, doc, updateDoc, getDoc } from '@angular/fire/firestore';
+import { Firestore, collection, query, where, getDocs, doc, updateDoc, getDoc, addDoc, collectionData, deleteDoc  } from '@angular/fire/firestore';
 import { JobApplication } from '../../core/interfaces/job-application/job-application.interface';
 import { ApplicationStatus } from '../../core/interfaces/job-application/application-status.enum';
 import { AuthStateService } from '../../shared/data-access/auth-state.service';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,38 @@ export class JobApplicationService {
     private firestore: Firestore,
     private authStateService: AuthStateService
   ) {}
+
+  async createJobApplication(application: Omit<JobApplication, 'id'>): Promise<string> {
+    try {
+      const applicationsRef = collection(this.firestore, 'jobApplications');
+      const docRef = await addDoc(applicationsRef, {
+        ...application,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      });
+      
+      return docRef.id;
+    } catch (error) {
+      console.error('Error creating job application:', error);
+      throw error;
+    }
+  }
+
+  async getApplicationsByJobOffer(jobOfferId: string): Promise<JobApplication[]> {
+    try {
+      const applicationsRef = collection(this.firestore, 'jobApplications');
+      const q = query(applicationsRef, where('jobOfferId', '==', jobOfferId));
+      const querySnapshot = await getDocs(q);
+      
+      return querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      } as JobApplication));
+    } catch (error) {
+      console.error('Error fetching applications:', error);
+      return [];
+    }
+  }
 
   async getUserApplications(): Promise<JobApplication[]> {
     const userId = this.authStateService.currentUser?.uid;
@@ -28,11 +61,16 @@ export class JobApplicationService {
   }
 
   async updateApplicationStatus(applicationId: string, status: ApplicationStatus): Promise<void> {
-    const applicationRef = doc(this.firestore, 'jobApplications', applicationId);
-    await updateDoc(applicationRef, {
-      status,
-      updatedAt: new Date()
-    });
+    try {
+      const applicationRef = doc(this.firestore, 'jobApplications', applicationId);
+      await updateDoc(applicationRef, { 
+        status,
+        updatedAt: new Date()
+      });
+    } catch (error) {
+      console.error('Error updating application status:', error);
+      throw error;
+    }
   }
 
   async getApplicationById(id: string): Promise<JobApplication> {
@@ -48,4 +86,13 @@ export class JobApplicationService {
       ...applicationSnap.data()
     } as JobApplication;
   }
+
+  async deleteApplication(id: string): Promise<void> {
+    if (!id) throw new Error('ID de postulación no proporcionado');
+    
+    const applicationRef = doc(this.firestore, 'jobApplications', id);
+    await deleteDoc(applicationRef);
+  }
+
+  
 }

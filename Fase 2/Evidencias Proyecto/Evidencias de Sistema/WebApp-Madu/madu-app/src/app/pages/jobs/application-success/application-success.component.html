@@ -1,136 +1,120 @@
-<!-- application-success.component.html -->
-<div class="min-h-screen bg-gradient-to-br from-gray-50 to-lavender-50 pt-24 pb-8 px-4">
-  <!-- Loader Animado -->
-  @if (isLoading) {
-  <div class="flex justify-center items-center min-h-[400px]">
-    <div class="relative">
-      <div class="w-16 h-16 rounded-full border-4 border-indigo-200 animate-pulse"></div>
-      <div class="w-16 h-16 rounded-full border-t-4 border-[#4B0082] animate-spin absolute top-0"></div>
-    </div>
-  </div>
-  }
+<div class="pt-16 min-h-screen bg-gradient-to-b from-indigo-50 to-white">
 
-  <!-- Mensaje de Error -->
-  @else if (error) {
-  <div class="text-center py-8 animate-fadeIn">
-    <div class="max-w-md mx-auto bg-white/90 backdrop-blur-sm p-8 rounded-xl shadow-lg border border-red-100">
-      <i class="fas fa-exclamation-circle text-3xl text-red-500 mb-4"></i>
-      <p class="text-red-600 mb-4">{{ error }}</p>
-      <button routerLink="/jobs" class="btn-error">
-        <i class="fas fa-arrow-left"></i>
-        <span>Volver a ofertas</span>
-      </button>
-    </div>
-  </div>
-  }
+    <div class="min-h-screen bg-gradient-to-b from-indigo-50 to-white py-12 px-4 sm:px-6 lg:px-8">
+        <!-- Loading State -->
+        <div *ngIf="loading" class="flex justify-center items-center h-64">
+            <div class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-indigo-600"></div>
+        </div>
 
-  <!-- Contenido de Éxito -->
-  @else if (application) {
-  <div class="max-w-3xl mx-auto">
-    <div class="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden border border-[#C2AFFF]
-                  transform hover:scale-[1.01] transition-all duration-500 animate-slideDown">
-      <!-- Banner de éxito -->
-      <div class="p-8 bg-gradient-to-r from-[#4CAF50]/10 to-[#4CAF50]/20 border-b border-[#C2AFFF]">
-        <div class="flex flex-col sm:flex-row items-center gap-4">
-          <div class="relative">
-            <div class="w-16 h-16 rounded-full bg-[#4CAF50]/20 flex items-center justify-center
-                                animate-pulse">
-              <i class="fas fa-check-circle text-3xl text-[#4CAF50]"></i>
+        <!-- Error State -->
+        <div *ngIf="error" class="max-w-3xl mx-auto mt-8">
+            <div class="bg-red-50 border-l-4 border-red-400 p-4">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-red-700">{{ error }}</p>
+                    </div>
+                </div>
             </div>
-            <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-[#4CAF50] rounded-full 
-                                flex items-center justify-center shadow-lg">
-              <i class="fas fa-paper-plane text-white text-sm"></i>
+        </div>
+
+        <!-- Success Content -->
+        <div *ngIf="!loading && !error" class="max-w-3xl mx-auto">
+            <div class="text-center">
+                <!-- Success Icon -->
+                <div class="mx-auto flex items-center justify-center h-24 w-24 rounded-full bg-green-100">
+                    <svg class="h-16 w-16 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 48 48">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M20 36l-8-8 4-4 4 4 12-12 4 4-16 16z" />
+                    </svg>
+                </div>
+
+                <!-- Title and Subtitle -->
+                <h2 class="mt-6 text-3xl font-bold text-gray-900">
+                    ¡Postulación enviada con éxito!
+                </h2>
+                <p class="mt-2 text-lg text-gray-600" *ngIf="jobOffer">
+                    Has postulado exitosamente a la posición de "{{ jobOffer.title }}" en {{ jobOffer.companyName }}
+                </p>
+
+                <!-- Application Details Card -->
+                <div class="mt-8 bg-white rounded-lg shadow-sm p-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Detalles de tu postulación</h3>
+
+                    <div class="space-y-4 text-left">
+                        <div class="flex justify-between py-3 border-b border-gray-200">
+                            <span class="text-gray-600">Fecha de postulación</span>
+                            <span class="text-gray-900">{{ applicationDate | date:'medium' }}</span>
+                        </div>
+
+                        <div class="flex justify-between py-3 border-b border-gray-200">
+                            <span class="text-gray-600">Estado</span>
+                            <span
+                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                En revisión
+                            </span>
+                        </div>
+
+                        <div *ngIf="jobOffer?.applicationProcess" class="py-3">
+                            <h4 class="text-sm font-medium text-gray-900 mb-2">Próximos pasos</h4>
+                            <ol class="list-decimal list-inside space-y-2 text-gray-600">
+                                <li *ngFor="let step of jobOffer?.applicationProcess?.steps">
+                                    {{ step }}
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- What's Next Section -->
+                <div class="mt-8 bg-indigo-50 rounded-lg p-6">
+                    <h3 class="text-lg font-medium text-indigo-900 mb-4">¿Qué sigue ahora?</h3>
+                    <ul class="text-left space-y-4">
+                        <li class="flex items-start">
+                            <svg class="h-6 w-6 text-indigo-600 mr-2" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span>El equipo de reclutamiento revisará tu postulación</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="h-6 w-6 text-indigo-600 mr-2" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                            <span>Recibirás un correo con la confirmación de tu postulación</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="h-6 w-6 text-indigo-600 mr-2" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                            </svg>
+                            <span>Puedes hacer seguimiento a tu postulación en tu panel de control</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="mt-8 flex justify-center space-x-4">
+                    <button (click)="goToMyApplications()"
+                        class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Ver mis postulaciones
+                    </button>
+                    <button (click)="goToJobListings()"
+                        class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Explorar más ofertas
+                    </button>
+                </div>
             </div>
-          </div>
-          <div class="text-center sm:text-left">
-            <h1 class="text-2xl font-bold bg-gradient-to-r from-[#4B0082] to-[#5A4FCF] 
-                                 text-transparent bg-clip-text mb-2">
-              ¡Postulación enviada con éxito!
-            </h1>
-            <p class="text-gray-600">
-              <i class="fas fa-briefcase mr-2 text-[#5A4FCF]"></i>
-              {{ application.jobTitle }}
-            </p>
-          </div>
         </div>
-      </div>
-
-      <!-- Detalles de la postulación -->
-      <div class="p-8">
-        <div class="space-y-6">
-          <!-- Fecha -->
-          <div class="flex items-center gap-2 text-gray-600">
-            <i class="far fa-calendar-alt text-[#5A4FCF]"></i>
-            <p>Postulación realizada el {{ application.appliedAt | date:'medium' }}</p>
-          </div>
-
-          <!-- Carta de presentación -->
-          @if (application.coverLetter) {
-          <div class="bg-[#5A4FCF]/5 rounded-lg p-6 border border-[#C2AFFF]">
-            <h3 class="font-semibold text-[#4B0082] mb-3 flex items-center gap-2">
-              <i class="far fa-envelope"></i>
-              Carta de presentación
-            </h3>
-            <p class="text-gray-600 italic">{{ application.coverLetter }}</p>
-          </div>
-          }
-
-          <!-- Siguiente pasos -->
-          <div class="bg-[#FFC107]/10 rounded-lg p-6 border border-[#FFC107]">
-            <h3 class="font-semibold text-[#4B0082] mb-3 flex items-center gap-2">
-              <i class="fas fa-lightbulb text-[#FFC107]"></i>
-              Siguientes pasos
-            </h3>
-            <ul class="space-y-2 text-gray-600">
-              <li class="flex items-center gap-2">
-                <i class="fas fa-check text-[#4CAF50]"></i>
-                Revisaremos tu postulación en los próximos días
-              </li>
-              <li class="flex items-center gap-2">
-                <i class="fas fa-check text-[#4CAF50]"></i>
-                Te contactaremos por correo electrónico
-              </li>
-              <li class="flex items-center gap-2">
-                <i class="fas fa-check text-[#4CAF50]"></i>
-                Puedes revisar el estado en tu dashboard
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- Botones de acción -->
-        <div class="mt-8 flex flex-col sm:flex-row justify-between gap-4">
-          <button routerLink="/dashboard" class="btn-primary">
-            <i class="fas fa-tasks"></i>
-            <span>Ver mis postulaciones</span>
-          </button>
-          <button routerLink="/jobs" class="btn-secondary">
-            <i class="fas fa-search"></i>
-            <span>Explorar más ofertas</span>
-          </button>
-        </div>
-      </div>
     </div>
-
-    <!-- Recomendaciones adicionales -->
-    <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4 animate-slideUp">
-      <div class="bg-white/90 backdrop-blur-sm p-6 rounded-xl shadow-md border border-[#C2AFFF]
-                      hover:shadow-lg transition-all duration-300">
-        <h4 class="font-semibold text-[#4B0082] mb-3 flex items-center gap-2">
-          <i class="fas fa-star text-[#FFC107]"></i>
-          Mejora tu perfil
-        </h4>
-        <p class="text-gray-600">Mantén tu perfil actualizado para aumentar tus posibilidades de éxito.</p>
-      </div>
-      <div class="bg-white/90 backdrop-blur-sm p-6 rounded-xl shadow-md border border-[#C2AFFF]
-                      hover:shadow-lg transition-all duration-300">
-        <h4 class="font-semibold text-[#4B0082] mb-3 flex items-center gap-2">
-          <i class="fas fa-bell text-[#5A4FCF]"></i>
-          Configura alertas
-        </h4>
-        <p class="text-gray-600">Activa las notificaciones para no perderte nuevas oportunidades.</p>
-      </div>
-    </div>
-  </div>
-  }
 </div>

@@ -1,0 +1,136 @@
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200">
+  <div class="p-4">
+    <!-- Header con título y menú de acciones -->
+    <div class="flex justify-between items-start mb-3">
+      <div>
+        <h3 class="text-lg font-semibold text-gray-900 hover:text-indigo-600 cursor-pointer"
+          [routerLink]="['/dashboard/mi-empresa/ofertas/', jobOffer.id]">
+          {{jobOffer.title}}
+        </h3>
+        <p class="text-sm text-gray-600">{{jobOffer.department}}</p>
+      </div>
+
+      <!-- Menú de acciones -->
+      <div class="flex items-center space-x-2">
+        <button mat-icon-button [matMenuTriggerFor]="menu" class="text-gray-500 hover:text-gray-700">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="onEdit()">
+            <mat-icon class="text-blue-600">edit</mat-icon>
+            <span>Editar oferta</span>
+          </button>
+          <button mat-menu-item (click)="onDuplicate()">
+            <mat-icon class="text-green-600">content_copy</mat-icon>
+            <span>Duplicar oferta</span>
+          </button>
+          <mat-divider></mat-divider>
+          <!-- Submenú de estados -->
+          <button mat-menu-item [matMenuTriggerFor]="statusMenu">
+            <mat-icon class="text-orange-600">swap_horiz</mat-icon>
+            <span>Cambiar estado</span>
+          </button>
+          <mat-divider></mat-divider>
+          <button mat-menu-item (click)="onDelete()" class="text-red-600">
+            <mat-icon class="text-red-600">delete</mat-icon>
+            <span>Eliminar oferta</span>
+          </button>
+        </mat-menu>
+
+        <mat-menu #statusMenu="matMenu">
+          <button mat-menu-item *ngFor="let status of JobOfferStatus | keyvalue" (click)="onStatusChange(status.value)"
+            [disabled]="jobOffer.status === status.value">
+            <span [class]="getStatusColor(status.value) + ' px-2 py-1 rounded-full text-xs'">
+              {{getStatusLabel(status.value)}}
+            </span>
+          </button>
+        </mat-menu>
+      </div>
+    </div>
+
+    <!-- Información principal -->
+    <div class="space-y-3">
+      <!-- Estado y badges -->
+      <div class="flex flex-wrap gap-2 mb-2">
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+          [class]="getStatusColor(jobOffer.status)">
+          <span class="h-2 w-2 rounded-full mr-1.5" [class.bg-green-400]="jobOffer.status === JobOfferStatus.PUBLISHED"
+            [class.bg-yellow-400]="jobOffer.status === JobOfferStatus.PAUSED"
+            [class.bg-red-400]="jobOffer.status === JobOfferStatus.CLOSED"
+            [class.bg-gray-400]="jobOffer.status === JobOfferStatus.DRAFT">
+          </span>
+          {{getStatusLabel(jobOffer.status)}}
+        </span>
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+          {{jobOffer.type}}
+        </span>
+        <span
+          class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+          {{jobOffer.modality}}
+        </span>
+      </div>
+
+      <!-- Estadísticas -->
+      <div class="grid grid-cols-3 gap-4 p-2 bg-gray-50 rounded-lg">
+        <div class="text-center" [matTooltip]="'Visualizaciones'">
+          <div class="flex items-center justify-center text-gray-600">
+            <mat-icon class="text-gray-400 mr-1">visibility</mat-icon>
+            <span class="text-lg font-semibold">{{jobOffer.metrics.views}}</span>
+          </div>
+          <span class="text-xs text-gray-500">Vistas</span>
+        </div>
+        <div class="text-center border-x" [matTooltip]="'Postulaciones totales'">
+          <div class="flex items-center justify-center text-gray-600">
+            <mat-icon class="text-gray-400 mr-1" [matBadge]="jobOffer.metrics.applications"
+              [matBadgeHidden]="jobOffer.metrics.applications === 0" matBadgeSize="small" matBadgeColor="accent">
+              people
+            </mat-icon>
+            <span class="text-lg font-semibold">{{jobOffer.metrics.applications}}</span>
+          </div>
+          <span class="text-xs text-gray-500">Postulantes</span>
+        </div>
+        <div class="text-center" [matTooltip]="'Compartidos'">
+          <div class="flex items-center justify-center text-gray-600">
+            <mat-icon class="text-gray-400 mr-1">share</mat-icon>
+            <span class="text-lg font-semibold">{{jobOffer.metrics.shares}}</span>
+          </div>
+          <span class="text-xs text-gray-500">Compartidos</span>
+        </div>
+      </div>
+
+      <!-- Fechas y plazos -->
+      <div class="flex justify-between items-center text-sm text-gray-600 mt-2">
+        <span class="flex items-center">
+          <mat-icon class="text-gray-400 mr-1 text-sm">event</mat-icon>
+          Publicada: {{formatDate(jobOffer.publishedAt || jobOffer.createdAt)}}
+        </span>
+        <span *ngIf="getDaysRemaining() !== null" [class.text-red-600]="getDaysRemaining()! < 7"
+          [class.font-medium]="getDaysRemaining()! < 7">
+          <mat-icon class="text-sm align-middle mr-1" [class.text-red-600]="getDaysRemaining()! < 7">
+            schedule
+          </mat-icon>
+          {{getDaysRemaining()}} días restantes
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer con acciones -->
+  <div class="border-t px-4 py-3 bg-gray-50 flex justify-between items-center">
+    <div class="flex space-x-2">
+      <button (click)="onViewApplications()" [disabled]="jobOffer.metrics.applications === 0"
+        class="flex items-center px-3 py-1.5 rounded-md text-sm font-medium transition-colors duration-200"
+        [class.bg-indigo-600]="jobOffer.metrics.applications > 0" [class.text-white]="jobOffer.metrics.applications > 0"
+        [class.bg-gray-100]="jobOffer.metrics.applications === 0"
+        [class.text-gray-400]="jobOffer.metrics.applications === 0">
+        <mat-icon class="text-sm mr-1">assignment_ind</mat-icon>
+        Ver postulantes
+      </button>
+      <button (click)="onPreview()"
+        class="flex items-center px-3 py-1.5 rounded-md text-sm font-medium bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition-colors duration-200">
+        <mat-icon class="text-sm mr-1">visibility</mat-icon>
+        Vista previa
+      </button>
+    </div>
+  </div>
+</div>

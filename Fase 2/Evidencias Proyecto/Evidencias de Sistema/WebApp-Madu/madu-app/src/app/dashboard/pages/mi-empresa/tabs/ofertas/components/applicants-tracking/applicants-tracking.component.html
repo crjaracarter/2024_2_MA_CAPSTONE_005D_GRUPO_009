@@ -1,0 +1,153 @@
+<!-- applicants-tracking.component.html -->
+<div class="bg-white rounded-lg shadow-sm p-6">
+  <!-- Filtros y búsqueda -->
+  <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <!-- Búsqueda -->
+    <div class="flex-1 w-full sm:w-auto">
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Buscar</mat-label>
+        <mat-icon matPrefix class="mr-2">search</mat-icon>
+        <input matInput 
+               [(ngModel)]="searchTerm"
+               (ngModelChange)="applyFilters()"
+               placeholder="Buscar por nombre o email...">
+      </mat-form-field>
+    </div>
+    
+    <!-- Filtro de Estado -->
+    <div class="flex items-center gap-4">
+      <mat-form-field appearance="outline">
+        <mat-label>Estado</mat-label>
+        <mat-select [(ngModel)]="selectedStatus" 
+                   (selectionChange)="applyFilters()">
+          <mat-option value="all">Todos</mat-option>
+          <mat-option *ngFor="let status of applicationStatuses" 
+                     [value]="status.value">
+            <div class="flex items-center">
+              <span [class]="status.color + ' px-2 py-1 rounded-full text-xs mr-2'">
+                {{status.label}}
+              </span>
+            </div>
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <!-- Tabla de postulantes -->
+  <div class="overflow-x-auto">
+    <table mat-table [dataSource]="filteredApplicants" class="w-full">
+      <!-- Columna Postulante -->
+      <ng-container matColumnDef="applicant">
+        <th mat-header-cell *matHeaderCellDef class="font-semibold">Postulante</th>
+        <td mat-cell *matCellDef="let application">
+          <div class="flex items-center">
+            <div class="ml-3">
+              <div class="text-sm font-medium text-gray-900">
+                {{application.employeeData?.nombres}} {{application.employeeData?.apellidos}}
+              </div>
+              <div class="text-sm text-gray-500">
+                {{application.employeeData?.email}}
+              </div>
+            </div>
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Columna Fecha -->
+      <ng-container matColumnDef="appliedDate">
+        <th mat-header-cell *matHeaderCellDef class="font-semibold">Fecha</th>
+        <td mat-cell *matCellDef="let application">
+          <div class="text-sm text-gray-900">
+            {{formatDate(application.appliedAt)}}
+          </div>
+          <div class="text-xs text-gray-500">
+            {{getTimeSinceApplication(application.appliedAt)}}
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Columna Estado -->
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef class="font-semibold">Estado</th>
+        <td mat-cell *matCellDef="let application">
+          <span [class]="getStatusColor(application.status) + ' px-2 py-1 rounded-full text-xs font-medium'">
+            {{getStatusLabel(application.status)}}
+          </span>
+        </td>
+      </ng-container>
+
+      <!-- Columna Evaluación -->
+      <ng-container matColumnDef="evaluation">
+        <th mat-header-cell *matHeaderCellDef class="font-semibold">Evaluación</th>
+        <td mat-cell *matCellDef="let application">
+          <div class="flex items-center">
+            <mat-icon *ngFor="let star of ratingArray"
+                     [class.text-yellow-400]="shouldFillStar(star, application.evaluation?.score)"
+                     [class.text-gray-300]="!shouldFillStar(star, application.evaluation?.score)"
+                     class="text-sm">
+              star
+            </mat-icon>
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Columna Acciones -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let application">
+          <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Opciones">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+
+          <!-- Menú principal -->
+          <mat-menu #menu="matMenu">
+            <a mat-menu-item [routerLink]="getApplicationDetailUrl(application.id)">
+              <mat-icon>visibility</mat-icon>
+              <span>Ver detalle</span>
+            </a>
+            <button mat-menu-item 
+                    (click)="downloadCV(application.cvUrl, application.employeeData?.nombres)"
+                    [disabled]="!application.cvUrl">
+              <mat-icon>download</mat-icon>
+              <span>Descargar CV</span>
+            </button>
+            <button mat-menu-item (click)="scheduleInterview(application.id)">
+              <mat-icon>event</mat-icon>
+              <span>Agendar entrevista</span>
+            </button>
+            <mat-divider></mat-divider>
+            <button mat-menu-item [matMenuTriggerFor]="statusMenu">
+              <mat-icon>update</mat-icon>
+              <span>Cambiar estado</span>
+            </button>
+          </mat-menu>
+
+          <!-- Submenú de estados -->
+          <mat-menu #statusMenu="matMenu">
+            <button mat-menu-item *ngFor="let status of applicationStatuses"
+                    (click)="updateApplicationStatus(application.id, status.value)"
+                    [disabled]="isCurrentStatus(application, status.value)">
+              <span [class]="status.color + ' px-2 py-1 rounded-full text-xs'">
+                {{status.label}}
+              </span>
+            </button>
+          </mat-menu>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>
+
+  <!-- Estado vacío -->
+  <div *ngIf="filteredApplicants.length === 0" 
+       class="text-center py-8 text-gray-500">
+    <mat-icon class="text-6xl mb-2">person_search</mat-icon>
+    <p class="text-lg">No se encontraron postulantes</p>
+    <p class="text-sm">
+      {{searchTerm ? 'Intenta con otros filtros' : 'Aún no hay postulaciones para esta oferta'}}
+    </p>
+  </div>
+</div>

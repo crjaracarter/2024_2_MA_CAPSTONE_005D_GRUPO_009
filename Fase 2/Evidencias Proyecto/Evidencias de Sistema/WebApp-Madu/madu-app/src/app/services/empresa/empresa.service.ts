@@ -178,4 +178,42 @@ export class EmpresaService {
       throw error;
     }
   }
+
+  async getEmpleadosByEmpresaId(empresaId: string): Promise<string[]> {
+    try {
+      const empresaRef = doc(this.firestore, 'empresas', empresaId);
+      const empresaSnap = await getDoc(empresaRef);
+      
+      if (!empresaSnap.exists()) {
+        throw new Error('Empresa no encontrada');
+      }
+      
+      const empresaData = empresaSnap.data() as Empresa;
+      return empresaData.empleados || [];
+    } catch (error) {
+      console.error('Error al obtener empleados:', error);
+      throw error;
+    }
+  }
+  async removeEmpleadoFromEmpresa(empresaId: string, empleadoId: string): Promise<void> {
+    try {
+      const empresaRef = doc(this.firestore, 'empresas', empresaId);
+      const empresaSnap = await getDoc(empresaRef);
+      
+      if (!empresaSnap.exists()) {
+        throw new Error('Empresa no encontrada');
+      }
+      
+      const empresaData = empresaSnap.data() as Empresa;
+      const empleadosActualizados = (empresaData.empleados || []).filter(id => id !== empleadoId);
+      
+      await updateDoc(empresaRef, {
+        empleados: empleadosActualizados,
+        fechaActualizacion: serverTimestamp()
+      });
+    } catch (error) {
+      console.error('Error al eliminar empleado de la empresa:', error);
+      throw error;
+    }
+  }
 }

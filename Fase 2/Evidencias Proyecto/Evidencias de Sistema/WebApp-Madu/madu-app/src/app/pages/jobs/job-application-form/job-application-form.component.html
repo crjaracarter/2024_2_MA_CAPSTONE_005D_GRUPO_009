@@ -1,141 +1,241 @@
 <!-- job-application-form.component.html -->
-<div class="min-h-screen bg-gradient-to-br from-gray-50 to-lavender-50 pt-24 pb-8 px-4">
-    <!-- Loader Animado -->
-    @if (isLoading) {
-    <div class="flex justify-center items-center min-h-[400px]">
-        <div class="relative">
-            <div class="w-16 h-16 rounded-full border-4 border-indigo-200 animate-pulse"></div>
-            <div class="w-16 h-16 rounded-full border-t-4 border-[#4B0082] animate-spin absolute top-0"></div>
-        </div>
-    </div>
-    }
+<div class="pt-16 min-h-screen bg-gradient-to-b from-indigo-50 to-white">
+  <div class="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="max-w-3xl mx-auto mb-8">
+      <button
+        (click)="goBack()"
+        class="flex items-center text-indigo-600 hover:text-indigo-700"
+      >
+        <mat-icon>arrow_back</mat-icon>
+        <span class="ml-2">Volver a la oferta</span>
+      </button>
 
-    <!-- Mensaje de Error -->
-    @else if (error) {
-    <div class="text-center py-8 animate-fadeIn">
-        <div class="max-w-md mx-auto bg-white/90 backdrop-blur-sm p-8 rounded-xl shadow-lg border border-red-100">
-            <i class="fas fa-exclamation-circle text-3xl text-red-500 mb-4"></i>
-            <p class="text-red-600 mb-4">{{ error }}</p>
-            <button (click)="goBack()" class="btn-error">
-                <i class="fas fa-arrow-left"></i>
-                <span>Volver</span>
-            </button>
-        </div>
+      <div *ngIf="jobOffer" class="mt-4">
+        <h1 class="text-2xl font-bold text-gray-900">{{ jobOffer.title }}</h1>
+        <p class="text-gray-600">{{ jobOffer.companyName }}</p>
+      </div>
     </div>
-    }
 
-    <!-- Formulario Principal -->
-    @else if (jobOffer) {
-    <div class="max-w-3xl mx-auto">
-        <!-- Encabezado -->
-        <div class="bg-white/90 backdrop-blur-sm rounded-t-xl shadow-lg overflow-hidden border border-[#C2AFFF]
-                    animate-slideDown">
-            <div class="p-6 bg-gradient-to-r from-[#4B0082]/5 to-[#5A4FCF]/5">
-                <h1 class="text-2xl font-bold bg-gradient-to-r from-[#4B0082] to-[#5A4FCF] 
-                           text-transparent bg-clip-text mb-2">
-                    Postular a: {{ jobOffer.title }}
-                </h1>
-                <div class="flex items-center gap-2 text-gray-700">
-                    <i class="fas fa-building text-[#5A4FCF]"></i>
-                    <p>{{ jobOffer.company }}</p>
-                </div>
+    <!-- Loading State -->
+    <div *ngIf="loading" class="max-w-3xl mx-auto text-center py-12">
+      <mat-spinner diameter="40" class="mx-auto"></mat-spinner>
+      <p class="mt-4 text-gray-600">Cargando formulario...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error" class="max-w-3xl mx-auto">
+      <div class="bg-red-50 border border-red-200 rounded-md p-4">
+        <div class="flex">
+          <mat-icon class="text-red-500">error</mat-icon>
+          <div class="ml-3">
+            <h3 class="text-sm font-medium text-red-800">
+              Error al cargar el formulario
+            </h3>
+            <p class="text-sm text-red-700 mt-2">{{ error }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Application Form -->
+    <form
+      *ngIf="!loading && !error && formTemplate"
+      [formGroup]="applicationForm"
+      (ngSubmit)="onSubmit()"
+      class="max-w-3xl mx-auto bg-white shadow rounded-lg"
+    >
+      <!-- Form Header -->
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h2 class="text-lg font-medium text-gray-900">
+          Formulario de Postulación
+        </h2>
+        <p class="mt-1 text-sm text-gray-600">
+          Complete todos los campos requeridos para postular a esta oferta
+        </p>
+      </div>
+
+      <!-- Questions -->
+      <div class="px-6 py-4 space-y-6">
+        <ng-container *ngFor="let question of formTemplate.questions">
+          <div [ngSwitch]="question.type" class="question-container">
+            <!-- Question Label -->
+            <label
+              [for]="question.id"
+              class="block text-sm font-medium text-gray-700"
+            >
+              {{ question.label }}
+              <span *ngIf="question.validation?.required" class="text-red-500"
+                >*</span
+              >
+            </label>
+
+            <p *ngIf="question.description" class="mt-1 text-sm text-gray-500">
+              {{ question.description }}
+            </p>
+
+            <!-- Short Text Input -->
+            <input
+              *ngSwitchCase="QuestionType.SHORT_TEXT"
+              [id]="question.id"
+              type="text"
+              [formControlName]="question.id"
+              [placeholder]="question.placeholder || ''"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            />
+
+            <!-- Long Text Input -->
+            <textarea
+              *ngSwitchCase="QuestionType.LONG_TEXT"
+              [id]="question.id"
+              [formControlName]="question.id"
+              [placeholder]="question.placeholder || ''"
+              rows="4"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            ></textarea>
+
+            <!-- Single Choice -->
+            <div
+              *ngSwitchCase="QuestionType.SINGLE_CHOICE"
+              class="mt-2 space-y-3"
+            >
+              <div
+                *ngFor="let option of question.options"
+                class="flex items-center"
+              >
+                <input
+                  type="radio"
+                  [id]="option.value"
+                  [formControlName]="question.id"
+                  [value]="option.value"
+                  class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                />
+                <label
+                  [for]="option.value"
+                  class="ml-3 block text-sm text-gray-700"
+                >
+                  {{ option.label }}
+                </label>
+              </div>
             </div>
+
+            <!-- Multiple Choice -->
+            <div
+              *ngSwitchCase="QuestionType.MULTIPLE_CHOICE"
+              class="mt-2 space-y-3"
+            >
+              <div
+                *ngFor="let option of question.options"
+                class="flex items-center"
+              >
+                <input
+                  type="checkbox"
+                  [id]="option.value"
+                  (change)="
+                    onMultipleChoiceChange($event, question.id, option.value)
+                  "
+                  [checked]="
+                    isMultipleChoiceSelected(question.id, option.value)
+                  "
+                  class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                />
+                <label
+                  [for]="option.value"
+                  class="ml-3 block text-sm text-gray-700"
+                >
+                  {{ option.label }}
+                </label>
+              </div>
+            </div>
+
+            <!-- File Upload -->
+            <div *ngSwitchCase="QuestionType.FILE_UPLOAD" class="mt-2">
+              <div class="flex items-center justify-center w-full">
+                <label
+                  [for]="question.id"
+                  class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
+                >
+                  <div
+                    class="flex flex-col items-center justify-center pt-5 pb-6"
+                  >
+                    <mat-icon class="text-gray-400">cloud_upload</mat-icon>
+                    <p class="mb-2 text-sm text-gray-500">
+                      <span class="font-semibold">Click para subir</span> o
+                      arrastrar y soltar
+                    </p>
+                    <p
+                      class="text-xs text-gray-500"
+                      *ngIf="question.validation?.fileTypes?.length"
+                    >
+                      Formatos permitidos:
+                      {{ question.validation.fileTypes?.join(", ") }}
+                    </p>
+                  </div>
+                  <input
+                    [id]="question.id"
+                    type="file"
+                    class="hidden"
+                    (change)="onFileSelected($event, question.id)"
+                    [accept]="question.validation.fileTypes?.join(',') || ''"
+                    [attr.data-max-size]="question.validation.maxFileSize"
+                  />
+                  
+                </label>
+              </div>
+              <!-- Nombre del archivo seleccionado -->
+              <div
+                *ngIf="applicationForm.get(question.id)?.value"
+                class="mt-2 text-sm text-gray-600"
+              >
+                Archivo seleccionado:
+                {{ applicationForm.get(question.id)?.value?.name }}
+              </div>
+            </div>
+            
+
+            <!-- Error Messages -->
+            <div
+              *ngIf="
+                applicationForm.get(question.id)?.touched &&
+                applicationForm.get(question.id)?.invalid
+              "
+              class="mt-2 text-sm text-red-600"
+            >
+              {{ getErrorMessage(question.id) }}
+            </div>
+
+            <!-- Help Text -->
+            <p *ngIf="question.helpText" class="mt-2 text-sm text-gray-500">
+              {{ question.helpText }}
+            </p>
+          </div>
+        </ng-container>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="px-6 py-4 bg-gray-50 rounded-b-lg border-t border-gray-200">
+        <div class="flex justify-end space-x-3">
+          <button
+            type="button"
+            (click)="goBack()"
+            class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            [disabled]="applicationForm.invalid || submitLoading"
+            class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+          >
+            <span *ngIf="!submitLoading">Enviar Postulación</span>
+            <mat-spinner
+              *ngIf="submitLoading"
+              diameter="20"
+              class="inline"
+            ></mat-spinner>
+          </button>
         </div>
-
-        <!-- Formulario -->
-        <div class="mt-6 bg-white/90 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden border border-[#C2AFFF]
-                    animate-slideUp">
-            <form [formGroup]="applicationForm" (ngSubmit)="onSubmit()" class="p-6 space-y-6">
-                <!-- Carta de presentación -->
-                <div class="group">
-                    <label for="coverLetter" class="block text-sm font-semibold text-[#4B0082] mb-2 
-                                                  transition-colors duration-300 group-hover:text-[#5A4FCF]">
-                        Carta de presentación
-                    </label>
-                    <textarea id="coverLetter" formControlName="coverLetter" rows="4" class="w-full px-4 py-3 border border-[#C2AFFF] rounded-lg 
-                               focus:ring-2 focus:ring-[#5A4FCF]/20 focus:border-[#5A4FCF]
-                               transition-all duration-300 resize-none
-                               placeholder:text-gray-400"
-                        placeholder="Cuéntanos por qué te interesa este puesto y qué puedes aportar...">
-                    </textarea>
-                </div>
-
-                <!-- Preguntas dinámicas -->
-                @if (formTemplate) {
-                @for (question of formTemplate.questions; track question.id) {
-                <div class="group">
-                    <label [for]="'question_' + question.id" class="block text-sm font-semibold text-[#4B0082] mb-2 
-                                  transition-colors duration-300 group-hover:text-[#5A4FCF]">
-                        {{ question.question }}
-                        @if (question.required) {
-                        <span class="text-red-500 ml-1">*</span>
-                        }
-                    </label>
-
-                    @switch (question.type) {
-                    @case ('text') {
-                    <input [id]="'question_' + question.id" [formControlName]="'question_' + question.id" type="text"
-                        class="w-full px-4 py-3 border border-[#C2AFFF] rounded-lg
-                                  focus:ring-2 focus:ring-[#5A4FCF]/20 focus:border-[#5A4FCF]
-                                  transition-all duration-300">
-                    }
-                    @case ('multiline') {
-                    <textarea [id]="'question_' + question.id" [formControlName]="'question_' + question.id" rows="3"
-                        class="w-full px-4 py-3 border border-[#C2AFFF] rounded-lg
-                                    focus:ring-2 focus:ring-[#5A4FCF]/20 focus:border-[#5A4FCF]
-                                    transition-all duration-300 resize-none">
-                    </textarea>
-                    }
-                    @case ('select') {
-                    <select [id]="'question_' + question.id" [formControlName]="'question_' + question.id" class="w-full px-4 py-3 border border-[#C2AFFF] rounded-lg
-                                   focus:ring-2 focus:ring-[#5A4FCF]/20 focus:border-[#5A4FCF]
-                                   transition-all duration-300 bg-white">
-                        <option value="" disabled>Selecciona una opción</option>
-                        @for (option of question.options; track option) {
-                        <option [value]="option">{{ option }}</option>
-                        }
-                    </select>
-                    }
-                    }
-                </div>
-                }
-                }
-
-                <!-- Subir CV -->
-                <div class="group">
-                    <label class="block text-sm font-semibold text-[#4B0082] mb-2
-                                 transition-colors duration-300 group-hover:text-[#5A4FCF]">
-                        Curriculum Vitae (PDF o Word, máx. 5MB) *
-                    </label>
-                    <div class="relative">
-                        <input type="file" (change)="onFileSelected($event)" accept=".pdf,.doc,.docx" class="w-full px-4 py-3 border border-[#C2AFFF] rounded-lg
-                                      focus:ring-2 focus:ring-[#5A4FCF]/20 focus:border-[#5A4FCF]
-                                      transition-all duration-300
-                                      file:mr-4 file:py-2 file:px-4 file:rounded-lg
-                                      file:border-0 file:bg-[#5A4FCF]/10 file:text-[#4B0082]
-                                      hover:file:bg-[#5A4FCF]/20">
-                        @if (cvFile) {
-                        <span class="absolute right-3 top-1/2 -translate-y-1/2 text-green-500">
-                            <i class="fas fa-check-circle"></i>
-                        </span>
-                        }
-                    </div>
-                </div>
-
-                <!-- Botones -->
-                <div class="flex flex-col sm:flex-row justify-end gap-4 pt-6 border-t border-[#C2AFFF]">
-                    <button type="button" (click)="goBack()" class="btn-secondary">
-                        <i class="fas fa-arrow-left"></i>
-                        <span>Cancelar</span>
-                    </button>
-                    <button type="submit" [disabled]="applicationForm.invalid || !cvFile"
-                        class="btn-primary disabled:opacity-50 disabled:cursor-not-allowed">
-                        <span>Enviar postulación</span>
-                        <i class="fas fa-paper-plane group-hover:translate-x-1 transition-transform duration-300"></i>
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-    }
+      </div>
+    </form>
+  </div>
 </div>

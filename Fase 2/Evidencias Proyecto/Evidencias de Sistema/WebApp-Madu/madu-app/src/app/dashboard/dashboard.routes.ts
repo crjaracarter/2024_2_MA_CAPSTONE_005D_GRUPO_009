@@ -2,9 +2,6 @@
 import { Routes } from '@angular/router';
 import { DashboardComponent } from './dashboard.component';
 
-// import { BlogModule } from './features/blog/blog.module';
-
-
 import { HomeComponent } from './pages/home/home.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { SettingsComponent } from './features/settings/settings.component';
@@ -13,12 +10,6 @@ import { SettingsComponent } from './features/settings/settings.component';
 // import { PostulacionesComponent } from './pages/postulaciones/postulaciones.component';
 import { ContactListComponent } from './pages/contact-list/contact-list.component';
 import { UsuariosComponent } from './pages/usuarios/usuarios.component';
-
-import { JobOfferListComponent } from './features/job-offers/job-offer-list/job-offer-list.component';
-import { JobOfferCreateComponent } from './features/job-offers/job-offer-create/job-offer-create.component';
-import { JobOfferEditComponent } from './features/job-offers/job-offer-edit/job-offer-edit.component';
-import { JobOfferDetailComponent } from './features/job-offers/job-offer-detail/job-offer-detail.component';
-import { JobApplicationsComponent } from './features/job-applications/job-applications.component';
 
 // Mi Empresa Components
 import { MiEmpresaComponent } from './pages/mi-empresa/mi-empresa.component';
@@ -29,17 +20,16 @@ import { DocumentosComponent } from './pages/mi-empresa/tabs/documentos/document
 import { OfertasComponent } from './pages/mi-empresa/tabs/ofertas/ofertas.component';
 import { ConfiguracionComponent } from './pages/mi-empresa/tabs/configuracion/configuracion.component';
 import { MigracionComponent } from './pages/admin/migracion/migracion.component';
+import { AsistenciasComponent } from './pages/mi-empresa/tabs/asistencias/asistencias.component';
+import { ApplicantsTrackingComponent } from './pages/mi-empresa/tabs/ofertas/components/applicants-tracking/applicants-tracking.component';
 
-// Nuevos imports para el blog no se usa pero se deja como referencia
-// import { BlogListComponent } from './features/blog/blog-list/blog-list.component';
-// import { BlogCreateComponent } from './features/blog/blog-create/blog-create.component';
-// import { BlogEditComponent } from './features/blog/blog-edit/blog-edit.component';
-// import { BlogDetailComponent } from './features/blog/blog-detail/blog-detail.component';
-// import { privateGuard } from '../core/auth.guard';
-// import { RoleGuard } from '../core/guards/role.guard';
+import { JobPreviewComponent } from './pages/mi-empresa/tabs/ofertas/components/job-preview/job-preview.component';
+import { RoleGuard } from '../core/guards/role.guard';
+import { ApplicationSuccessGuard } from '../core/guards/application-success.guard';
+import { MisPostulacionesComponent } from '../dashboard/pages/mis-postulaciones/mis-postulaciones.component';
+import { privateGuard } from '../core/auth.guard';
 
-
-export class DashboardModule { }
+export class DashboardModule {}
 
 export const DASHBOARD_ROUTES: Routes = [
   {
@@ -49,17 +39,21 @@ export const DASHBOARD_ROUTES: Routes = [
       { path: 'home', component: HomeComponent },
       { path: 'profile', component: ProfileComponent },
       { path: 'settings', component: SettingsComponent },
-      // { path: 'personas', component: PersonasComponent },
-      // { path: 'reclutamiento', component: ReclutamientoComponent },
-      // { path: 'postulaciones', component: PostulacionesComponent },
-      { path: 'contact-list', component: ContactListComponent },
-      { path: 'usuarios', component: UsuariosComponent },
 
-      { path: 'job-offers', component: JobOfferListComponent },
-      { path: 'job-offers/create', component: JobOfferCreateComponent },
-      { path: 'job-offers/edit/:id', component: JobOfferEditComponent },
-      { path: 'job-offers/detail/:id', component: JobOfferDetailComponent },
-      { path: 'job-applications', component: JobApplicationsComponent },
+      { path: 'contact-list', component: ContactListComponent },
+      { 
+        path: 'usuarios', 
+        component: UsuariosComponent,
+        canActivate: [() => privateGuard(), RoleGuard],
+        data: { roles: ['Admin'] }
+      },
+      {
+        path: 'mis-postulaciones',
+        loadComponent: () => import('./pages/mis-postulaciones/mis-postulaciones.component')
+          .then(m => m.MisPostulacionesComponent),
+        canActivate: [() => privateGuard(), RoleGuard],
+        data: { roles: ['Usuario'] }
+      },
 
       // Rutas de Mi Empresa
       {
@@ -71,23 +65,26 @@ export const DASHBOARD_ROUTES: Routes = [
           { path: 'empleados', component: EmpleadosComponent },
           { path: 'estadisticas', component: EstadisticasComponent },
           { path: 'documentos', component: DocumentosComponent },
-          { path: 'ofertas', component: OfertasComponent },
-          { path: 'configuracion', component: ConfiguracionComponent }
-        ]
+          { path: 'configuracion', component: ConfiguracionComponent },
+          { path: 'asistencias', component: AsistenciasComponent },
+          {
+            path: 'ofertas',
+            children: [
+              { path: '', component: OfertasComponent },
+              { path: ':id/applications', component: ApplicantsTrackingComponent },
+              { path: ':id/preview', component: JobPreviewComponent }, // Agregar esta ruta
+            ],
+          },
+          
+        ],
       },
 
-      {
-        path: 'my-applications',
-        loadChildren: () => import('./features/my-applications/my-applications.routes')
-          .then(m => m.MY_APPLICATIONS_ROUTES)
-      },
 
       {
         path: 'admin/migracion',
         component: MigracionComponent,
         //canActivate: [AdminGuard]  Asegúrate de proteger esta ruta
       },
-
 
       { path: '', redirectTo: 'home', pathMatch: 'full' }, // Redirigir a home
     ],

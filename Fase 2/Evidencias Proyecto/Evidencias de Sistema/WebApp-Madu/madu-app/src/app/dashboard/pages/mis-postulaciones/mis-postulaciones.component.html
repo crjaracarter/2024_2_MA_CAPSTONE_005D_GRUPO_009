@@ -1,0 +1,63 @@
+<!-- mis-postulaciones.component.html -->
+<div class="p-6">
+    <h1 class="text-2xl font-bold text-white mb-6">Mis Postulaciones</h1>
+  
+    <!-- Loading State -->
+    <div *ngIf="loading" class="text-center py-4">
+      <p class="text-gray-600">Cargando postulaciones...</p>
+    </div>
+  
+    <!-- Error State -->
+    <div *ngIf="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+      {{ error }}
+    </div>
+  
+    <!-- Table -->
+    <div *ngIf="!loading && !error && postulaciones.length > 0" class="bg-white rounded-lg shadow overflow-hidden">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Puesto
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Empresa
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Estado
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Fecha Postulación
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <tr *ngFor="let postulacion of postulaciones">
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm font-medium text-gray-900">
+                {{ postulacion.jobTitle || 'Sin título' }}
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-900">
+                Empresa
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span [class]="'px-2 inline-flex text-xs leading-5 font-semibold rounded-full ' + getStatusClass(postulacion.status)">
+                {{ getStatusText(postulacion.status) }}
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              {{ formatDate(postulacion.createdAt) }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  
+    <!-- No Data State -->
+    <div *ngIf="!loading && !error && postulaciones.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+      <p class="text-gray-600">No tienes postulaciones activas</p>
+    </div>
+  </div>

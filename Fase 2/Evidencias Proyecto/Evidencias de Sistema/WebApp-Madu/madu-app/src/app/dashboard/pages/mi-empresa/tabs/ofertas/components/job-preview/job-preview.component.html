@@ -1,0 +1,158 @@
+<!-- job-preview.component.html -->
+<div class="bg-white rounded-lg shadow-lg overflow-hidden max-w-4xl mx-auto">
+
+
+    <!-- Encabezado de la oferta -->
+    <div class="bg-gradient-to-r from-indigo-600 to-indigo-800 p-6 text-white">
+        <div class="flex justify-between items-start">
+            <div>
+                <h1 class="text-2xl font-bold mb-2">{{jobOffer.title}}</h1>
+                <p class="text-lg">{{jobOffer.companyName}}</p>
+            </div>
+            <div class="text-right">
+                <span class="inline-flex items-center px-3 py-1 rounded-full bg-indigo-500 text-sm font-medium">
+                    {{getJobTypeLabel(jobOffer.type)}}
+                </span>
+            </div>
+        </div>
+        
+    </div>
+
+    <!-- Información principal -->
+    <div class="p-6">
+        <!-- Detalles rápidos -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div class="flex items-center space-x-2">
+                <mat-icon>location_on</mat-icon>
+                <span>{{jobOffer.location.city}}, {{jobOffer.location.region}}</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <mat-icon>work</mat-icon>
+                <span>{{getModalityLabel(jobOffer.modality)}}</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <mat-icon>school</mat-icon>
+                <span>{{getExperienceLevelLabel(jobOffer.experienceLevel)}}</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <mat-icon>payments</mat-icon>
+                <span>{{formatSalaryRange()}}</span>
+            </div>
+        </div>
+
+        <!-- Descripción -->
+        <div class="mb-6">
+            <h2 class="text-xl font-semibold mb-3">Descripción del puesto</h2>
+            <p class="text-gray-700 whitespace-pre-line">{{jobOffer.description}}</p>
+        </div>
+
+        <!-- Requisitos -->
+        <div class="mb-6">
+            <h2 class="text-xl font-semibold mb-3">Requisitos</h2>
+            <div class="space-y-4">
+                <div>
+                    <h3 class="font-medium text-gray-900 mb-2">Esenciales:</h3>
+                    <ul class="list-disc pl-5 text-gray-700">
+                        <li *ngFor="let req of jobOffer.requirements.essential">{{req}}</li>
+                    </ul>
+                </div>
+                <div *ngIf="jobOffer.requirements.desirable.length">
+                    <h3 class="font-medium text-gray-900 mb-2">Deseables:</h3>
+                    <ul class="list-disc pl-5 text-gray-700">
+                        <li *ngFor="let req of jobOffer.requirements.desirable">{{req}}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Habilidades -->
+        <div class="mb-6">
+            <h2 class="text-xl font-semibold mb-3">Habilidades requeridas</h2>
+            <div class="space-y-4">
+                <div>
+                    <h3 class="font-medium text-gray-900 mb-2">Técnicas:</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <mat-chip *ngFor="let skill of jobOffer.skills.technical">
+                            {{skill}}
+                        </mat-chip>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="font-medium text-gray-900 mb-2">Blandas:</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <mat-chip *ngFor="let skill of jobOffer.skills.soft">
+                            {{skill}}
+                        </mat-chip>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Beneficios -->
+        <div class="mb-6" *ngIf="jobOffer.benefits.length">
+            <h2 class="text-xl font-semibold mb-3">Beneficios</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div *ngFor="let benefit of jobOffer.benefits"
+                    class="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
+                    <mat-icon *ngIf="benefit.iconName" class="text-indigo-600">
+                        {{benefit.iconName}}
+                    </mat-icon>
+                    <div>
+                        <h3 class="font-medium text-gray-900">{{benefit.title}}</h3>
+                        <p class="text-sm text-gray-600">{{benefit.description}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Proceso de postulación -->
+        <div class="mb-6">
+            <h2 class="text-xl font-semibold mb-3">Proceso de postulación</h2>
+            <div class="space-y-4">
+                <div class="flex items-center space-x-2 text-gray-700">
+                    <mat-icon>schedule</mat-icon>
+                    <span>Duración estimada: {{jobOffer.applicationProcess.estimatedDuration}}</span>
+                </div>
+                <div>
+                    <h3 class="font-medium text-gray-900 mb-2">Etapas:</h3>
+                    <ol class="list-decimal pl-5 text-gray-700">
+                        <li *ngFor="let step of jobOffer.applicationProcess.steps">{{step}}</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preguntas personalizadas -->
+        <div class="mb-6" *ngIf="customQuestions.length">
+            <h2 class="text-xl font-semibold mb-3">Preguntas del formulario</h2>
+            <div class="space-y-4">
+                <div *ngFor="let question of customQuestions; let i = index" class="p-4 bg-gray-50 rounded-lg">
+                    <p class="font-medium text-gray-900">{{i + 1}}. {{question.label}}</p>
+                    <p *ngIf="question.description" class="text-sm text-gray-600 mt-1">
+                        {{question.description}}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer con información adicional -->
+    <div class="bg-gray-50 px-6 py-4 border-t">
+        <div class="flex justify-between items-center text-sm text-gray-600">
+            <div class="flex items-center space-x-4">
+                <span class="flex items-center">
+                    <mat-icon class="text-gray-400 mr-1">visibility</mat-icon>
+                    {{jobOffer.metrics.views}} visualizaciones
+                </span>
+                <span class="flex items-center">
+                    <mat-icon class="text-gray-400 mr-1">people</mat-icon>
+                    {{jobOffer.metrics.applications}} postulaciones
+                </span>
+            </div>
+            <div *ngIf="getDaysUntilDeadline()" class="flex items-center">
+                <mat-icon class="text-gray-400 mr-1">event</mat-icon>
+                Cierra en {{getDaysUntilDeadline()}} días
+            </div>
+        </div>
+    </div>
+</div>

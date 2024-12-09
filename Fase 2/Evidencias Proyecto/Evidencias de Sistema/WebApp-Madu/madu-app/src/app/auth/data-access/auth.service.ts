@@ -30,7 +30,6 @@ import {
 @Injectable({
   providedIn: 'root',
 })
-
 export class AuthService {
   private _auth = inject(Auth);
   private _firestore = inject(Firestore);
@@ -98,14 +97,14 @@ export class AuthService {
         ...empleador,
         rol: UserRole.EMPLEADOR,
       });
-  
+
       if (credential.user) {
         // Crear documento en la colección 'empleador'
         const empleadorDocRef = doc(
           this._firestore,
           `empleador/${credential.user.uid}`
         );
-  
+
         // Extraer los datos específicos del empleador
         const empleadorData = {
           uid: credential.user.uid,
@@ -118,10 +117,10 @@ export class AuthService {
           fechaCreacion: new Date(),
           ultimaActualizacion: new Date(),
         };
-  
+
         // Guardar en la colección empleador
         await setDoc(empleadorDocRef, empleadorData);
-  
+
         // Crear documento en la colección 'empresas'
         const empresasRef = collection(this._firestore, 'empresas');
         const empresaData = {
@@ -136,18 +135,18 @@ export class AuthService {
           empleados: [],
           documentos: [],
           fechaCreacion: new Date(),
-          fechaActualizacion: new Date()
+          fechaActualizacion: new Date(),
         };
-  
+
         // Usar addDoc para crear un nuevo documento con ID autogenerado
         await addDoc(empresasRef, empresaData);
-  
+
         return {
           ...credential,
           empleadorData,
         };
       }
-  
+
       return credential;
     } catch (error) {
       console.error('Error en signUpEmpleador:', error);
@@ -190,6 +189,13 @@ export class AuthService {
         user.email,
         user.password!
       );
+
+      const returnUrl = localStorage.getItem('returnUrl');
+      if (returnUrl) {
+        localStorage.removeItem('returnUrl');
+        window.location.href = returnUrl;
+      }
+      
 
       // Verificar si hay una URL guardada para redirección
       const redirectUrl = localStorage.getItem('redirectAfterLogin');

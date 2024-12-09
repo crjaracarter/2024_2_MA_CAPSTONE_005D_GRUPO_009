@@ -1,80 +1,54 @@
-// src/app/pages/jobs/application-success/application-success.component.scss
-@keyframes fadeInUp {
+:host {
+    display: block;
+  }
+  
+  // Animación de entrada para el ícono de éxito
+  @keyframes scaleIn {
     from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  .bg-white {
-    animation: fadeInUp 0.5s ease-out forwards;
-  }
-  
-  // Animación del ícono de éxito
-  @keyframes checkmark {
-    0% {
       transform: scale(0);
       opacity: 0;
     }
-    50% {
-      transform: scale(1.2);
-    }
-    100% {
+    to {
       transform: scale(1);
       opacity: 1;
     }
   }
   
-  .bg-green-100 svg {
-    animation: checkmark 0.5s ease-out forwards;
+  .success-icon {
+    animation: scaleIn 0.5s ease-out;
   }
   
-  // Hover effects para botones
-  button {
-    transition: all 0.2s ease-in-out;
+  // Animación para la lista de próximos pasos
+  @keyframes slideInRight {
+    from {
+      transform: translateX(20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  .next-steps-item {
+    animation: slideInRight 0.5s ease-out;
+    animation-fill-mode: both;
+  }
+  
+  // Aplicar delay a cada item
+  .next-steps-item:nth-child(1) { animation-delay: 0.1s; }
+  .next-steps-item:nth-child(2) { animation-delay: 0.2s; }
+  .next-steps-item:nth-child(3) { animation-delay: 0.3s; }
+  
+  // Hover effect para los botones
+  .action-button {
+    transition: transform 0.2s ease;
     
     &:hover {
       transform: translateY(-1px);
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     }
     
     &:active {
       transform: translateY(0);
     }
   }
-
-  // application-success.component.scss
-:host {
-  display: block;
-}
-
-// Animaciones adicionales
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-}
-
-.success-icon {
-  animation: pulse 2s infinite;
-}
-
-// Estilos específicos del componente que no se pueden lograr solo con Tailwind
-.gradient-border {
-  position: relative;
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 1rem;
-    padding: 2px;
-    background: linear-gradient(to right, #4B0082, #5A4FCF);
-    mask: 
-      linear-gradient(#fff 0 0) content-box, 
-      linear-gradient(#fff 0 0);
-    mask-composite: exclude;
-  }
-}

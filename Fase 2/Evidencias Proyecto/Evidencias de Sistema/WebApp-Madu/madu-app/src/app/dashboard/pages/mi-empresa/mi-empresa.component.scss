@@ -1,25 +1,28 @@
+// Variables
+$primary-color: #5A4FCF;
+$accent-color: #C2AFFF;
+$dark-bg: #4B0082;
+$transition-duration: 0.3s;
+
+// Base Styles
 :host {
-  display: block;
+  @apply block w-full min-h-screen;
 }
 
-/* Ocultar scrollbar pero mantener funcionalidad */
+// Utility Classes
 .hide-scrollbar {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;     /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
   
   &::-webkit-scrollbar {
-    display: none;           /* Chrome, Safari and Opera */
+    display: none;
   }
 }
 
-/* Animación suave para cambios de tab */
-.transition-opacity {
-  transition: opacity 200ms ease-in-out;
-}
-
-/* Asegurar que el contenedor de tabs sea responsive */
+// Layout & Container Styles
 .overflow-x-auto {
   -webkit-overflow-scrolling: touch;
+  
   &::-webkit-scrollbar {
     height: 0;
     width: 0;
@@ -27,13 +30,185 @@
   }
 }
 
-/* Mejorar la accesibilidad del focus */
-button:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(90, 79, 207, 0.2);
+// Component Specific Styles
+.tab-button {
+  @apply relative overflow-hidden transition-all duration-300;
+  
+  &::before {
+    content: '';
+    @apply absolute inset-0 bg-indigo-600/0 transition-colors duration-200;
+  }
+  
+  &:hover::before {
+    @apply bg-indigo-600/10;
+  }
+  
+  &:focus-visible {
+    @apply ring-2 ring-[#C2AFFF] ring-offset-2 ring-offset-indigo-900;
+  }
+
+  // Tab Indicator
+  &::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-full h-0.5 bg-[#C2AFFF] transform scale-x-0 transition-transform duration-300 ease-out origin-left;
+  }
+
+  &.active::after {
+    @apply scale-x-100;
+  }
 }
 
-/* Animación suave para el indicador de tab activa */
+// Loading States
+.loading-spinner {
+  @apply w-12 h-12 rounded-full border-4 border-indigo-400/30 border-t-[#C2AFFF];
+  animation: spin 1s linear infinite;
+
+  &.small {
+    @apply w-6 h-6 border-2;
+  }
+}
+
+// Content Transitions
+.tab-content {
+  @apply transition-all duration-300 relative;
+  
+  &.entering {
+    @apply opacity-0 translate-y-4;
+  }
+  
+  &.entered {
+    @apply opacity-100 translate-y-0;
+  }
+
+  // Glass effect for content
+  &::before {
+    content: '';
+    @apply absolute inset-0 bg-indigo-900/30 backdrop-blur-sm rounded-lg -z-10;
+  }
+}
+
+// Focus States
+button, 
+a {
+  &:focus {
+    outline: none;
+    @apply ring-2 ring-[#C2AFFF]/50 ring-offset-1 ring-offset-indigo-900;
+  }
+}
+
+// Animations
 .transform {
-  transition: transform 0.2s ease-in-out;
+  transition: transform $transition-duration ease-in-out;
+}
+
+.transition-opacity {
+  transition: opacity $transition-duration ease-in-out;
+}
+
+// Custom Keyframe Animations
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+// Animation Classes
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+// Responsive Adjustments
+@screen md {
+  .tab-button {
+    @apply px-6;
+  }
+
+  .content-wrapper {
+    @apply px-6;
+  }
+}
+
+@screen lg {
+  .tab-button {
+    @apply px-8;
+  }
+}
+
+// Dark Mode Optimizations
+@media (prefers-color-scheme: dark) {
+  .tab-button {
+    &:hover::before {
+      @apply bg-indigo-600/20;
+    }
+  }
+
+  .loading-spinner {
+    @apply border-indigo-400/40 border-t-[#C2AFFF];
+  }
+}
+
+// Glassmorphism Effects
+.glass-panel {
+  @apply backdrop-blur-md bg-white/5 border border-white/10;
+}
+
+.glass-card {
+  @apply backdrop-blur-sm bg-indigo-900/30 border border-indigo-400/20 rounded-lg;
+}
+
+// Interactive States
+.hover-effect {
+  @apply transition-all duration-300 ease-in-out;
+  
+  &:hover {
+    @apply transform -translate-y-1 shadow-lg;
+  }
+}
+
+// Utility Animations
+.fade-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.fade-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.fade-exit {
+  opacity: 1;
+}
+
+.fade-exit-active {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 300ms, transform 300ms;
 }

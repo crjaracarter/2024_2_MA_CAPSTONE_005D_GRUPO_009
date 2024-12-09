@@ -1,7 +1,7 @@
 export interface JobApplication {
     id?: string;
     jobOfferId: string;
-    jobTitle?: string;  // Para referencia rápida
+    jobTitle?: string;
     employeeId: string;
     employeeData?: {
       nombres: string;
@@ -12,4 +12,9 @@ export interface JobApplication {
     appliedAt: Date;
     updatedAt: Date;
     coverLetter?: string;
+    responses: {
+      questionId: string;
+      answer: string;
+    }[];
+    createdAt: Date;
   }

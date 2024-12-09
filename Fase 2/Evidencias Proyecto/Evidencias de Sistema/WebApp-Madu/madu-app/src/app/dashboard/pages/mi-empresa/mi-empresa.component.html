@@ -1,62 +1,278 @@
 <div class="container mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold mb-8 text-white">Mi Empresa</h1>
-
-    <!-- Estado de Error -->
-    <div *ngIf="error" class="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-        {{ error }}
+    <!-- Encabezado con breadcrumb -->
+    <div class="mb-8">
+        <div class="flex items-center space-x-2 text-sm text-gray-400 mb-2">
+            <span>Dashboard</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+            <span class="text-white">Mi Empresa</span>
+        </div>
+        <h1 class="text-3xl font-bold text-white">Mi Empresa</h1>
     </div>
 
-    <!-- Tabs Container con scroll en móvil -->
-    <div class="relative">
-        <div class="overflow-x-auto hide-scrollbar">
-            <nav class="flex whitespace-nowrap border-b border-indigo-100 min-w-full" aria-label="Tabs">
-                <div class="flex space-x-1 px-2">
-                    <button *ngFor="let tab of tabs" [class]="getTabClasses(tab.id)" (click)="setActiveTab(tab.id)"
-                        [disabled]="loading"
-                        class="group relative min-w-0 flex-1 overflow-hidden px-4 py-3 text-sm font-medium text-center focus:z-10 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 rounded-lg transition-all duration-200 ease-in-out">
-                        <span class="relative z-10 transition-colors duration-200 text-indigo-200">
-                            {{ tab.label }}
-                        </span>
-                        <span class="absolute inset-x-0 bottom-0 h-0.5 transition-all duration-200 ease-out"
-                            [class]="tab.id === activeTab ? 'bg-[#5A4FCF] scale-x-100' : 'bg-transparent scale-x-0 group-hover:bg-[#C2AFFF] group-hover:scale-x-100'">
-                        </span>
-                    </button>
-                </div>
-            </nav>
+    <!-- Estado de Error Mejorado -->
+    <div *ngIf="error" 
+         class="mb-6 p-4 bg-red-500/10 backdrop-blur-sm border border-red-400/30 text-red-400 rounded-lg animate-fade-in">
+        <div class="flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span class="font-medium">{{ error }}</span>
         </div>
     </div>
 
-    <!-- Loading State -->
-    <div *ngIf="loading" class="flex justify-center items-center py-12">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500"></div>
+    <!-- Contenedor Principal de Tabs -->
+    <div class="relative mb-8 bg-indigo-900/30 rounded-xl p-4 backdrop-blur-sm border border-indigo-400/20">
+        <!-- Navigation Desktop -->
+        <nav class="hidden md:flex mb-0 border-b border-indigo-400/30" aria-label="Tabs">
+            <div class="flex space-x-2 w-full px-2">
+                <!-- Tab Información General -->
+                <button [class]="getTabClasses('info')"
+                        (click)="setActiveTab('info')"
+                        [disabled]="loading"
+                        class="tab-button group relative flex-1 flex items-center justify-center px-4 py-3 text-sm font-medium focus:outline-none rounded-t-lg transition-all duration-300">
+                    <span class="relative z-10 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                        </svg>
+                        <span>Información General</span>
+                    </span>
+                    <span class="absolute bottom-0 left-0 w-full h-0.5 transition-transform duration-300 ease-out transform origin-left"
+                          [class.scale-x-100]="activeTab === 'info'"
+                          [class.scale-x-0]="activeTab !== 'info'"
+                          [class.bg-[#C2AFFF]]="activeTab === 'info'"></span>
+                </button>
+
+                <!-- Tab Empleados -->
+                <button [class]="getTabClasses('empleados')"
+                        (click)="setActiveTab('empleados')"
+                        [disabled]="loading"
+                        class="tab-button group relative flex-1 flex items-center justify-center px-4 py-3 text-sm font-medium focus:outline-none rounded-t-lg transition-all duration-300">
+                    <span class="relative z-10 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                        </svg>
+                        <span>Empleados</span>
+                    </span>
+                    <span class="absolute bottom-0 left-0 w-full h-0.5 transition-transform duration-300 ease-out transform origin-left"
+                          [class.scale-x-100]="activeTab === 'empleados'"
+                          [class.scale-x-0]="activeTab !== 'empleados'"
+                          [class.bg-[#C2AFFF]]="activeTab === 'empleados'"></span>
+                </button>
+
+                <!-- Tab Estadísticas -->
+                <button [class]="getTabClasses('stats')"
+                        (click)="setActiveTab('stats')"
+                        [disabled]="loading"
+                        class="tab-button group relative flex-1 flex items-center justify-center px-4 py-3 text-sm font-medium focus:outline-none rounded-t-lg transition-all duration-300">
+                    <span class="relative z-10 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
+                        <span>Estadísticas</span>
+                    </span>
+                    <span class="absolute bottom-0 left-0 w-full h-0.5 transition-transform duration-300 ease-out transform origin-left"
+                          [class.scale-x-100]="activeTab === 'stats'"
+                          [class.scale-x-0]="activeTab !== 'stats'"
+                          [class.bg-[#C2AFFF]]="activeTab === 'stats'"></span>
+                </button>
+
+                <!-- Tab Documentos -->
+                <button [class]="getTabClasses('docs')"
+                        (click)="setActiveTab('docs')"
+                        [disabled]="loading"
+                        class="tab-button group relative flex-1 flex items-center justify-center px-4 py-3 text-sm font-medium focus:outline-none rounded-t-lg transition-all duration-300">
+                    <span class="relative z-10 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        <span>Documentos</span>
+                    </span>
+                    <span class="absolute bottom-0 left-0 w-full h-0.5 transition-transform duration-300 ease-out transform origin-left"
+                          [class.scale-x-100]="activeTab === 'docs'"
+                          [class.scale-x-0]="activeTab !== 'docs'"
+                          [class.bg-[#C2AFFF]]="activeTab === 'docs'"></span>
+                </button>
+
+                <!-- Tab Ofertas -->
+                <button [class]="getTabClasses('ofertas')"
+                        (click)="setActiveTab('ofertas')"
+                        [disabled]="loading"
+                        class="tab-button group relative flex-1 flex items-center justify-center px-4 py-3 text-sm font-medium focus:outline-none rounded-t-lg transition-all duration-300">
+                    <span class="relative z-10 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                        </svg>
+                        <span>Ofertas</span>
+                    </span>
+                    <span class="absolute bottom-0 left-0 w-full h-0.5 transition-transform duration-300 ease-out transform origin-left"
+                          [class.scale-x-100]="activeTab === 'ofertas'"
+                          [class.scale-x-0]="activeTab !== 'ofertas'"
+                          [class.bg-[#C2AFFF]]="activeTab === 'ofertas'"></span>
+                </button>
+
+                <!-- Tab Asistencias -->
+                <button [class]="getTabClasses('asistencias')"
+                        (click)="setActiveTab('asistencias')"
+                        [disabled]="loading"
+                        class="tab-button group relative flex-1 flex items-center justify-center px-4 py-3 text-sm font-medium focus:outline-none rounded-t-lg transition-all duration-300">
+                    <span class="relative z-10 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <span>Asistencias</span>
+                    </span>
+                    <span class="absolute bottom-0 left-0 w-full h-0.5 transition-transform duration-300 ease-out transform origin-left"
+                          [class.scale-x-100]="activeTab === 'asistencias'"
+                          [class.scale-x-0]="activeTab !== 'asistencias'"
+                          [class.bg-[#C2AFFF]]="activeTab === 'asistencias'"></span>
+                </button>
+
+                <!-- Tab Configuración -->
+                <button [class]="getTabClasses('config')"
+                        (click)="setActiveTab('config')"
+                        [disabled]="loading"
+                        class="tab-button group relative flex-1 flex items-center justify-center px-4 py-3 text-sm font-medium focus:outline-none rounded-t-lg transition-all duration-300">
+                    <span class="relative z-10 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                        <span>Configuración</span>
+                    </span>
+                    <span class="absolute bottom-0 left-0 w-full h-0.5 transition-transform duration-300 ease-out transform origin-left"
+                          [class.scale-x-100]="activeTab === 'config'"
+                          [class.scale-x-0]="activeTab !== 'config'"
+                          [class.bg-[#C2AFFF]]="activeTab === 'config'"></span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Navigation Mobile -->
+        <div class="md:hidden relative">
+            <button (click)="toggleMobileMenu()" 
+                    class="w-full flex items-center justify-between px-4 py-3 text-white bg-indigo-900/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C2AFFF] border border-indigo-400/30">
+                <span class="flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                    <span>{{ getCurrentTabLabel() }}</span>
+                </span>
+                <svg class="w-5 h-5 transition-transform duration-200" 
+                     [class.transform]="isMobileMenuOpen" 
+                     [class.rotate-180]="isMobileMenuOpen"
+                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+            </button>
+
+            <!-- Mobile Menu Dropdown -->
+            <div *ngIf="isMobileMenuOpen" 
+                 class="absolute z-50 w-full mt-2 origin-top-right rounded-lg shadow-lg"
+                 @slideDown>
+                 <div class="bg-indigo-900 bg-opacity-95 backdrop-blur-sm rounded-lg border border-indigo-400 border-opacity-30 shadow-xs divide-y divide-indigo-400 divide-opacity-30">
+                    <div class="py-1">
+                        <button *ngFor="let tab of tabs" 
+                                (click)="setActiveTabMobile(tab.id)"
+                                class="w-full flex items-center px-4 py-3 text-sm text-white hover:bg-indigo-800 hover:bg-opacity-50 transition-colors duration-150"
+                                [ngClass]="{'bg-indigo-800 bg-opacity-30': activeTab === tab.id}">
+                            <ng-container [ngTemplateOutlet]="tabIcon" 
+                                        [ngTemplateOutletContext]="{tab: tab}">
+                            </ng-container>
+                            <span class="ml-2">{{ tab.label }}</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- No Data State -->
-    <div *ngIf="!loading && !empresa && !error" class="text-center py-12">
-        <p class="text-gray-500">No se encontró información de la empresa.</p>
-    </div>
+    <!-- Content Area -->
+    <div class="content-wrapper relative" #contentWrapper>
+        <!-- Loading State -->
+        <div *ngIf="loading" 
+             class="flex justify-center items-center py-12 animate-pulse">
+            <div class="flex flex-col items-center space-y-4">
+                <div class="loading-spinner"></div>
+                <p class="text-indigo-300 text-sm">Cargando información...</p>
+            </div>
+        </div>
 
-    <!-- Tab Content con fade in/out -->
-    <div *ngIf="!loading && empresa" class="mt-8 transition-opacity duration-200 ease-in-out"
-        [class.opacity-0]="loading" [class.opacity-100]="!loading">
-        <ng-container [ngSwitch]="activeTab">
-            <app-informacion-general *ngSwitchCase="'info'" [empresa]="empresa" (updated)="onEmpresaUpdated($event)">
-            </app-informacion-general>
+        <!-- No Data State -->
+        <div *ngIf="!loading && !empresa && !error" 
+             class="flex flex-col items-center justify-center py-12 text-center space-y-4">
+            <svg class="w-16 h-16 text-indigo-400/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <div>
+                <p class="text-xl font-semibold text-white mb-2">No se encontró información</p>
+                <p class="text-gray-400">No hay datos disponibles de la empresa en este momento.</p>
+            </div>
+            <button (click)="reloadData()" 
+                    class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200">
+                Reintentar
+            </button>
+        </div>
 
-            <app-empleados *ngSwitchCase="'empleados'" [empresa]="empresa">
-            </app-empleados>
+        <!-- Tab Content with Animations -->
+        <div *ngIf="!loading && empresa" 
+             class="tab-content bg-indigo-900/30 rounded-lg border border-indigo-400/20 backdrop-blur-sm"
+             [@tabAnimation]="activeTab">
+            <ng-container [ngSwitch]="activeTab">
+                <app-informacion-general 
+                    *ngSwitchCase="'info'" 
+                    [empresa]="empresa" 
+                    (updated)="onEmpresaUpdated($event)">
+                </app-informacion-general>
 
-            <app-estadisticas *ngSwitchCase="'stats'" [empresa]="empresa">
-            </app-estadisticas>
+                <app-empleados 
+                    *ngSwitchCase="'empleados'" 
+                    [empresa]="empresa">
+                </app-empleados>
 
-            <app-documentos *ngSwitchCase="'docs'" [empresa]="empresa">
-            </app-documentos>
+                <app-estadisticas 
+                    *ngSwitchCase="'stats'" 
+                    [empresa]="empresa">
+                </app-estadisticas>
 
-            <app-ofertas *ngSwitchCase="'ofertas'" [empresa]="empresa">
-            </app-ofertas>
+                <app-documentos 
+                    *ngSwitchCase="'docs'" 
+                    [empresa]="empresa">
+                </app-documentos>
 
-            <app-configuracion *ngSwitchCase="'config'" [empresa]="empresa">
-            </app-configuracion>
-        </ng-container>
+                <app-ofertas 
+                    *ngSwitchCase="'ofertas'" 
+                    [empresa]="empresa">
+                </app-ofertas>
+
+                <app-configuracion 
+                    *ngSwitchCase="'config'" 
+                    [empresa]="empresa">
+                </app-configuracion>
+
+                <app-asistencias 
+                    *ngSwitchCase="'asistencias'" 
+                    [empresa]="empresa">
+                </app-asistencias>
+            </ng-container>
+        </div>
     </div>
 </div>
+
+<!-- Template for Tab Icons -->
+<ng-template #tabIcon let-tab="tab">
+    <div class="w-5 h-5" [ngSwitch]="tab.id">
+        <!-- Los íconos SVG específicos para cada tab -->
+    </div>
+</ng-template>

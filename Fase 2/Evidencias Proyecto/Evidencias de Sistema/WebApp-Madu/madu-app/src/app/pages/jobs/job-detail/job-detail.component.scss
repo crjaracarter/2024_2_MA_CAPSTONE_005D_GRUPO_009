@@ -1,84 +1,52 @@
-// src/app/pages/jobs/job-detail/job-detail.component.scss
-.prose {
-  h1,
-  h2,
-  h3,
-  h4 {
-    color: #1a202c;
-    font-weight: 600;
-    margin-top: 2em;
-    margin-bottom: 1em;
+:host {
+    display: block;
   }
-
-  p {
-    margin-bottom: 1.5em;
-    line-height: 1.75;
-  }
-
-  ul {
-    margin-top: 1.25em;
-    margin-bottom: 1.25em;
-  }
-
-  li {
-    margin-top: 0.5em;
-    margin-bottom: 0.5em;
-  }
-}
-
-// Animaciones para elementos que aparecen
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.3s ease-out forwards;
-}
-
-.btn-base {
-  @apply px-6 py-3 rounded-lg font-medium transition-all duration-300 
-         flex items-center justify-center gap-2 
-         hover:transform hover:scale-105 shadow-md hover:shadow-lg;
-}
-
-// Botón primario
-.btn-primary {
-  @apply btn-base bg-gradient-to-r from-[#4B0082] to-[#5A4FCF] text-white;
   
-  &:hover {
-    @apply shadow-[#5A4FCF]/20;
+  // Animaciones para elementos que aparecen
+  .fade-in {
+    animation: fadeIn 0.5s ease-out;
   }
-}
-
-// Botón secundario
-.btn-secondary {
-  @apply btn-base border-2 border-[#5A4FCF] text-[#f7f7f7] bg-[#4B0082];
   
-  &:hover {
-    @apply bg-[#5A4FCF] text-white;
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
-}
-
-// Botón de error/alerta
-.btn-error {
-  @apply btn-base bg-gradient-to-r from-red-500 to-red-600 text-white;
   
-  &:hover {
-    @apply shadow-red-500/20;
+  // Estilos para el contenido rich text
+  .prose {
+    h1, h2, h3, h4 {
+      color: #1F2937;
+      margin-top: 1.5em;
+      margin-bottom: 0.5em;
+    }
+  
+    p {
+      margin-bottom: 1em;
+      line-height: 1.7;
+    }
+  
+    ul, ol {
+      margin-left: 1.5em;
+      margin-bottom: 1em;
+    }
   }
-}
-
-// Botón deshabilitado
-.btn-disabled {
-  @apply btn-base bg-gray-300 text-gray-500 cursor-not-allowed;
-  &:hover {
-    @apply transform-none shadow-none;
+  
+  // Hover effects para las cards
+  .benefit-card {
+    transition: transform 0.2s ease;
+  
+    &:hover {
+      transform: translateY(-2px);
+    }
   }
-}
+  
+  // Estilos para el scroll suave
+  .smooth-scroll {
+    scroll-behavior: smooth;
+  }

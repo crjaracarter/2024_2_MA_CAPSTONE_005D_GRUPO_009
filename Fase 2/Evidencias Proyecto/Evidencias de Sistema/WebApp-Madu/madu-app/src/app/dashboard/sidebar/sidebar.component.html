@@ -1,15 +1,12 @@
 <!-- Overlay para modo móvil -->
-<div *ngIf="isOpen && isMobile"
-     class="fixed inset-0 bg-black/50 z-20 transition-opacity duration-300"
-     (click)="sidebarService.closeSidebar()">
+<div *ngIf="isOpen && isMobile" class="fixed inset-0 bg-black/50 z-20 transition-opacity duration-300"
+  (click)="sidebarService.closeSidebar()">
 </div>
 
 <!-- Sidebar Desktop -->
 <aside
   class="fixed inset-y-0 left-0 z-30 w-72 transition-all duration-300 transform bg-gradient-to-b from-[#4B0082] to-[#5A4FCF] shadow-xl"
-  [class.translate-x-0]="isOpen" 
-  [class.-translate-x-full]="!isOpen && isMobile" 
-  [ngClass]="[
+  [class.translate-x-0]="isOpen" [class.-translate-x-full]="!isOpen && isMobile" [ngClass]="[
   'fixed inset-y-0 left-0 z-30 w-72 transition-transform duration-300 transform bg-gradient-to-b from-[#4B0082] to-[#5A4FCF] shadow-xl',
   isMobile ? (isOpen ? 'translate-x-0' : '-translate-x-full') : 'translate-x-0'
 ]">
@@ -19,7 +16,7 @@
       <div class="p-2 rounded-xl bg-white/10">
         <!-- Logo -->
         <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
-          
+
           <!-- Aquí tu logo SVG -->
         </svg>
       </div>
@@ -29,9 +26,7 @@
       </div>
     </div>
     <!-- Botón cerrar mobile -->
-    <button 
-      *ngIf="isMobile"
-      (click)="sidebarService.closeSidebar()"
+    <button *ngIf="isMobile" (click)="sidebarService.closeSidebar()"
       class="p-2 rounded-lg hover:bg-white/10 text-white transition-colors">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -82,18 +77,8 @@
         <div class="text-xs font-bold text-white/50 uppercase px-3">Gestión</div>
       </div>
 
-      <!-- Usuarios -->
-      <a routerLink="/dashboard/usuarios" routerLinkActive="bg-white/20"
-        class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 text-white transition-colors group">
-        <div class="p-2 rounded-lg bg-white/10 group-hover:bg-white/20 transition-colors">
-          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-          </svg>
-        </div>
-        <span class="font-medium">Usuarios</span>
-      </a>
-      <!-- Vacantes -->
+
+      <!-- Ofertas Laborales
       <a routerLink="/dashboard/job-offers" routerLinkActive="bg-white/20"
         class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 text-white transition-colors group">
         <div class="p-2 rounded-lg bg-white/10 group-hover:bg-white/20 transition-colors">
@@ -105,8 +90,8 @@
           </svg>
         </div>
         <span class="font-medium">Ofertas Laborales</span>
-      </a>
-      <!-- Postulaciones -->
+      </a>-->
+      <!-- Postulaciones 
       <a routerLink="/dashboard/job-applications" routerLinkActive="bg-white/20"
         class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 text-white transition-colors group">
         <div class="p-2 rounded-lg bg-white/10 group-hover:bg-white/20 transition-colors">
@@ -119,9 +104,10 @@
           </svg>
         </div>
         <span class="font-medium">Postulaciones</span>
-      </a>
+      </a>-->
+
       <!-- Mis Postulaciones -->
-      <a routerLink="/dashboard/my-applications" routerLinkActive="bg-white/20"
+      <a routerLink="/dashboard/mis-postulaciones" routerLinkActive="bg-white/20"
         class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 text-white transition-colors group">
         <div class="p-2 rounded-lg bg-white/10 group-hover:bg-white/20 transition-colors">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -133,7 +119,11 @@
         </div>
         <span class="font-medium">Mis postulaciones</span>
       </a>
-      <!-- Contactos -->
+      <!-- ADMINISTRACION Separador -->
+      <div class="py-4">
+        <div class="text-xs font-bold text-white/50 uppercase px-3">Administración</div>
+      </div>
+      <!-- Interesados/Contactos -->
       <a routerLink="/dashboard/contact-list" routerLinkActive="bg-white/20"
         class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 text-white transition-colors group">
         <div class="p-2 rounded-lg bg-white/10 group-hover:bg-white/20 transition-colors">
@@ -143,8 +133,24 @@
               clip-rule="evenodd" />
           </svg>
         </div>
-        <span class="font-medium">Contactos</span>
+        <span class="font-medium">Interesados</span>
       </a>
+      <!-- Usuarios -->
+      <ng-container *ngIf="(authState.user$ | async)?.rol === UserRole.ADMIN">
+        <a routerLink="/dashboard/usuarios" 
+           routerLinkActive="bg-white/20"
+           class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 text-white transition-colors group">
+          <div class="p-2 rounded-lg bg-white/10 group-hover:bg-white/20 transition-colors">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" 
+                    stroke-linejoin="round" 
+                    stroke-width="2"
+                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+          </div>
+          <span class="font-medium">Usuarios</span>
+        </a>
+      </ng-container>
 
       <!-- Similares para otros items del menú... -->
     </nav>

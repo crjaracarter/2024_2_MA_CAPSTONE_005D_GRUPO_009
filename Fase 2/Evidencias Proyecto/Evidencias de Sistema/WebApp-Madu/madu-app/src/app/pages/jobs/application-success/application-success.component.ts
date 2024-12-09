@@ -1,44 +1,23 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { JobOfferService } from '../../../services/job-offer/job-offer.service';
-import { JobApplication } from '../../../core/interfaces/job-application/job-application.interface';
-import { trigger, transition, style, animate } from '@angular/animations';
+import { JobOffer } from '../../../core/interfaces/job-offer/job-offer.interface';
 
 @Component({
   selector: 'app-application-success',
-  standalone: true,
-  imports: [CommonModule, RouterModule],
   templateUrl: './application-success.component.html',
-  styleUrl: './application-success.component.scss',
-  animations: [
-    trigger('slideDown', [
-      transition(':enter', [
-        style({ transform: 'translateY(-20px)', opacity: 0 }),
-        animate('500ms ease-out', style({ transform: 'translateY(0)', opacity: 1 }))
-      ])
-    ]),
-    trigger('slideUp', [
-      transition(':enter', [
-        style({ transform: 'translateY(20px)', opacity: 0 }),
-        animate('500ms ease-out', style({ transform: 'translateY(0)', opacity: 1 }))
-      ])
-    ]),
-    trigger('fadeIn', [
-      transition(':enter', [
-        style({ opacity: 0 }),
-        animate('300ms ease-out', style({ opacity: 1 }))
-      ])
-    ])
-  ]
+  styleUrls: ['./application-success.component.scss'],
+  standalone: true,
+  imports: [CommonModule, RouterModule]
 })
-
 export class ApplicationSuccessComponent implements OnInit {
-  jobTitle: string = '';
-  applicationData: any;
-  application: JobApplication | null = null;
-  isLoading = true;
-  error: string | null = null;
+  jobOffer: JobOffer | null = null;
+  applicationId: string | null = null;
+  empresaId: string | null = null;
+  loading = true;
+  error = '';
+  applicationDate = new Date();
 
   constructor(
     private route: ActivatedRoute,
@@ -46,48 +25,46 @@ export class ApplicationSuccessComponent implements OnInit {
     private jobOfferService: JobOfferService
   ) {}
 
-  ngOnInit() {
-    const applicationId = this.route.snapshot.params['id'];
-    if (!applicationId) {
-      this.error = 'No se encontró la postulación';
-      this.isLoading = false;
-      return;
-    }
+  ngOnInit(): void {
+    this.route.params.subscribe(params => {
+      const jobOfferId = params['jobOfferId'];
+      this.applicationId = params['applicationId'];
 
-    this.loadApplication(applicationId);
-  }
-
-  private async loadApplication(applicationId: string) {
-    try {
-      this.isLoading = true;
-      const application = await this.jobOfferService.getJobApplicationById(applicationId);
-      if (application) {
-        this.application = application;
+      if (jobOfferId && this.applicationId) {
+        this.loadJobOffer(jobOfferId);
       } else {
-        this.error = 'No se encontró la postulación';
+        this.loading = false;
+        this.error = 'No se encontró información de la postulación';
       }
-    } catch (error) {
-      console.error('Error loading application:', error);
-      this.error = 'Error al cargar la postulación';
+    });
+  }
+
+  private async loadJobOffer(jobOfferId: string): Promise<void> {
+    try {
+      const offer = await this.jobOfferService.getJobOfferById(jobOfferId);
+      if (offer) {
+        this.jobOffer = offer;
+        this.empresaId = offer.empresaId;
+      }
+    } catch (err) {
+      console.error('Error cargando oferta:', err);
+      this.error = 'Error al cargar los detalles de la postulación';
     } finally {
-      this.isLoading = false;
+      this.loading = false;
     }
   }
 
-
-  sendConfirmationEmail() {
-    // Aquí implementarías la lógica para enviar el email
-    console.log('Enviando email de confirmación...');
+  goToMyApplications(): void {
+    this.router.navigate(['/dashboard']);
   }
 
-  getFormattedKeys(): string[] {
-    if (!this.applicationData) return [];
-    return Object.keys(this.applicationData);
+  goToJobListings(): void {
+    if (this.empresaId) {
+      this.router.navigate(['/empresa', this.empresaId, 'trabajos']);
+    } else {
+      // Si por alguna razón no tenemos el empresaId, redirigimos al home
+      this.router.navigate(['/']);
+    }
   }
 
-  formatQuestionKey(key: string): string {
-    if (key === 'coverLetter') return 'Carta de presentación';
-    // Remover el prefijo 'question_' y formatear
-    return key.replace('question_', 'Pregunta ');
-  }
 }

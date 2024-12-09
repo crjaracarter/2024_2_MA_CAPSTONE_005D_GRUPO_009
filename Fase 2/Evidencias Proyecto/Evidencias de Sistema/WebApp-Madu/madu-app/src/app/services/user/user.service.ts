@@ -6,27 +6,28 @@ import {
   doc,
   updateDoc,
   deleteDoc,
+  getDoc,
 } from '@angular/fire/firestore';
 
 export enum UserRole {
   ADMIN = 'Admin',
   EMPLEADOR = 'Empleador',
   EMPLEADO = 'Empleado',
-  USUARIO = 'Usuario'
+  USUARIO = 'Usuario',
 }
 
 export enum Gender {
   MASCULINO = 'Masculino',
   FEMENINO = 'Femenino',
   OTRO = 'Otro',
-  NO_ESPECIFICA = 'Prefiero no especificar'
+  NO_ESPECIFICA = 'Prefiero no especificar',
 }
 
 export enum AccountStatus {
   ACTIVA = 'Activa',
   INACTIVA = 'Inactiva',
   PENDIENTE = 'Pendiente',
-  BLOQUEADA = 'Bloqueada'
+  BLOQUEADA = 'Bloqueada',
 }
 
 export interface User {
@@ -72,5 +73,24 @@ export class UserService {
   async deleteUser(uid: string): Promise<void> {
     const userRef = doc(this.firestore, 'users', uid);
     await deleteDoc(userRef);
+  }
+
+  async getUserById(uid: string): Promise<User | null> {
+    try {
+      const userRef = doc(this.firestore, 'users', uid);
+      const userSnap = await getDoc(userRef);
+
+      if (!userSnap.exists()) {
+        return null;
+      }
+
+      return {
+        uid: userSnap.id,
+        ...userSnap.data(),
+      } as User;
+    } catch (error) {
+      console.error('Error al obtener usuario:', error);
+      throw error;
+    }
   }
 }

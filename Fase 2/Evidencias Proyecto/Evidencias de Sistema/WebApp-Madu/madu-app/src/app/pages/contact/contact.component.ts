@@ -1,12 +1,17 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule, FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ContactService } from '../../services/contact/contact.service';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import AOS from 'aos';
+
+
 
 @Component({
   selector: 'app-contact',
   standalone: true,
-  imports: [FormsModule, CommonModule, ReactiveFormsModule], 
+  imports: [FormsModule, CommonModule, ReactiveFormsModule],
   templateUrl: './contact.component.html',
   styleUrls: ['./contact.component.scss'],
 })
@@ -36,6 +41,44 @@ export class ContactComponent {
       area: ['', Validators.required]
     });
   }
+
+  ngOnInit() {
+    // Inicializar AOS
+    AOS.init({
+      duration: 1000,
+      once: true,
+      offset: 100
+    });
+
+    // Configurar GSAP
+    gsap.registerPlugin(ScrollTrigger);
+    
+    // Animación del parallax
+    gsap.to('.parallax-bg', {
+      yPercent: 50,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '.hero-section',
+        start: 'top top',
+        end: 'bottom top',
+        scrub: true
+      }
+    });
+
+    // Animación de las cards de beneficios
+    gsap.from('.benefit-card', {
+      scrollTrigger: {
+        trigger: '.benefits-section',
+        start: 'top center',
+      },
+      y: 100,
+      opacity: 0,
+      duration: 1,
+      stagger: 0.2
+    });
+  }
+
+
   // Getter para el teléfono
   get phoneField() { return this.contactForm.get('phone'); }
   get regionField() { return this.contactForm.get('region'); }

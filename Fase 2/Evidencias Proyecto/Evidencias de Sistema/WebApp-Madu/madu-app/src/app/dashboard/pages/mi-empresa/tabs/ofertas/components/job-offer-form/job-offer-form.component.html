@@ -1,0 +1,510 @@
+<!-- src/app/dashboard/pages/mi-empresa/tabs/ofertas/components/job-offer-form/job-offer-form.component.html -->
+
+<!-- Header del formulario -->
+<div class="bg-white px-6 py-4 border-b">
+  <div class="flex justify-between items-center">
+    <h2 class="text-xl font-semibold text-gray-900">
+      {{ offer ? 'Editar Oferta Laboral' : 'Nueva Oferta Laboral' }}
+    </h2>
+    <div class="flex items-center space-x-3">
+      <button (click)="togglePreview()"
+        class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+        <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+        </svg>
+        Vista Previa
+      </button>
+      <button (click)="onCancel()"
+        class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200">
+        Cancelar
+      </button>
+    </div>
+  </div>
+
+  <!-- Indicador de progreso -->
+  <div class="mt-4">
+    <div class="flex justify-between mb-2">
+      <span class="text-xs font-medium text-gray-500">Progreso</span>
+      <span class="text-xs font-medium text-gray-500">{{ currentStep }}/{{ totalSteps }}</span>
+    </div>
+    <div class="relative">
+      <div class="overflow-hidden h-2 text-xs flex rounded bg-gray-200">
+        <div [style.width.%]="(currentStep / totalSteps) * 100"
+          class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-[#5A4FCF]"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Contenido del formulario -->
+<div class="p-6">
+  <!-- Paso 1: Información Básica -->
+  <div *ngIf="currentStep === 1" class="space-y-6" [formGroup]="basicInfoForm">
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+      <!-- Título de la oferta -->
+      <div class="col-span-2">
+        <label class="block text-sm font-medium text-gray-700">
+          Título del puesto *
+        </label>
+        <input type="text" formControlName="title"
+          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+          placeholder="ej. Desarrollador Frontend Senior">
+        <div *ngIf="basicInfoForm.get('title')?.touched && basicInfoForm.get('title')?.errors"
+          class="mt-1 text-sm text-red-600">
+          <span *ngIf="basicInfoForm.get('title')?.errors?.['required']">El título es requerido</span>
+          <span *ngIf="basicInfoForm.get('title')?.errors?.['minlength']">El título debe tener al menos 5
+            caracteres</span>
+        </div>
+      </div>
+
+      <!-- Departamento -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700">
+          Departamento *
+        </label>
+        <select formControlName="department"
+          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+          <option value="">Seleccionar departamento</option>
+          <option *ngFor="let dept of departmentOptions" [value]="dept">
+            {{dept}}
+          </option>
+        </select>
+      </div>
+
+      <!-- Tipo de trabajo -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700">
+          Tipo de trabajo *
+        </label>
+        <select formControlName="type"
+          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+          <option value="">Seleccionar tipo</option>
+          <option *ngFor="let type of jobTypes" [value]="type">
+            {{type | titlecase}}
+          </option>
+        </select>
+      </div>
+      <!-- Modalidad -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700">
+          Modalidad de trabajo *
+        </label>
+        <select formControlName="modality"
+          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+          <option value="">Seleccionar modalidad</option>
+          <option *ngFor="let modality of workModalities" [value]="modality">
+            {{modality | titlecase}}
+          </option>
+        </select>
+      </div>
+
+      <!-- Nivel de experiencia -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700">
+          Nivel de experiencia *
+        </label>
+        <select formControlName="experienceLevel"
+          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+          <option value="">Seleccionar nivel</option>
+          <option *ngFor="let level of experienceLevels" [value]="level">
+            {{level | titlecase}}
+          </option>
+        </select>
+      </div>
+
+      <!-- Grupo de ubicación -->
+      <div class="col-span-2" formGroupName="location">
+        <h4 class="text-sm font-medium text-gray-700 mb-3">Ubicación</h4>
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <!-- País -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700">País *</label>
+            <select formControlName="country"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+              <option value="CL">Chile</option>
+              <!-- Agregar más países según necesidad -->
+            </select>
+          </div>
+
+          <!-- Región -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Región *</label>
+            <select formControlName="region"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+              <option value="">Seleccionar región</option>
+              <option value="rm">Región Metropolitana</option>
+              <!-- Agregar regiones dinámicamente según el país -->
+            </select>
+          </div>
+
+          <!-- Ciudad -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Ciudad *</label>
+            <select formControlName="city"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+              <option value="">Seleccionar ciudad</option>
+              <option value="santiago">Santiago</option>
+              
+              <!-- Agregar ciudades dinámicamente según la región -->
+            </select>
+          </div>
+
+          <!-- Opción de trabajo remoto -->
+          <div class="col-span-3">
+            <div class="flex items-center">
+              <input type="checkbox" formControlName="isRemoteAllowed"
+                class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+              <label class="ml-2 block text-sm text-gray-700">
+                Permitir trabajo remoto
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grupo de salario -->
+      <div class="col-span-2" formGroupName="salary">
+        <h4 class="text-sm font-medium text-gray-700 mb-3">Información salarial</h4>
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Salario mínimo *</label>
+            <div class="mt-1 relative rounded-md shadow-sm">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <span class="text-gray-500 sm:text-sm">$</span>
+              </div>
+              <input type="number" formControlName="min"
+                class="mt-1 block w-full pl-7 pr-12 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                placeholder="0">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Salario máximo *</label>
+            <div class="mt-1 relative rounded-md shadow-sm">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <span class="text-gray-500 sm:text-sm">$</span>
+              </div>
+              <input type="number" formControlName="max"
+                class="mt-1 block w-full pl-7 pr-12 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                placeholder="0">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Moneda</label>
+            <select formControlName="currency"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+              <option value="CLP">CLP</option>
+              <option value="USD">USD</option>
+            </select>
+          </div>
+
+          <div class="col-span-3">
+            <div class="flex items-center">
+              <input type="checkbox" formControlName="showInOffer"
+                class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+              <label class="ml-2 block text-sm text-gray-700">
+                Mostrar salario en la oferta
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Descripción del puesto -->
+      <div class="col-span-2">
+        <label class="block text-sm font-medium text-gray-700">
+          Descripción corta *
+          <span class="text-xs text-gray-500">(Máximo 150 caracteres)</span>
+        </label>
+        <div class="mt-1">
+          <textarea formControlName="shortDescription" rows="2"
+            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            placeholder="Breve descripción que aparecerá en las vistas previas"></textarea>
+        </div>
+      </div>
+
+      <div class="col-span-2">
+        <label class="block text-sm font-medium text-gray-700">
+          Descripción completa *
+        </label>
+        <div class="mt-1">
+          <textarea formControlName="description" rows="6"
+            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            placeholder="Describe detalladamente el puesto, responsabilidades y lo que buscas en el candidato ideal"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Paso 2: Requisitos y Habilidades -->
+  <div *ngIf="currentStep === 2" [formGroup]="requirementsForm" class="space-y-8">
+    <!-- Requisitos Esenciales -->
+    <div>
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-medium text-gray-900">Requisitos Esenciales</h3>
+        <button type="button" (click)="addRequirement('essential')"
+          class="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-[#5A4FCF] hover:bg-[#4B0082]">
+          <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          Agregar Requisito
+        </button>
+      </div>
+
+      <div class="space-y-3" formArrayName="essential">
+        <div *ngFor="let control of getFormArrayControls('essential'); let i = index" class="flex items-center gap-2">
+          <input [formControlName]="i" type="text"
+            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            placeholder="Ej: 3 años de experiencia en desarrollo web">
+          <button type="button" (click)="removeRequirement('essential', i)"
+            class="inline-flex items-center p-1.5 border border-transparent rounded-md text-red-600 hover:bg-red-50">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Requisitos Deseables -->
+    <div>
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-medium text-gray-900">Requisitos Deseables</h3>
+        <button type="button" (click)="addRequirement('desirable')"
+          class="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-[#5A4FCF] hover:bg-[#4B0082]">
+          <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          Agregar Requisito
+        </button>
+      </div>
+
+      <div class="space-y-3" formArrayName="desirable">
+        <!-- Similar al anterior pero para requisitos deseables -->
+        <div *ngFor="let control of getFormArrayControls('desirable'); let i = index" class="flex items-center gap-2">
+          <input [formControlName]="i" type="text"
+            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            placeholder="Ej: Conocimientos en AWS">
+          <button type="button" (click)="removeRequirement('desirable', i)"
+            class="inline-flex items-center p-1.5 border border-transparent rounded-md text-red-600 hover:bg-red-50">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- Habilidades Técnicas -->
+    <div formGroupName="skills">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-medium text-gray-900">Habilidades Técnicas</h3>
+        <button type="button" (click)="addSkill('technical')"
+          class="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-[#5A4FCF] hover:bg-[#4B0082]">
+          <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          Agregar Habilidad
+        </button>
+      </div>
+
+      <div class="space-y-3" formArrayName="technical">
+        <div *ngFor="let control of getFormArrayControls('skills.technical'); let i = index"
+          class="flex items-center gap-2">
+          <input [formControlName]="i" type="text"
+            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            placeholder="Ej: Angular, React, Node.js">
+          <button type="button" (click)="removeSkill('technical', i)"
+            class="inline-flex items-center p-1.5 border border-transparent rounded-md text-red-600 hover:bg-red-50">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Habilidades Blandas -->
+    <div formGroupName="skills">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-medium text-gray-900">Habilidades Blandas</h3>
+        <button type="button" (click)="addSkill('soft')"
+          class="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-[#5A4FCF] hover:bg-[#4B0082]">
+          <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          Agregar Habilidad
+        </button>
+      </div>
+
+      <div class="space-y-3" formArrayName="soft">
+        <div *ngFor="let control of getFormArrayControls('skills.soft'); let i = index" class="flex items-center gap-2">
+          <input [formControlName]="i" type="text"
+            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            placeholder="Ej: Trabajo en equipo, Comunicación efectiva">
+          <button type="button" (click)="removeSkill('soft', i)"
+            class="inline-flex items-center p-1.5 border border-transparent rounded-md text-red-600 hover:bg-red-50">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Paso 3: Beneficios -->
+  <div *ngIf="currentStep === 3" [formGroup]="benefitsForm" class="space-y-6">
+    <div class="flex justify-between items-center mb-4">
+      <div>
+        <h3 class="text-lg font-medium text-gray-900">Beneficios</h3>
+        <p class="text-sm text-gray-500">Agrega los beneficios que ofrece el puesto</p>
+      </div>
+      <button type="button" (click)="addBenefit()"
+        class="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-[#5A4FCF] hover:bg-[#4B0082]">
+        <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+        Agregar Beneficio
+      </button>
+    </div>
+
+    <div class="space-y-4" formArrayName="benefits">
+      <div *ngFor="let benefit of getBenefitsControls(); let i = index" [formGroupName]="i"
+        class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Categoría *</label>
+            <select formControlName="category"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+              <option value="">Seleccionar categoría</option>
+              <option value="health">Salud</option>
+              <option value="financial">Financieros</option>
+              <option value="lifestyle">Estilo de vida</option>
+              <option value="professional">Desarrollo profesional</option>
+              <option value="other">Otros</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Título *</label>
+            <input type="text" formControlName="title"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+              placeholder="Ej: Seguro de salud complementario">
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="block text-sm font-medium text-gray-700">Descripción *</label>
+            <textarea formControlName="description" rows="2"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+              placeholder="Describe el beneficio en detalle"></textarea>
+          </div>
+        </div>
+
+        <div class="mt-4 flex justify-end">
+          <button type="button" (click)="removeBenefit(i)"
+            class="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-red-600 hover:bg-red-50">
+            <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+            Eliminar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Paso 4: Preguntas Personalizadas -->
+  <div *ngIf="currentStep === 4" class="space-y-6">
+    <div class="bg-white rounded-lg border border-gray-200 shadow-sm">
+      <div class="p-4 border-b border-gray-200">
+        <h3 class="text-lg font-medium text-gray-900">Preguntas para el Candidato</h3>
+        <p class="mt-1 text-sm text-gray-500">
+          Crea preguntas personalizadas que los candidatos deberán responder al postular
+        </p>
+      </div>
+
+      <!-- Componente de constructor de preguntas -->
+      <app-custom-questions-builder 
+      [templateId]="formTemplateId!" 
+      [questions]="customQuestionsForm.get('questions')?.value || []"
+      (questionsChange)="onQuestionsChange($event)">
+    </app-custom-questions-builder>
+    </div>
+  </div>
+
+  <!-- Vista previa de la oferta -->
+  <div *ngIf="showPreview" class="fixed inset-0 overflow-hidden z-50" role="dialog" aria-modal="true">
+    <div class="absolute inset-0 overflow-hidden">
+      <!-- Overlay de fondo -->
+      <div class="absolute inset-0 bg-gray-500 bg-opacity-75 transition-opacity" (click)="togglePreview()"></div>
+
+      <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+        <div class="pointer-events-auto relative w-screen max-w-2xl">
+          <!-- Header del panel -->
+          <div class="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
+            <div class="px-4 py-6 sm:px-6">
+              <div class="flex items-start justify-between">
+                <h2 class="text-lg font-medium text-gray-900">Vista Previa de la Oferta</h2>
+                <button type="button" (click)="togglePreview()"
+                  class="rounded-md bg-white text-gray-400 hover:text-gray-500">
+                  <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Contenido de la vista previa -->
+            <div class="relative flex-1 px-4 py-6 sm:px-6">
+              <app-job-preview [jobOffer]="getPreviewData()"></app-job-preview>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Botones de navegación -->
+  <div class="mt-8 pt-5 border-t border-gray-200">
+    <div class="flex justify-between">
+      <!-- Botón Anterior -->
+      <button *ngIf="currentStep > 1" type="button" (click)="previousStep()"
+        class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+        <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+        Anterior
+      </button>
+      <div></div> <!-- Espaciador -->
+
+      <!-- Botones Siguiente/Guardar -->
+      <div class="flex space-x-3">
+        <button *ngIf="currentStep < totalSteps" type="button" (click)="nextStep()" [disabled]="!validateCurrentStep()"
+          class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-[#5A4FCF] hover:bg-[#4B0082] disabled:opacity-50 disabled:cursor-not-allowed">
+          Siguiente
+          <svg class="h-5 w-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+
+        <button *ngIf="currentStep === totalSteps" type="button" (click)="saveOffer()"
+          [disabled]="isSubmitting || !validateAllSteps()"
+          class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-[#5A4FCF] hover:bg-[#4B0082] disabled:opacity-50 disabled:cursor-not-allowed">
+          <svg *ngIf="isSubmitting" class="animate-spin -ml-1 mr-2 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+            <path class="opacity-75" fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+          </svg>
+          {{ isSubmitting ? 'Guardando...' : (offer ? 'Actualizar Oferta' : 'Publicar Oferta') }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

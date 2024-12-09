@@ -1,0 +1,85 @@
+// src/styles/_variables.scss
+
+// Colores principales
+$primary-color: #5A4FCF;
+$primary-dark: #4B0082;
+$secondary-color: #C2AFFF;
+$success-color: #4CAF50;
+$warning-color: #FFC107;
+$danger-color: #DC2626;
+$background-light: #F5F7FA;
+
+// Colores de texto
+$text-primary: #2C2C2C;
+$text-secondary: #7D7D7D;
+
+// Colores de fondo
+$bg-light: #F5F7FA;
+$bg-container: #E0E3E7;
+
+// Colores alternativos
+$accent-pink: #F48FB1;
+$accent-blue: #B0BEC5;
+
+// Variables de espaciado
+$spacing-xs: 0.25rem;  // 4px
+$spacing-sm: 0.5rem;   // 8px
+$spacing-md: 1rem;     // 16px
+$spacing-lg: 1.5rem;   // 24px
+$spacing-xl: 2rem;     // 32px
+
+// Variables de bordes
+$border-radius-sm: 0.25rem;
+$border-radius-md: 0.5rem;
+$border-radius-lg: 1rem;
+$border-radius-full: 9999px;
+
+// Variables de sombras
+$shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+$shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+
+// Variables de transiciones
+$transition-fast: 150ms;
+$transition-normal: 300ms;
+$transition-slow: 500ms;
+
+// Breakpoints
+$breakpoint-sm: 640px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 1024px;
+$breakpoint-xl: 1280px;
+
+// Z-index
+$z-dropdown: 1000;
+$z-modal: 1050;
+$z-tooltip: 1070;
+$z-toast: 1080;
+
+// Mixins comunes
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin card-shadow {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  transition: box-shadow 0.3s ease-in-out;
+  
+  &:hover {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+  }
+}
+
+@mixin truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@mixin responsive($breakpoint) {
+  @media screen and (min-width: $breakpoint) {
+    @content;
+  }
+}

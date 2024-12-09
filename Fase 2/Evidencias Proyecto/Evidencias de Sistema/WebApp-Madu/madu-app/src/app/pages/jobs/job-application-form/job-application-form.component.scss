@@ -1,27 +1,136 @@
-// src/app/pages/jobs/job-application-form/job-application-form.component.scss
-.ng-invalid.ng-touched {
-  @apply border-red-500;
+// job-application-form.component.scss
+
+// Variables
+$transition-speed: 0.2s;
+$primary-color: #5A4FCF;  // Índigo medio de la paleta Madu
+$error-color: #DC2626;
+$success-color: #059669;
+
+// Estilos generales del formulario
+.question-container {
+  @apply mb-6 relative;
+  
+  transition: all $transition-speed ease-in-out;
+
+  // Separador entre preguntas
+  &:not(:last-child) {
+    &::after {
+      content: '';
+      @apply block w-full h-px bg-gray-200 my-6;
+    }
+  }
 }
 
+// Estilos para el uploader de archivos
+.file-upload-container {
+  .upload-area {
+    @apply relative border-2 border-dashed rounded-lg p-6 
+           transition-all duration-200 ease-in-out;
+
+    &:hover {
+      @apply border-indigo-300 bg-indigo-50;
+    }
+
+    &.drag-over {
+      @apply border-indigo-500 bg-indigo-50;
+    }
+
+    input[type="file"] {
+      @apply hidden;
+    }
+
+    .file-info {
+      @apply mt-2 text-sm text-gray-600 flex items-center gap-2;
+      
+      .file-name {
+        @apply truncate max-w-xs;
+      }
+
+      .file-size {
+        @apply text-gray-500;
+      }
+    }
+  }
+}
+
+// Estilos para opciones múltiples y única
+.options-group {
+  @apply space-y-2;
+
+  .option-item {
+    @apply relative flex items-center p-3 rounded-lg 
+           transition-all duration-200 ease-in-out;
+
+    &:hover {
+      @apply bg-gray-50;
+    }
+
+    input[type="radio"],
+    input[type="checkbox"] {
+      @apply transform scale-110 transition-transform duration-200;
+
+      &:checked + label {
+        @apply text-indigo-700 font-medium;
+      }
+    }
+
+    label {
+      @apply ml-3 block text-sm text-gray-700 cursor-pointer select-none;
+    }
+  }
+}
+
+// Animaciones para validación
+.form-field {
+  &.ng-invalid.ng-touched {
+    input, textarea, select {
+      @apply border-red-300;
+
+      &:focus {
+        @apply ring-red-500 border-red-500;
+      }
+    }
+  }
+
+  &.ng-valid.ng-touched {
+    input, textarea, select {
+      @apply border-green-300;
+
+      &:focus {
+        @apply ring-green-500 border-green-500;
+      }
+    }
+  }
+}
+
+// Estilos para mensajes de error
 .error-message {
-  @apply text-red-500 text-sm mt-1;
+  @apply mt-2 text-sm text-red-600;
+  animation: slideIn 0.2s ease-out;
 }
 
-// Estilo personalizado para input type file
-input[type="file"] {
-  @apply block w-full text-sm text-gray-500
-      file:mr-4 file:py-2 file:px-4
-      file:rounded-lg file:border-0
-      file:text-sm file:font-semibold
-      file:bg-indigo-50 file:text-indigo-700
-      hover:file:bg-indigo-100;
+// Estilos para el estado de carga
+.loading-overlay {
+  @apply fixed inset-0 bg-black bg-opacity-50 
+         flex items-center justify-center z-50;
+
+  .loading-content {
+    @apply bg-white p-6 rounded-lg shadow-xl 
+           flex flex-col items-center;
+
+    .spinner {
+      @apply w-12 h-12 border-4 border-indigo-200 
+             rounded-full border-t-indigo-600 
+             animate-spin;
+    }
+  }
 }
 
-// Animación de entrada para los elementos del formulario
+// Animaciones
 @keyframes slideIn {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(-10px);
   }
   to {
     opacity: 1;
@@ -29,6 +138,76 @@ input[type="file"] {
   }
 }
 
-form > div {
-  animation: slideIn 0.3s ease-out forwards;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// Media queries para responsividad
+@media (max-width: 640px) {
+  .question-container {
+    @apply px-4;
+  }
+
+  .file-upload-container {
+    .upload-area {
+      @apply p-4;
+    }
+  }
+
+  .options-group {
+    .option-item {
+      @apply p-2;
+    }
+  }
+}
+
+// Estilo para el botón de submit
+.submit-button {
+  @apply relative overflow-hidden;
+  
+  &:not(:disabled) {
+    &:hover {
+      @apply bg-indigo-700;
+    }
+
+    &:active {
+      @apply bg-indigo-800;
+    }
+  }
+
+  &:disabled {
+    @apply cursor-not-allowed opacity-50;
+  }
+
+  .button-content {
+    @apply flex items-center justify-center gap-2;
+  }
+}
+
+// Tooltips personalizados
+.custom-tooltip {
+  @apply absolute z-10 bg-gray-900 text-white px-2 py-1 
+         text-sm rounded shadow-lg max-w-xs;
+  
+  animation: fadeIn 0.2s ease-out;
+}
+
+// Efectos de hover para inputs
+input:not([type="radio"]):not([type="checkbox"]),
+textarea,
+select {
+  @apply transition-all duration-200;
+
+  &:hover:not(:disabled) {
+    @apply border-gray-400;
+  }
+
+  &:focus:not(:disabled) {
+    @apply border-indigo-500 ring-2 ring-indigo-200;
+  }
 }

@@ -12,7 +12,10 @@ import {
   getDoc,
 } from '@angular/fire/firestore';
 import { Observable, firstValueFrom, from, map } from 'rxjs';
-import { JobOffer } from '../../core/interfaces/job-offer/job-offer.interface';
+import {
+  JobOffer,
+  JobOfferStatus,
+} from '../../core/interfaces/job-offer/job-offer.interface';
 import { AuthService } from '../../auth/data-access/auth.service';
 import {
   UserRole,
@@ -22,12 +25,37 @@ import {
 } from '../../core/interfaces/user.interface';
 import { JobApplication } from '../../core/interfaces/job-application/job-application.interface';
 import { JobApplicationRequest } from '../../core/interfaces/job-application/job-application-request.interface';
+import { EmpresaService } from '../empresa/empresa.service';
+import { FormTemplateService } from '../application-form/form-template.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class JobOfferService {
-  constructor(private firestore: Firestore, private authService: AuthService) {}
+  
+  constructor(
+    private firestore: Firestore,
+    private authService: AuthService,
+    private empresaService: EmpresaService,
+    private formTemplateService: FormTemplateService 
+  ) {}
+
+  getJobOffersByCompany(empresaId: string): Observable<JobOffer[]> {
+    console.log('getJobOffersByCompany - empresaId:', empresaId);
+    const jobOffersRef = collection(this.firestore, 'jobOffers');
+    const q = query(jobOffersRef, where('empresaId', '==', empresaId));
+    return from(getDocs(q)).pipe(
+      map((snapshot) =>
+        snapshot.docs.map(
+          (doc) =>
+            ({
+              id: doc.id,
+              ...doc.data(),
+            } as JobOffer)
+        )
+      )
+    );
+  }
 
   // Crear oferta laboral con validación de rol
   async createJobOffer(jobOffer: Omit<JobOffer, 'id'>): Promise<string> {
@@ -38,20 +66,70 @@ export class JobOfferService {
         throw new Error('Solo los empleadores pueden crear ofertas');
       }
 
+      // Obtener la empresa asociada al empleador
+      if (!user?.uid) {
+        throw new Error('El usuario no tiene un UID válido');
+      }
+      const empresa = await this.empresaService.getEmpresaByEmpleadorId(
+        user.uid
+      );
+      if (!empresa) {
+        throw new Error('No se encontró una empresa asociada al empleador');
+      }
+
+      // Crear la oferta con todos los campos necesarios
       const jobOffersRef = collection(this.firestore, 'jobOffers');
-      const docRef = await addDoc(jobOffersRef, {
+      const newOffer = {
         ...jobOffer,
+        employerId: user.uid,
+        empresaId: empresa.id, // Agregar el ID de la empresa
+        companyName: empresa.nombreEmpresa, // Usar el nombre de la empresa
+        department: jobOffer.department || '',
         createdAt: new Date(),
         updatedAt: new Date(),
-        status: 'active',
+        status: JobOfferStatus.PUBLISHED,
+        metrics: {
+          views: 0,
+          applications: 0,
+          shares: 0,
+        },
         applicants: [],
+        keywords: [],
+        isHighlighted: false,
+        isConfidential: false,
+      };
+
+      console.log('Creando nueva oferta:', newOffer);
+
+      const docRef = await addDoc(jobOffersRef, newOffer);
+      console.log('Oferta creada con ID:', docRef.id);
+      // Crear el template de formulario asociado
+
+      const templateId = await this.formTemplateService.createFormTemplate(
+        docRef.id,  // jobOfferId
+        user.uid    // employerId
+      );
+      await updateDoc(doc(this.firestore, 'jobOffers', docRef.id), {
+        formTemplateId: templateId
       });
+
+      // await this.formTemplateService.createFormTemplate({
+      //   jobOfferId: docRef.id,
+      //   employerId: user.uid,
+      //   title: `Formulario de postulación - ${newOffer.title}`,
+      //   description: 'Formulario de postulación personalizado',
+      //   questions: [],
+      // });
 
       return docRef.id;
     } catch (error) {
       console.error('Error creating job offer:', error);
       throw error;
     }
+
+    
+
+    
   }
 
   // Obtener todas las ofertas laborales
@@ -76,13 +154,17 @@ export class JobOfferService {
     const q = query(jobOffersRef, where('employerId', '==', employerId));
     return from(getDocs(q)).pipe(
       map((snapshot) =>
-        snapshot.docs.map(
-          (doc) =>
-            ({
-              id: doc.id,
-              ...doc.data(),
-            } as JobOffer)
-        )
+        snapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            ...data,
+            publishedAt: data['publishedAt']?.toDate(),
+            expiresAt: data['expiresAt']?.toDate(),
+            createdAt: data['createdAt']?.toDate(),
+            updatedAt: data['updatedAt']?.toDate(),
+          } as JobOffer;
+        })
       )
     );
   }
@@ -90,28 +172,31 @@ export class JobOfferService {
   async getJobOffersByEmployerId(employerId: string): Promise<JobOffer[]> {
     try {
       console.log('Service: Buscando ofertas para empleador:', employerId);
-      
+
       // Primero, verificar si existe el empleador
       const empleadorRef = doc(this.firestore, `empleador/${employerId}`);
       const empleadorDoc = await getDoc(empleadorRef);
-      
+
       if (!empleadorDoc.exists()) {
         console.log('No se encontró el documento del empleador');
         return [];
       }
-  
+
       // Luego buscar las ofertas
       const jobOffersRef = collection(this.firestore, 'jobOffers');
       const q = query(jobOffersRef, where('employerId', '==', employerId));
       const querySnapshot = await getDocs(q);
-      
+
       console.log('Documentos encontrados:', querySnapshot.size);
-  
-      const offers = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      } as JobOffer));
-      
+
+      const offers = querySnapshot.docs.map(
+        (doc) =>
+          ({
+            id: doc.id,
+            ...doc.data(),
+          } as JobOffer)
+      );
+
       console.log('Ofertas encontradas:', offers);
       return offers;
     } catch (error) {
@@ -265,7 +350,10 @@ export class JobOfferService {
     }
   }
 
-  async createJobApplication(application: JobApplicationRequest): Promise<string> {
+  async createJobApplication(
+    application: JobApplicationRequest
+    
+  ): Promise<string> {
     try {
       // Primero obtener la oferta de trabajo para tener el título
       const jobOffer = await this.getJobOfferById(application.jobOfferId);
@@ -282,7 +370,9 @@ export class JobOfferService {
         status: 'pending',
         appliedAt: new Date(),
         updatedAt: new Date(),
-        coverLetter: application.coverLetter || ''
+        coverLetter: application.coverLetter || '',
+        responses: [],
+        createdAt: new Date()
       };
 
       // Opcional: Actualizar la oferta de trabajo para incluir este postulante
@@ -291,12 +381,12 @@ export class JobOfferService {
         applicants: [...(jobOffer.applicants || []), application.employeeId],
       });
 
-      const docRef = await addDoc(jobApplicationsRef, newApplication);
-      return docRef.id;
-    } catch (error) {
-      console.error('Error creating job application:', error);
-      throw error;
-    }
+      const docRef = await addDoc(collection(this.firestore, 'jobApplications'), newApplication);
+    return docRef.id;
+  } catch (error) {
+    console.error('Error creating job application:', error);
+    throw error;
+  }
   }
 
   async updateApplicationStatus(
@@ -314,30 +404,51 @@ export class JobOfferService {
     });
   }
 
-  async getJobApplicationById(applicationId: string): Promise<JobApplication | null> {
+  async getJobApplicationById(
+    applicationId: string
+  ): Promise<JobApplication | null> {
     try {
-      const applicationRef = doc(this.firestore, 'jobApplications', applicationId);
+      const applicationRef = doc(
+        this.firestore,
+        'jobApplications',
+        applicationId
+      );
       const applicationDoc = await getDoc(applicationRef);
-  
+
       if (!applicationDoc.exists()) {
         return null;
       }
-  
+
       const application = {
         id: applicationDoc.id,
-        ...applicationDoc.data()
+        ...applicationDoc.data(),
       } as JobApplication;
-  
+
       // Obtener datos adicionales de la oferta
       const jobOffer = await this.getJobOfferById(application.jobOfferId);
       if (jobOffer) {
         application.jobTitle = jobOffer.title;
       }
-  
+
       return application;
     } catch (error) {
       console.error('Error getting application:', error);
       return null;
+    }
+  }
+  async hasUserApplied(jobOfferId: string, userId: string): Promise<boolean> {
+    try {
+      const applicationsRef = collection(this.firestore, 'jobApplications');
+      const q = query(
+        applicationsRef, 
+        where('jobOfferId', '==', jobOfferId),
+        where('employeeId', '==', userId)
+      );
+      const snapshot = await getDocs(q);
+      return !snapshot.empty;
+    } catch (error) {
+      console.error('Error checking application:', error);
+      return false;
     }
   }
 }
