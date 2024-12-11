@@ -10,15 +10,21 @@ import {
   getDocs,
   CollectionReference,
   Query, 
-  addDoc
+  addDoc,
+  doc,
+  updateDoc,
+  getDoc,
+  Timestamp,
+  DocumentData
 } from '@angular/fire/firestore';
-import { Observable, from } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, from, throwError } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';import { Asistencia } from '../../core/interfaces/asistencia.interface';
 
 export interface AsistenciaFiltros {
   fechaInicio?: Date;
   fechaFin?: Date;
   empleadoId?: string;
+  empresaId?: string;
 }
 
 @Injectable({
@@ -26,6 +32,92 @@ export interface AsistenciaFiltros {
 })
 export class AsistenciaService {
   constructor(private firestore: Firestore) {}
+
+  // Obtener la asistencia del día actual para un empleado
+  obtenerAsistenciaHoy(empleadoId: string, fecha: string): Observable<Asistencia | null> {
+    const asistenciaRef = collection(this.firestore, 'asistencia');
+    const q = query(
+      asistenciaRef,
+      where('usuarioId', '==', empleadoId),
+      where('fecha', '==', fecha)
+    );
+
+    return from(getDocs(q)).pipe(
+      map(snapshot => {
+        if (snapshot.empty) return null;
+        const doc = snapshot.docs[0];
+        return { id: doc.id, ...doc.data() } as Asistencia;
+      }),
+      catchError(error => {
+        console.error('Error al obtener asistencia del día:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  // Registrar entrada de un empleado
+  async registrarEntrada(asistencia: Partial<Asistencia>): Promise<string> {
+    try {
+      const asistenciaRef = collection(this.firestore, 'asistencia');
+      const docRef = await addDoc(asistenciaRef, {
+        ...asistencia,
+        entrada: Timestamp.fromDate(asistencia.entrada as Date),
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now()
+      });
+      return docRef.id;
+    } catch (error) {
+      console.error('Error al registrar entrada:', error);
+      throw error;
+    }
+  }
+
+  // Registrar salida de un empleado
+  async registrarSalida(asistenciaId: string, ubicacionSalida: any): Promise<void> {
+    try {
+      const asistenciaRef = doc(this.firestore, 'asistencia', asistenciaId);
+      await updateDoc(asistenciaRef, {
+        salida: Timestamp.now(),
+        ubicacionSalida,
+        updatedAt: Timestamp.now()
+      });
+    } catch (error) {
+      console.error('Error al registrar salida:', error);
+      throw error;
+    }
+  }
+
+  // Obtener asistencias por empleado con filtros
+  obtenerAsistenciasPorEmpleado(
+    empleadoId: string,
+    fechaInicio: Date,
+    fechaFin: Date
+  ): Observable<Asistencia[]> {
+    const asistenciaRef = collection(this.firestore, 'asistencia');
+    const q = query(
+      asistenciaRef,
+      where('usuarioId', '==', empleadoId),
+      where('fecha', '>=', fechaInicio.toISOString().split('T')[0]),
+      where('fecha', '<=', fechaFin.toISOString().split('T')[0]),
+      orderBy('fecha', 'desc')
+    );
+
+    return from(getDocs(q)).pipe(
+      map(snapshot => {
+        if (snapshot.empty) return [];
+        return snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+          entrada: doc.data()['entrada']?.toDate(),
+          salida: doc.data()['salida']?.toDate()
+        })) as Asistencia[];
+      }),
+      catchError(error => {
+        console.error('Error al obtener asistencias:', error);
+        return throwError(() => error);
+      })
+    );
+  }
 
   // Obtener todas las asistencias de los empleados de una empresa específica
   obtenerAsistenciasPorEmpresa(empresaId: string, filtros?: AsistenciaFiltros): Observable<any[]> {

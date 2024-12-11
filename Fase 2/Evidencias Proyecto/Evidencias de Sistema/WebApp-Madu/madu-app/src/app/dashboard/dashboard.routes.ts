@@ -28,6 +28,7 @@ import { RoleGuard } from '../core/guards/role.guard';
 import { ApplicationSuccessGuard } from '../core/guards/application-success.guard';
 import { MisPostulacionesComponent } from '../dashboard/pages/mis-postulaciones/mis-postulaciones.component';
 import { privateGuard } from '../core/auth.guard';
+import { MiAsistenciaComponent } from './pages/mi-asistencia/mi-asistencia.component';
 
 export class DashboardModule {}
 
@@ -53,6 +54,12 @@ export const DASHBOARD_ROUTES: Routes = [
           .then(m => m.MisPostulacionesComponent),
         canActivate: [() => privateGuard(), RoleGuard],
         data: { roles: ['Usuario'] }
+      },
+      { 
+        path: 'mi-asistencia', 
+        component: MiAsistenciaComponent,
+        canActivate: [RoleGuard],
+        data: { roles: ['Empleado'] }
       },
 
       // Rutas de Mi Empresa

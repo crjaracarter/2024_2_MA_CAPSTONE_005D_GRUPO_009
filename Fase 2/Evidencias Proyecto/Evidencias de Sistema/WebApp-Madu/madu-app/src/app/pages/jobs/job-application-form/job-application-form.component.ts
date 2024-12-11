@@ -271,12 +271,12 @@ export class JobApplicationFormComponent implements OnInit {
       }
 
       // Verificar postulación previa
-      const hasApplied = await this.jobOfferService.hasUserApplied(
+      const hasExistingApplication = await this.jobApplicationService.checkExistingApplication(
         this.jobOffer.id,
         user.uid
       );
 
-      if (hasApplied) {
+      if (hasExistingApplication) {
         this.toastr.error('Ya has postulado a esta oferta laboral');
         return;
       }
@@ -287,18 +287,8 @@ export class JobApplicationFormComponent implements OnInit {
       // Preparar respuestas
       const responses = await this.prepareResponses();
 
+      // Crear postulación (una sola vez)
       const applicationId = await this.jobApplicationService.createJobApplication({
-        jobOfferId: this.jobOffer.id,
-        employeeId: user.uid,
-        responses,
-        status: 'pending',
-        appliedAt: new Date(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      });
-
-      // Crear postulación
-      await this.jobApplicationService.createJobApplication({
         jobOfferId: this.jobOffer.id,
         employeeId: user.uid,
         responses,
@@ -318,7 +308,11 @@ export class JobApplicationFormComponent implements OnInit {
       });
     } catch (error) {
       console.error('Error al enviar postulación:', error);
-      this.toastr.error('Error al enviar la postulación');
+      if (error instanceof Error && error.message === 'Ya has postulado a esta oferta anteriormente') {
+        this.toastr.error('Ya has postulado a esta oferta laboral');
+      } else {
+        this.toastr.error('Error al enviar la postulación');
+      }
     } finally {
       this.submitLoading = false;
     }

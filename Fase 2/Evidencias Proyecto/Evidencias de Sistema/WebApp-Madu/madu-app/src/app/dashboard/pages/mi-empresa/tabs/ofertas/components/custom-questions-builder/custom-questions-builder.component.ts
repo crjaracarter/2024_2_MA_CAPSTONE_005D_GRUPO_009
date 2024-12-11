@@ -405,26 +405,85 @@ export class CustomQuestionsBuilderComponent {
     });
   }
 
-  deleteQuestion(index: number) {
-    const question = this.questions[index];
-    if (!question.isEditable) {
-      this.notificationService.warning('Esta pregunta no se puede eliminar');
-      return;
-    }
+  async deleteQuestion(index: number) {
+    try {
+      // Validar que el índice sea válido
+      if (index < 0 || index >= this.questions.length) {
+        this.notificationService.error('Índice de pregunta inválido');
+        return;
+      }
 
-    if (confirm('¿Estás seguro de que deseas eliminar esta pregunta?')) {
-      this.questions.splice(index, 1);
-      this.questions.forEach((q, idx) => (q.order = idx));
-      this.questionsChange.emit(this.questions);
+      const question = this.questions[index];
+
+      // Prevenir eliminación de la pregunta CV
+      if (question.id === 'cv_upload') {
+        this.notificationService.warning(
+          'La pregunta del CV no se puede eliminar'
+        );
+        return;
+      }
+
+      // Validar que la pregunta exista y sea editable
+      if (!question || !question.isEditable) {
+        this.notificationService.warning('Esta pregunta no se puede eliminar');
+        return;
+      }
+
+      // Solicitar confirmación antes de eliminar
+      const confirmed = await this.confirmDelete();
+      if (!confirmed) {
+        return;
+      }
+
+      this.isLoading = true;
+
+      // Validar que exista templateId
+      if (!this.templateId) {
+        throw new Error('Template ID no encontrado');
+      }
+
+      console.log('Eliminando pregunta...', {
+        templateId: this.templateId,
+        questionToDelete: question,
+        currentQuestions: this.questions,
+      });
+
+      // Crear una copia del array de preguntas para mantener inmutabilidad
+      const updatedQuestions = this.questions.filter((_, i) => i !== index);
+
+      // Actualizar el orden de las preguntas restantes
+      updatedQuestions.forEach((q, idx) => {
+        q.order = idx;
+      });
 
       // Actualizar en Firebase
-      this.formTemplateService
-        .updateFormTemplate(this.templateId, this.questions)
-        .catch((error) => {
-          console.error('Error deleting question:', error);
-          this.notificationService.error('Error al eliminar la pregunta');
-        });
+      await this.formTemplateService.updateFormTemplate(
+        this.templateId,
+        updatedQuestions
+      );
+
+      // Actualizar el estado local
+      this.questions = updatedQuestions;
+      this.questionsChange.emit(this.questions);
+
+      console.log('Preguntas después de eliminar:', this.questions);
+      this.notificationService.success('Pregunta eliminada correctamente');
+    } catch (error) {
+      console.error('Error al eliminar la pregunta:', error);
+      this.notificationService.error('Error al eliminar la pregunta');
+    } finally {
+      this.isLoading = false;
     }
+  }
+
+  // Mantén la función auxiliar para confirmar la eliminación
+  private confirmDelete(): Promise<boolean> {
+    return new Promise((resolve) => {
+      const result = confirm(
+        '¿Estás seguro de que deseas eliminar esta pregunta?'
+      );
+      resolve(result);
+    });
   }
 
   onDrop(event: CdkDragDrop<FormQuestion[]>) {

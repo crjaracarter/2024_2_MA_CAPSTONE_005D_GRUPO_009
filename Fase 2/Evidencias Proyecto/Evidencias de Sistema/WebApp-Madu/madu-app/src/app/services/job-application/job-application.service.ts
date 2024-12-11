@@ -16,6 +16,17 @@ export class JobApplicationService {
 
   async createJobApplication(application: Omit<JobApplication, 'id'>): Promise<string> {
     try {
+      // Verificar si ya existe una postulación
+      const hasExisting = await this.checkExistingApplication(
+        application.jobOfferId,
+        application.employeeId
+      );
+  
+      if (hasExisting) {
+        throw new Error('Ya has postulado a esta oferta anteriormente');
+      }
+  
+      // Si no existe, crear la nueva postulación
       const applicationsRef = collection(this.firestore, 'jobApplications');
       const docRef = await addDoc(applicationsRef, {
         ...application,
@@ -92,6 +103,23 @@ export class JobApplicationService {
     
     const applicationRef = doc(this.firestore, 'jobApplications', id);
     await deleteDoc(applicationRef);
+  }
+
+  async checkExistingApplication(jobOfferId: string, userId: string): Promise<boolean> {
+    try {
+      const applicationsRef = collection(this.firestore, 'jobApplications');
+      const q = query(
+        applicationsRef, 
+        where('jobOfferId', '==', jobOfferId),
+        where('employeeId', '==', userId)
+      );
+      
+      const querySnapshot = await getDocs(q);
+      return !querySnapshot.empty;
+    } catch (error) {
+      console.error('Error checking existing application:', error);
+      throw error;
+    }
   }
 
   

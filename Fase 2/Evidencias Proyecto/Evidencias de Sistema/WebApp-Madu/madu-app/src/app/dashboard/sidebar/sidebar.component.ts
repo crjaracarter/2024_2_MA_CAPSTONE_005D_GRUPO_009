@@ -51,6 +51,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   isEmpleador: boolean = false;
   private userSubscription?: Subscription;
   isAdmin: boolean = false;
+  isEmpleado: boolean = false;
   
   
   constructor(
@@ -80,12 +81,19 @@ export class SidebarComponent implements OnInit, OnDestroy {
     );
   }
 
+  get isEmpleado$() {
+    return this.authState.user$.pipe(
+      map(user => user?.rol === UserRole.EMPLEADO)
+    );
+  }
+
   ngOnInit(): void {
     this.checkScreenSize();
     
     this.userSubscription = this.authState.user$.subscribe(user => {
       this.isEmpleador = user?.rol === UserRole.EMPLEADOR;
       this.isAdmin = user?.rol === UserRole.ADMIN;
+      this.isEmpleado = user?.rol === UserRole.EMPLEADO;
     });
   }
 

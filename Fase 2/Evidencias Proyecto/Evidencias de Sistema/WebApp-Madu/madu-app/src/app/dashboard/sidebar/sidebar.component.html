@@ -65,6 +65,17 @@
       <div class="py-4">
         <div class="text-xs font-bold text-white/50 uppercase px-3">Gestión</div>
       </div>
+      <!-- Mi Asistencia - Solo visible para Empleado -->
+      <a *ngIf="isEmpleado" routerLink="/dashboard/mi-asistencia" routerLinkActive="bg-white/20"
+        class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 text-white transition-colors group">
+        <div class="p-2 rounded-lg bg-white/10 group-hover:bg-white/20 transition-colors">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <span class="font-medium">Mi Asistencia</span>
+      </a>
       <!-- Mi Empresa - Solo visible para Empleador -->
       <a *ngIf="isEmpleador" routerLink="/dashboard/mi-empresa" routerLinkActive="bg-white/20"
         class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 text-white transition-colors group">
@@ -96,7 +107,8 @@
 
       <ng-container *ngIf="(authState.user$ | async)?.rol === UserRole.USUARIO">
         <!-- Ofertas de Trabajo -->
-        <a routerLink="/dashboard/ofertas-disponibles" routerLinkActive="bg-white/20" target="_blank"
+        <a href="https://madu-app-ca037.web.app/empresa/3B14YgsYENYAA4B9hkdf/trabajos" routerLinkActive="bg-white/20"
+          target="_blank"
           class="flex items-center justify-between p-3 rounded-xl hover:bg-white/10 text-white transition-colors group">
           <div class="flex items-center gap-3">
             <div class="p-2 rounded-lg bg-white/10 group-hover:bg-white/20 transition-colors">
@@ -118,7 +130,7 @@
           </svg>
         </a>
 
-        
+
       </ng-container>
       <!-- ADMINISTRACION Separador -->
       <ng-container *ngIf="(authState.user$ | async)?.rol === UserRole.ADMIN">
