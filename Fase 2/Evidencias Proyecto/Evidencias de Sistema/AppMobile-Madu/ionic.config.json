@@ -1,0 +1,7 @@
+{
+  "name": "maduconlogin",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

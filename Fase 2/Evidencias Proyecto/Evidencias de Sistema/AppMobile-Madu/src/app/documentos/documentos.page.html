@@ -1,0 +1,58 @@
+<!-- documentos.page.html -->
+<ion-content class="gradient-background">
+  <!-- Loading overlay -->
+  <div class="loading-overlay" *ngIf="isloading">
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
+  </div>
+
+  <!-- Encabezado -->
+  <div class="header-container">
+    <h1>Calendario</h1>
+    <p class="subtitle">Eventos y Notas</p>
+  </div>
+
+  <!-- Panel Principal -->
+  <div class="main-container">
+    <!-- Filtros -->
+    <div class="filter-section">
+      <ion-segment [value]="selectedView" (ionChange)="filterEvents($event)" scrollable>
+        <ion-segment-button value="all">
+          <ion-label>Todo</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="payments">
+          <ion-label>Pagos</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="holidays">
+          <ion-label>Feriados</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+    </div>
+
+    <!-- Calendario -->
+    <div class="calendar-card">
+      <full-calendar #calendar [options]="calendarOptions"></full-calendar>
+    </div>
+
+    <!-- Próximos Eventos -->
+    <div class="upcoming-section">
+      <h3 class="section-title">PRÓXIMOS EVENTOS</h3>
+      <div class="upcoming-card">
+        <ion-list>
+          <ion-item *ngFor="let event of events">
+            <ion-icon [name]="getEventIcon(event)" slot="start" 
+                     [style.color]="event.color"></ion-icon>
+            <ion-label>
+              <h4>{{event.title}}</h4>
+              <p>{{event.date || event.start | date:'dd/MM/yyyy'}}</p>
+            </ion-label>
+          </ion-item>
+          <ion-item *ngIf="events.length === 0">
+            <ion-label class="no-events">
+              No hay eventos próximos
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </div>
+    </div>
+  </div>
+</ion-content>

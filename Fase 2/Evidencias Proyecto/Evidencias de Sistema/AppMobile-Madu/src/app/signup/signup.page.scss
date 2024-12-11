@@ -1,0 +1,202 @@
+// signup.page.scss
+// Variables (las mismas que en login)
+$indigo-dark: #4B0082;
+$indigo-medium: #5A4FCF;
+$indigo-light: #8A8EF2;
+$lavender: #C2AFFF;
+$background-light: #F5F7FA;
+$gray-soft: #E0E3E7;
+$text-primary: #f8f8f8;
+$text-secondary: #7D7D7D;
+
+.signup-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, $indigo-dark, $indigo-medium);
+  padding: 20px;
+
+  .header {
+    padding-top: 40px;
+    text-align: center;
+    margin-bottom: 40px;
+    
+    .logo {
+      width: 180px;
+      height: auto;
+      margin-bottom: 24px;
+      animation: fadeIn 0.8s ease-out;
+    }
+
+    h1 {
+      color: white;
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    p {
+      color: $lavender;
+      font-size: 16px;
+      opacity: 0.9;
+    }
+  }
+
+  .signup-card {
+    background: $background-light;
+    border-radius: 25px;
+    padding: 30px 20px;
+    margin: 0 auto;
+    max-width: 400px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    animation: slideUp 0.5s ease-out;
+
+    ion-list {
+      background: transparent;
+      padding: 0;
+    }
+
+    ion-item {
+      --background: white;
+      --padding-start: 12px;
+      --highlight-height: 2px;
+      --highlight-color: #{$indigo-medium};
+      border-radius: 12px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+
+      &.item-has-focus {
+        --highlight-background: #{$indigo-medium};
+      }
+
+      ion-label {
+        color: $text-secondary;
+        font-size: 14px;
+      }
+
+      ion-input, ion-select {
+        --padding-start: 8px;
+        font-size: 16px;
+        --placeholder-color: #{$text-secondary};
+        --placeholder-opacity: 0.8;
+      }
+
+      ion-icon {
+        color: $indigo-medium;
+        margin-right: 8px;
+      }
+    }
+
+    .error-message {
+      padding-left: 16px;
+      font-size: 12px;
+      color: var(--ion-color-danger);
+    }
+
+    .signup-button {
+      --background: #{$indigo-dark};
+      --border-radius: 12px;
+      --background-activated: #{$indigo-medium};
+      --box-shadow: 0 4px 12px rgba(90,79,207,0.2);
+      margin: 24px 0;
+      height: 48px;
+      font-size: 16px;
+      font-weight: 600;
+      text-transform: none;
+      letter-spacing: 0.5px;
+
+      &:disabled {
+        opacity: 0.7;
+      }
+    }
+
+    .login-link {
+      text-align: center;
+      color: $text-secondary;
+      font-size: 14px;
+      margin-top: 16px;
+
+      ion-button {
+        --color: #{$indigo-medium};
+        font-weight: 500;
+        text-transform: none;
+        
+        &::part(native) {
+          padding: 0;
+        }
+      }
+    }
+  }
+}
+
+// Animations
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 320px) {
+  .signup-container {
+    padding: 16px;
+    
+    .header {
+      padding-top: 20px;
+      
+      h1 {
+        font-size: 20px;
+      }
+      
+      p {
+        font-size: 14px;
+      }
+    }
+    
+    .signup-card {
+      padding: 20px 16px;
+    }
+  }
+}
+
+// Agregar al signup.page.scss existente
+ion-content {
+  --background: transparent;
+}
+
+.signup-container {
+  min-height: 100%;
+  padding: 20px;
+  background: linear-gradient(135deg, $indigo-dark, $indigo-medium);
+}
+
+ion-item {
+  margin-bottom: 5px;
+  
+  ion-icon {
+    color: $indigo-medium;
+  }
+}
+
+// Asegurar que el contenido tenga suficiente padding al final
+.signup-card {
+  padding-bottom: 30px;
+}
+
+// Mejorar la visualización de los errores
+.error-message {
+  margin: 5px 0 10px 16px;
+  font-size: 12px;
+}

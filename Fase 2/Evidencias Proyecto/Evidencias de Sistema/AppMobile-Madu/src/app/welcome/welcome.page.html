@@ -1,0 +1,53 @@
+<!-- welcome.page.html -->
+<ion-content>
+  <!-- Slide 1 -->
+  <div class="slide slide1" *ngIf="currentSlide === 0">
+    <div class="content-wrapper">
+      <img src="assets/icon/madu-blanco.png" alt="Madu Logo" class="logo animation-fade-in">
+      <h1 class="animation-slide-up">¡Bienvenido a Madu!</h1>
+      <p class="animation-slide-up">La plataforma que impulsa la gestión de personas</p>
+      <ion-button expand="block" (click)="nextSlide()" class="next-button animation-fade-in">
+        <span>Siguiente</span>
+        <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
+
+  <!-- Slide 2 -->
+  <div class="slide slide2" *ngIf="currentSlide === 1">
+    <div class="content-wrapper">
+      <img src="assets/icon/madu-blanco.png" alt="Madu Logo" class="logo animation-fade-in">
+      <h1 class="animation-slide-up">Madu se creó para apoyar la gestión de personas de las pequeñas y medianas empresas.</h1>
+      <p class="animation-slide-up">Facilitamos herramientas y recursos que contribuyen al éxito de tu equipo.</p>
+      <ion-button expand="block" (click)="nextSlide()" class="next-button animation-fade-in">
+        <span>Siguiente</span>
+        <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
+
+  <!-- Slide 3 -->
+  <div class="slide slide3" *ngIf="currentSlide === 2">
+    <div class="content-wrapper">
+      <img src="assets/icon/madu-blanco.png" alt="Madu Logo" class="logo animation-fade-in">
+      <h1 class="animation-slide-up">Comienza la experiencia</h1>
+      <p class="animation-slide-up">Nos importa la MADUrez de tu empresa</p>
+      <ion-button expand="block" (click)="goToLogin()" class="start-button animation-fade-in">
+        <span>Empezar ahora</span>
+        <ion-icon name="chevron-forward-circle-outline" slot="end"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
+
+  <!-- Slide indicators -->
+  <div class="slide-indicators">
+    <div class="indicator" [class.active]="currentSlide === 0"></div>
+    <div class="indicator" [class.active]="currentSlide === 1"></div>
+    <div class="indicator" [class.active]="currentSlide === 2"></div>
+  </div>
+
+  <!-- Skip button -->
+  <ion-button fill="clear" class="skip-button" (click)="goToLogin()">
+    Saltar
+  </ion-button>
+</ion-content>

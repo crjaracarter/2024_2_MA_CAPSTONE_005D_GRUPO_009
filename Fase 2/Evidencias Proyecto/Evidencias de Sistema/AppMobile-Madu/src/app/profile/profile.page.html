@@ -1,0 +1,95 @@
+<!-- profile.page.html -->
+<ion-content>
+  <div class="profile-wrapper">
+    <!-- Loading State -->
+    <div class="loading-container" *ngIf="isLoading">
+      <ion-spinner name="circular"></ion-spinner>
+      <p>Cargando perfil...</p>
+    </div>
+
+    <!-- Profile Content -->
+    <div class="profile-container" *ngIf="!isLoading && user">
+      <!-- Header Section -->
+      <div class="profile-header">
+        <div class="avatar-container">
+          <ion-avatar class="large-avatar">
+            <img src="assets/icon/avatar-placeholder.png" alt="Profile picture">
+          </ion-avatar>
+          <div class="status-indicator" [class.active]="user.estadoCuenta === 'Activa'"></div>
+        </div>
+
+        <h1>{{user.nombres}} {{user.apellidos}}</h1>
+        <p class="email">{{user.email}}</p>
+
+        <div class="badges">
+          <ion-badge [color]="getStatusColor(user.estadoCuenta)" class="status-badge">
+            {{user.estadoCuenta}}
+          </ion-badge>
+          <ion-badge color="primary" class="role-badge">
+            {{user.rol}}
+          </ion-badge>
+        </div>
+      </div>
+
+      <!-- Profile Info -->
+      <div class="profile-info">
+        <form [formGroup]="profileForm">
+          <ion-list lines="none">
+            <ion-item>
+              <ion-label position="stacked">Nombres</ion-label>
+              <ion-input formControlName="nombres" readonly></ion-input>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">Apellidos</ion-label>
+              <ion-input formControlName="apellidos" readonly></ion-input>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">Email</ion-label>
+              <ion-input formControlName="email" readonly></ion-input>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">Teléfono</ion-label>
+              <ion-input formControlName="telefono" readonly></ion-input>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">Región</ion-label>
+              <ion-input formControlName="region" readonly></ion-input>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">Ciudad</ion-label>
+              <ion-input formControlName="ciudad" readonly></ion-input>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">RUT</ion-label>
+              <ion-input formControlName="rut" readonly></ion-input>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">Género</ion-label>
+              <ion-input formControlName="genero" readonly></ion-input>
+            </ion-item>
+          </ion-list>
+        </form>
+
+        <ion-button expand="block" (click)="toggleEdit()" class="edit-button">
+          <ion-icon name="create-outline" slot="start"></ion-icon>
+          Editar Perfil
+        </ion-button>
+      </div>
+
+      <!-- Logout Section -->
+      <div class="logout-section">
+        <ion-button expand="block" fill="outline" (click)="logout()" color="danger">
+          <ion-icon name="log-out-outline" slot="start"></ion-icon>
+          Cerrar Sesión
+        </ion-button>
+      </div>
+    </div>
+  </div>
+</ion-content>

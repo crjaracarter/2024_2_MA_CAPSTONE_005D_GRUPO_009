@@ -1,0 +1,77 @@
+<!-- asistencia.page.html -->
+<ion-content>
+  <div class="asistencia-container">
+    <!-- Header -->
+    <div class="header">
+      <h1>Control de Asistencia</h1>
+      <p>Gestiona tu jornada laboral</p>
+    </div>
+
+    <!-- Resumen Card -->
+    <ion-card class="summary-card">
+      <ion-card-header>
+        <ion-card-subtitle>Resumen de Horas</ion-card-subtitle>
+        <ion-card-title>{{currentMonth}} {{monthlyHours}} hrs</ion-card-title>
+      </ion-card-header>
+      
+      <ion-card-content>
+        <div class="status-indicator">
+          <ion-icon [name]="isRegistered ? 'time' : 'time-outline'"></ion-icon>
+          <span [class.active]="isRegistered">
+            {{isRegistered ? 'Jornada en curso' : 'Sin jornada activa'}}
+          </span>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Control Buttons -->
+    <div class="control-buttons">
+      <ion-button 
+        class="entry-button" 
+        (click)="registerEntry()" 
+        [disabled]="isRegistered || isLoadingLocation">
+        <ion-spinner *ngIf="isLoadingLocation"></ion-spinner>
+        <span *ngIf="!isLoadingLocation">Marcar Entrada</span>
+      </ion-button>
+    
+      <ion-button 
+        class="exit-button" 
+        (click)="registerExit()" 
+        [disabled]="!isRegistered || isLoadingLocation">
+        <ion-spinner *ngIf="isLoadingLocation"></ion-spinner>
+        <span *ngIf="!isLoadingLocation">Marcar Salida</span>
+      </ion-button>
+    </div>
+    <!-- Añade esto después de los botones de control -->
+<div *ngIf="currentLocation" class="location-section">
+  <h3>Ubicación Actual</h3>
+  <app-attendance-map
+    [latitude]="currentLocation.latitude"
+    [longitude]="currentLocation.longitude"
+    [accuracy]="currentLocation.accuracy">
+  </app-attendance-map>
+</div>
+    <!-- History Section -->
+    <div class="history-section">
+      <h2>Historial de Asistencia</h2>
+      
+      <ion-card *ngFor="let record of attendanceRecords" class="record-card">
+        <ion-card-content>
+          <div class="record-date">
+            {{record.fecha}}
+          </div>
+          <div class="record-times">
+            <div class="time-entry">
+              <ion-icon name="enter-outline"></ion-icon>
+              <span>{{formatTimestamp(record.entrada)}}</span>
+            </div>
+            <div class="time-exit" [class.pending]="!record.salida">
+              <ion-icon name="exit-outline"></ion-icon>
+              <span>{{record.salida ? formatTimestamp(record.salida) : 'Salida pendiente'}}</span>
+            </div>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </div>
+</ion-content>

@@ -1,0 +1,60 @@
+<!-- login.page.html -->
+<ion-content>
+  <div class="login-container">
+    <div class="header">
+      <img src="assets/icon/madu-blanco.png" alt="Madu Logo" class="logo">
+      <h1>Bienvenido de vuelta a Madu</h1>
+      <p>Ingresa con tu cuenta</p>
+    </div>
+
+    <div class="login-card">
+      <form [formGroup]="loginForm" (ngSubmit)="login()">
+        <div class="form-group">
+          <ion-item class="input-item">
+            <ion-icon name="mail-outline" slot="start"></ion-icon>
+            <ion-input 
+              type="email" 
+              placeholder="Correo electrónico"
+              formControlName="email">
+            </ion-input>
+          </ion-item>
+          
+          <div class="error-message" *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid">
+            <ion-text color="danger">
+              <small>Por favor ingresa un email válido</small>
+            </ion-text>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <ion-item class="input-item">
+            <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+            <ion-input 
+              type="password" 
+              placeholder="Contraseña"
+              formControlName="password">
+            </ion-input>
+          </ion-item>
+          
+          <div class="error-message" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid">
+            <ion-text color="danger">
+              <small>La contraseña es obligatoria</small>
+            </ion-text>
+          </div>
+        </div>
+
+        <div class="forgot-password">
+          <a routerLink="/reset-password">¿Olvidaste tu contraseña?</a>
+        </div>
+
+        <ion-button expand="block" (click)="login()" class="login-button text-white-100">
+          Acceder a Madu
+        </ion-button>
+
+        <div class="signup-link">
+          ¿Nuevo Usuario? <a routerLink="/signup">Regístrate Ahora!</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</ion-content>

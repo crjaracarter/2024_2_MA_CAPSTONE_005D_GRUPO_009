@@ -1,0 +1,135 @@
+<ion-content>
+  <div class="signup-container">
+    <div class="header">
+      <img src="assets/icon/madu-blanco.png" class="logo" alt="Madu Logo">
+      <h1>Únete a Madu</h1>
+      <p>Crea tu cuenta para comenzar</p>
+    </div>
+
+    <form [formGroup]="regForm" (ngSubmit)="onSubmit()" class="signup-card">
+      <ion-list>
+        <!-- Nombres -->
+        <ion-item>
+          <ion-icon name="person-outline" slot="start"></ion-icon>
+          <ion-label position="floating">Nombres</ion-label>
+          <ion-input type="text" formControlName="nombres"></ion-input>
+        </ion-item>
+        <div class="error-message" *ngIf="f['nombres'].touched && f['nombres'].errors">
+          {{ getErrorMessage('nombres') }}
+        </div>
+
+        <!-- Apellidos -->
+        <ion-item>
+          <ion-icon name="person-outline" slot="start"></ion-icon>
+          <ion-label position="floating">Apellidos</ion-label>
+          <ion-input type="text" formControlName="apellidos"></ion-input>
+        </ion-item>
+        <div class="error-message" *ngIf="f['apellidos'].touched && f['apellidos'].errors">
+          {{ getErrorMessage('apellidos') }}
+        </div>
+
+        <!-- RUT -->
+        <ion-item>
+          <ion-icon name="card-outline" slot="start"></ion-icon>
+          <ion-label position="floating">RUT</ion-label>
+          <ion-input type="text" formControlName="rut" placeholder="12.345.678-9"></ion-input>
+        </ion-item>
+        <div class="error-message" *ngIf="f['rut'].touched && f['rut'].errors">
+          {{ getErrorMessage('rut') }}
+        </div>
+
+        <!-- Email -->
+        <ion-item>
+          <ion-icon name="mail-outline" slot="start"></ion-icon>
+          <ion-label position="floating">Correo electrónico</ion-label>
+          <ion-input type="email" formControlName="email"></ion-input>
+        </ion-item>
+        <div class="error-message" *ngIf="f['email'].touched && f['email'].errors">
+          {{ getErrorMessage('email') }}
+        </div>
+
+        <!-- Contraseña -->
+        <ion-item>
+          <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+          <ion-label position="floating">Contraseña</ion-label>
+          <ion-input type="password" formControlName="password"></ion-input>
+        </ion-item>
+        <div class="error-message" *ngIf="f['password'].touched && f['password'].errors">
+          {{ getErrorMessage('password') }}
+        </div>
+
+        <!-- Teléfono -->
+        <ion-item>
+          <ion-icon name="call-outline" slot="start"></ion-icon>
+          <ion-label position="floating">Teléfono</ion-label>
+          <ion-input type="tel" formControlName="telefono" placeholder="+569XXXXXXXX"></ion-input>
+        </ion-item>
+        <div class="error-message" *ngIf="f['telefono'].touched && f['telefono'].errors">
+          {{ getErrorMessage('telefono') }}
+        </div>
+
+        <!-- Ciudad -->
+        <ion-item>
+          <ion-icon name="business-outline" slot="start"></ion-icon>
+          <ion-label position="floating">Ciudad</ion-label>
+          <ion-input type="text" formControlName="ciudad"></ion-input>
+        </ion-item>
+        <div class="error-message" *ngIf="f['ciudad'].touched && f['ciudad'].errors">
+          {{ getErrorMessage('ciudad') }}
+        </div>
+
+        <!-- Región -->
+        <ion-item>
+          <ion-icon name="location-outline" slot="start"></ion-icon>
+          <ion-label position="floating">Región</ion-label>
+          <ion-select formControlName="region" interface="action-sheet">
+            <ion-select-option value="Arica y Parinacota">Arica y Parinacota</ion-select-option>
+            <ion-select-option value="Tarapacá">Tarapacá</ion-select-option>
+            <ion-select-option value="Antofagasta">Antofagasta</ion-select-option>
+            <ion-select-option value="Atacama">Atacama</ion-select-option>
+            <ion-select-option value="Coquimbo">Coquimbo</ion-select-option>
+            <ion-select-option value="Valparaíso">Valparaíso</ion-select-option>
+            <ion-select-option value="Metropolitana">Metropolitana</ion-select-option>
+            <ion-select-option value="O'Higgins">O'Higgins</ion-select-option>
+            <ion-select-option value="Maule">Maule</ion-select-option>
+            <ion-select-option value="Ñuble">Ñuble</ion-select-option>
+            <ion-select-option value="Biobío">Biobío</ion-select-option>
+            <ion-select-option value="La Araucanía">La Araucanía</ion-select-option>
+            <ion-select-option value="Los Ríos">Los Ríos</ion-select-option>
+            <ion-select-option value="Los Lagos">Los Lagos</ion-select-option>
+            <ion-select-option value="Aysén">Aysén</ion-select-option>
+            <ion-select-option value="Magallanes">Magallanes</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <div class="error-message" *ngIf="f['region'].touched && f['region'].errors">
+          {{ getErrorMessage('region') }}
+        </div>
+
+        <!-- Género -->
+        <ion-item>
+          <ion-icon name="people-outline" slot="start"></ion-icon>
+          <ion-label position="floating">Género</ion-label>
+          <ion-select formControlName="genero" interface="action-sheet">
+            <ion-select-option value="Masculino">Masculino</ion-select-option>
+            <ion-select-option value="Femenino">Femenino</ion-select-option>
+            <ion-select-option value="Otro">Otro</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <div class="error-message" *ngIf="f['genero'].touched && f['genero'].errors">
+          {{ getErrorMessage('genero') }}
+        </div>
+      </ion-list>
+
+      <ion-button expand="block" class="signup-button" type="submit" [disabled]="!regForm.valid">
+        Crear cuenta
+      </ion-button>
+
+      <div class="login-link">
+        ¿Ya tienes una cuenta?
+        <ion-button fill="clear" routerLink="/login">
+          Inicia sesión
+        </ion-button>
+      </div>
+    </form>
+  </div>
+</ion-content>

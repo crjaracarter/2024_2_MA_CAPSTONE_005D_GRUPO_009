@@ -1,0 +1,75 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Editar Perfil</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismissModal()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form [formGroup]="editForm" (ngSubmit)="onSubmit()">
+    <ion-list>
+      <ion-item>
+        <ion-label position="stacked">Nombres</ion-label>
+        <ion-input formControlName="nombres" type="text"></ion-input>
+        <ion-note color="danger" *ngIf="editForm.get('nombres')?.touched && editForm.get('nombres')?.invalid">
+          {{getErrorMessage('nombres')}}
+        </ion-note>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Apellidos</ion-label>
+        <ion-input formControlName="apellidos" type="text"></ion-input>
+        <ion-note color="danger" *ngIf="editForm.get('apellidos')?.touched && editForm.get('apellidos')?.invalid">
+          {{getErrorMessage('apellidos')}}
+        </ion-note>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Teléfono</ion-label>
+        <ion-input formControlName="telefono" type="tel"></ion-input>
+        <ion-note color="danger" *ngIf="editForm.get('telefono')?.touched && editForm.get('telefono')?.invalid">
+          {{getErrorMessage('telefono')}}
+        </ion-note>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Región</ion-label>
+        <ion-select formControlName="region">
+          <ion-select-option *ngFor="let region of regions" [value]="region">{{region}}</ion-select-option>
+        </ion-select>
+        <ion-note color="danger" *ngIf="editForm.get('region')?.touched && editForm.get('region')?.invalid">
+          {{getErrorMessage('region')}}
+        </ion-note>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Ciudad</ion-label>
+        <ion-input formControlName="ciudad" type="text"></ion-input>
+        <ion-note color="danger" *ngIf="editForm.get('ciudad')?.touched && editForm.get('ciudad')?.invalid">
+          {{getErrorMessage('ciudad')}}
+        </ion-note>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Género</ion-label>
+        <ion-select formControlName="genero">
+          <ion-select-option *ngFor="let genero of generos" [value]="genero">{{genero}}</ion-select-option>
+        </ion-select>
+        <ion-note color="danger" *ngIf="editForm.get('genero')?.touched && editForm.get('genero')?.invalid">
+          {{getErrorMessage('genero')}}
+        </ion-note>
+      </ion-item>
+    </ion-list>
+
+    <div class="ion-padding button-container">
+      <ion-button expand="block" type="submit" class="save-button" [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Guardando...' : 'Guardar Cambios' }}
+      </ion-button>
+      <ion-button expand="block" fill="clear" class="cancel-button" (click)="dismissModal()">
+        Cancelar
+      </ion-button>
+    </div>

@@ -1,0 +1,197 @@
+// asistencia.page.scss
+// Variables
+$indigo-dark: #4B0082;
+$indigo-medium: #5A4FCF;
+$indigo-light: #8A8EF2;
+$lavender: #C2AFFF;
+$background-light: #F5F7FA;
+$gray-soft: #E0E3E7;
+$text-primary: #2C2C2C;
+$text-secondary: #7D7D7D;
+$success-color: #4CAF50;
+$warning-color: #FFC107;
+
+.asistencia-container {
+  background: linear-gradient(135deg, $indigo-dark, $indigo-medium);
+  min-height: 100vh;
+  padding: 20px;
+
+  .header {
+    text-align: center;
+    color: white;
+    margin-bottom: 30px;
+    padding-top: 20px;
+
+    h1 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    p {
+      color: $lavender;
+      font-size: 16px;
+      opacity: 0.9;
+    }
+  }
+
+  .summary-card {
+    background: white;
+    border-radius: 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+
+    ion-card-header {
+      padding: 20px;
+      border-bottom: 1px solid $gray-soft;
+
+      ion-card-subtitle {
+        color: $text-secondary;
+        font-size: 14px;
+      }
+
+      ion-card-title {
+        color: $indigo-dark;
+        font-size: 24px;
+        font-weight: 600;
+      }
+    }
+
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+      color: $text-secondary;
+
+      &.active {
+        color: $success-color;
+      }
+
+      ion-icon {
+        font-size: 20px;
+      }
+    }
+  }
+
+  .control-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 32px;
+
+    ion-button {
+      height: 48px;
+      --border-radius: 12px;
+      font-size: 16px;
+      font-weight: 500;
+      
+      &.entry-button {
+        --background: #{$success-color};
+        --background-activated: #{darken($success-color, 10%)};
+      }
+
+      &.exit-button {
+        --background: #{$indigo-medium};
+        --background-activated: #{darken($indigo-medium, 10%)};
+      }
+
+      &[disabled] {
+        opacity: 0.7;
+      }
+    }
+  }
+
+  .history-section {
+    h2 {
+      color: white;
+      font-size: 20px;
+      margin-bottom: 16px;
+      padding-left: 8px;
+    }
+
+    .record-card {
+      background: white;
+      border-radius: 16px;
+      margin-bottom: 16px;
+      
+      .record-date {
+        font-weight: 600;
+        color: $indigo-dark;
+        margin-bottom: 12px;
+      }
+
+      .record-times {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+
+        .time-entry, .time-exit {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          color: $text-secondary;
+
+          ion-icon {
+            font-size: 18px;
+            color: $indigo-medium;
+          }
+        }
+
+        .time-exit.pending {
+          color: $warning-color;
+        }
+      }
+    }
+  }
+}
+
+// Animaciones
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+ion-card {
+  animation: fadeIn 0.3s ease-out;
+}
+
+// Responsive adjustments
+@media (max-width: 320px) {
+  .asistencia-container {
+    padding: 16px;
+
+    .header {
+      h1 {
+        font-size: 20px;
+      }
+    }
+
+    .control-buttons {
+      ion-button {
+        font-size: 14px;
+      }
+    }
+  }
+}
+
+.location-section {
+  background: white;
+  border-radius: 20px;
+  padding: 15px;
+  margin: 20px 0;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+
+  h3 {
+    color: $indigo-dark;
+    font-size: 18px;
+    margin: 0 0 10px;
+  }
+}
+

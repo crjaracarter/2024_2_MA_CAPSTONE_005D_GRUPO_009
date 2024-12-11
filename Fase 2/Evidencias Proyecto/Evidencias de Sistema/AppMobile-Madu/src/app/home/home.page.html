@@ -1,0 +1,75 @@
+<!-- home.page.html -->
+<ion-content class="gradient-background">
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div class="loading-overlay" *ngIf="isloading">
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
+  </div>
+
+  <!-- Encabezado -->
+  <div class="header-container">
+    <h1>Madu</h1>
+    <p class="subtitle">App Empleados</p>
+  </div>
+
+  <!-- Panel Principal -->
+  <div class="main-container">
+    <!-- Tarjeta de Bienvenida -->
+    <div class="welcome-card">
+      <div class="user-info">
+        <ion-avatar>
+          <img src="assets/icon/avatar-placeholder.png" alt="avatar">
+        </ion-avatar>
+        <div class="user-text">
+          <h2>¡Bienvenido{{userName ? ', ' + userName : ''}}!</h2>
+          <p>{{today | date:'EEEE d MMMM' | titlecase}}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tarjetas de Acceso Rápido -->
+    <div class="quick-access">
+      <div class="access-card" (click)="goToAttendance()">
+        <div class="card-icon">
+          <ion-icon name="time-outline"></ion-icon>
+        </div>
+        <div class="card-text">
+          <h3>Asistencia</h3>
+          <p>Registro diario</p>
+        </div>
+      </div>
+
+      <div class="access-card" (click)="goToCalendar()">
+        <div class="card-icon">
+          <ion-icon name="calendar-outline"></ion-icon>
+        </div>
+        <div class="card-text">
+          <h3>Calendario</h3>
+          <p>Eventos y notas</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estado Actual -->
+    <div class="status-section">
+      <h3 class="section-title">ESTADO ACTUAL</h3>
+      <div class="status-card" [class.active]="isWorking" (click)="goToAttendance()">
+        <ion-icon [name]="isWorking ? 'checkmark-circle' : 'time-outline'"></ion-icon>
+        <span>{{isWorking ? 'Jornada Activa' : 'Sin Jornada Activa'}}</span>
+        <ion-icon name="chevron-forward-outline" class="arrow-icon"></ion-icon>
+      </div>
+    </div>
+
+    <!-- Actividad Reciente -->
+    <div class="activity-section">
+      <h3 class="section-title">ACTIVIDAD RECIENTE</h3>
+      <div class="activity-card">
+        <p *ngIf="!recentActivity.length" class="no-activity">
+          No hay actividad reciente
+        </p>
+      </div>
+    </div>
+  </div>
+</ion-content>
