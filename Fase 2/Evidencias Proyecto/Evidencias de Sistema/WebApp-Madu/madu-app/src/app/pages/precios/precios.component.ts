@@ -52,7 +52,7 @@ export class PreciosComponent {
     },
     {
       name: 'Plan Crecimiento',
-      price: 3,
+      price: 0.91,
       recommended: true,
       features: [
         'Hasta 25 empleados',
@@ -65,7 +65,7 @@ export class PreciosComponent {
     },
     {
       name: 'Plan Empresa',
-      price: 5,
+      price: 1.17,
       features: [
         'Empleados ilimitados',
         'Todas las características',

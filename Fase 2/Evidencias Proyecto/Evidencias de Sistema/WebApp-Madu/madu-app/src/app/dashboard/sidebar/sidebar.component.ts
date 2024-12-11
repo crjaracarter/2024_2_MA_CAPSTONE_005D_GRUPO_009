@@ -18,7 +18,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SidebarService } from '../../services/dashboard/sidebar.service';
 import { DeviceService } from '../../services/dashboard/device/device.service';
-import { Subscription } from 'rxjs';
+import { map, Subscription, tap } from 'rxjs';
 import { AuthStateService } from '../../shared/data-access/auth-state.service';
 import { UserRole } from '../../core/interfaces/user.interface';
 
@@ -48,6 +48,10 @@ export class SidebarComponent implements OnInit, OnDestroy {
   isOpen: boolean = false;
   private subscription: Subscription;
   UserRole = UserRole;
+  isEmpleador: boolean = false;
+  private userSubscription?: Subscription;
+  isAdmin: boolean = false;
+  
   
   constructor(
     public sidebarService: SidebarService,
@@ -55,6 +59,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
     this.subscription = this.sidebarService.isOpen$.subscribe(
       (isOpen) => (this.isOpen = isOpen)
     );
+
+    console.log('UserRole enum:', UserRole);
   }
 
   navItems: NavItem[] = [
@@ -62,12 +68,32 @@ export class SidebarComponent implements OnInit, OnDestroy {
     { label: 'Personas', route: '/dashboard/usuarios', icon: 'people' },
   ];
 
+  get isAdmin$() {
+    return this.authState.user$.pipe(
+      map(user => user?.rol === UserRole.ADMIN)
+    );
+  }
+
+  get isEmpleador$() {
+    return this.authState.user$.pipe(
+      map(user => user?.rol === UserRole.EMPLEADOR)
+    );
+  }
+
   ngOnInit(): void {
     this.checkScreenSize();
+    
+    this.userSubscription = this.authState.user$.subscribe(user => {
+      this.isEmpleador = user?.rol === UserRole.EMPLEADOR;
+      this.isAdmin = user?.rol === UserRole.ADMIN;
+    });
   }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
+    if (this.userSubscription) {
+      this.userSubscription.unsubscribe();
+    }
   }
 
   @HostListener('window:resize')
@@ -96,4 +122,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
       console.log('Logout clicked');
     }
   }
+
+  
 }

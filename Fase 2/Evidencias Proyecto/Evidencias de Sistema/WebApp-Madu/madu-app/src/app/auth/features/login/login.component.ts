@@ -19,6 +19,10 @@ import {
 } from '../../../core/interfaces/user.interface';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { CommonModule } from '@angular/common';
+import { MatDialog } from '@angular/material/dialog';
+import { ForgotPasswordModalComponent } from '../forgot-password-modal/forgot-password-modal.component';
+
+
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -45,6 +49,7 @@ export class LoginComponent {
   private _formBuilder = inject(FormBuilder);
   private _authService = inject(AuthService);
   private _router = inject(Router);
+  private _dialog = inject(MatDialog);
 
   isLoading = false;
   showPassword = false;
@@ -61,6 +66,14 @@ export class LoginComponent {
 
   ngOnInit() {
     this.initializeMouseMove();
+  }
+
+  openForgotPasswordModal() {
+    this._dialog.open(ForgotPasswordModalComponent, {
+      width: '400px',
+      disableClose: true,
+      panelClass: 'custom-dialog-container'
+    });
   }
 
   private initializeMouseMove() {

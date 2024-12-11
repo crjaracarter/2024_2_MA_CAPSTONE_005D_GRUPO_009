@@ -1,6 +1,7 @@
 <div class="space-y-6" data-aos="fade-up">
     <!-- Estadísticas Rápidas -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Usuarios/Empleados/Postulaciones -->
         <div class="p-4 bg-white/10 backdrop-blur-md rounded-xl border border-white/10">
             <div class="flex items-center">
                 <div class="p-3 rounded-lg bg-[#4B0082]">
@@ -11,26 +12,93 @@
                     </svg>
                 </div>
                 <div class="ml-4">
-                    <p class="text-sm text-gray-200">Usuarios Totales</p>
+                    <p class="text-sm text-gray-200">
+                        <ng-container *ngIf="isAdmin">Usuarios Totales</ng-container>
+                        <ng-container *ngIf="isEmpleador">Empleados Activos</ng-container>
+                        <ng-container *ngIf="isUsuario">Postulaciones Activas</ng-container>
+                    </p>
                     <p class="text-2xl font-semibold text-white">{{totalUsers}}</p>
                 </div>
             </div>
         </div>
 
-        <!-- Más estadísticas similares... -->
+        <!-- Estadística específica para Admin -->
+        <div *ngIf="isAdmin" class="p-4 bg-white/10 backdrop-blur-md rounded-xl border border-white/10">
+            <div class="flex items-center">
+                <div class="p-3 rounded-lg bg-[#5A4FCF]">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm text-gray-200">Empresas Registradas</p>
+                    <p class="text-2xl font-semibold text-white">25</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estadística específica para Empleador -->
+        <div *ngIf="isEmpleador" class="p-4 bg-white/10 backdrop-blur-md rounded-xl border border-white/10">
+            <div class="flex items-center">
+                <div class="p-3 rounded-lg bg-[#4CAF50]">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" viewBox="0 0 20 20"
+                        fill="currentColor">
+                        <path
+                            d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5z" />
+                    </svg>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm text-gray-200">Ofertas Activas</p>
+                    <p class="text-2xl font-semibold text-white">8</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estadística específica para Usuario -->
+        <div *ngIf="isUsuario" class="p-4 bg-white/10 backdrop-blur-md rounded-xl border border-white/10">
+            <div class="flex items-center">
+                <div class="p-3 rounded-lg bg-[#FFC107]">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm text-gray-200">Ofertas Guardadas</p>
+                    <p class="text-2xl font-semibold text-white">12</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estadística específica para Empleado -->
+    <div *ngIf="isEmpleado" class="p-4 bg-white/10 backdrop-blur-md rounded-xl border border-white/10">
+        <div class="flex items-center">
+            <div class="p-3 rounded-lg bg-[#5A4FCF]">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+            <div class="ml-4">
+                <p class="text-sm text-gray-200">Horas Trabajadas</p>
+                <p class="text-2xl font-semibold text-white">36.5h</p>
+            </div>
+        </div>
     </div>
 
     <!-- Accesos Rápidos -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Gestión de Usuarios -->
-
-        <div class="group hover:scale-105 transition-all duration-300">
-            <a routerLink="/dashboard/usuarios" class="block p-6 rounded-xl bg-white/10 backdrop-blur-md hover:bg-white/20 
-        shadow-xl border border-white/10">
-
+        <!-- Gestión de Usuarios - Solo Admin -->
+        <div *ngIf="isAdmin" class="group hover:scale-105 transition-all duration-300">
+            <a routerLink="/dashboard/usuarios"
+                class="block p-6 rounded-xl bg-white/10 backdrop-blur-md hover:bg-white/20 shadow-xl border border-white/10">
                 <div class="flex items-center space-x-4">
                     <div class="p-3 rounded-lg bg-[#4B0082] group-hover:bg-[#5A4FCF] transition-colors">
-
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" viewBox="0 0 20 20"
                             fill="currentColor">
                             <path
@@ -44,11 +112,54 @@
                 </div>
             </a>
         </div>
+        <!-- Asistencia - Solo Empleado -->
+        <div *ngIf="isEmpleado" class="group hover:scale-105 transition-all duration-300">
+            <a routerLink="/dashboard/asistencia"
+                class="block p-6 rounded-xl bg-white/10 backdrop-blur-md hover:bg-white/20 shadow-xl border border-white/10">
+                <div class="flex items-center space-x-4">
+                    <div class="p-3 rounded-lg bg-[#5A4FCF] group-hover:bg-[#4B0082] transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" viewBox="0 0 20 20"
+                            fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-white">Control de Asistencia</h3>
+                        <p class="text-gray-200 mt-1">Registra entradas y salidas</p>
+                    </div>
+                </div>
+            </a>
+        </div>
 
-        <!-- Reclutamiento -->
-        <div class="group hover:scale-105 transition-all duration-300">
-            <a routerLink="/dashboard/job-offers" class="block p-6 rounded-xl bg-white/10 backdrop-blur-md hover:bg-white/20 
-                  shadow-xl border border-white/10">
+        <!-- Documentos - Solo Empleado -->
+        <div *ngIf="isEmpleado" class="group hover:scale-105 transition-all duration-300">
+            <a routerLink="/dashboard/documentos"
+                class="block p-6 rounded-xl bg-white/10 backdrop-blur-md hover:bg-white/20 shadow-xl border border-white/10">
+                <div class="flex items-center space-x-4">
+                    <div class="p-3 rounded-lg bg-[#5A4FCF] group-hover:bg-[#4B0082] transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" viewBox="0 0 20 20"
+                            fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-white">Mis Documentos</h3>
+                        <p class="text-gray-200 mt-1">Accede a tus documentos laborales</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+
+
+        <!-- Reclutamiento - Solo Empleador -->
+        <div *ngIf="isEmpleador" class="group hover:scale-105 transition-all duration-300">
+            <a routerLink="/dashboard/job-offers"
+                class="block p-6 rounded-xl bg-white/10 backdrop-blur-md hover:bg-white/20 shadow-xl border border-white/10">
                 <div class="flex items-center space-x-4">
                     <div class="p-3 rounded-lg bg-[#4CAF50] group-hover:bg-[#45a049] transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" viewBox="0 0 20 20"
@@ -68,10 +179,10 @@
             </a>
         </div>
 
-        <!-- Postulaciones -->
-        <div class="group hover:scale-105 transition-all duration-300">
-            <a routerLink="/dashboard/job-applications" class="block p-6 rounded-xl bg-white/10 backdrop-blur-md hover:bg-white/20 
-                  shadow-xl border border-white/10">
+        <!-- Postulaciones - Solo Usuario -->
+        <div *ngIf="isUsuario" class="group hover:scale-105 transition-all duration-300">
+            <a routerLink="/dashboard/job-applications"
+                class="block p-6 rounded-xl bg-white/10 backdrop-blur-md hover:bg-white/20 shadow-xl border border-white/10">
                 <div class="flex items-center space-x-4">
                     <div class="p-3 rounded-lg bg-[#FFC107] group-hover:bg-[#ffb300] transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" viewBox="0 0 20 20"
@@ -84,7 +195,7 @@
                     </div>
                     <div>
                         <h3 class="text-xl font-semibold text-white">Postulaciones</h3>
-                        <p class="text-gray-200 mt-1">Revisa candidaturas activas</p>
+                        <p class="text-gray-200 mt-1">Revisa tus postulaciones</p>
                     </div>
                 </div>
             </a>
@@ -93,9 +204,13 @@
 
     <!-- Actividad Reciente -->
     <div class="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/10">
-        <h2 class="text-xl font-semibold text-white mb-4">Actividad Reciente</h2>
+        <h2 class="text-xl font-semibold text-white mb-4">
+            <ng-container *ngIf="isAdmin">Actividad General</ng-container>
+            <ng-container *ngIf="isEmpleador">Actividad de Reclutamiento</ng-container>
+            <ng-container *ngIf="isEmpleado">Actividad Laboral</ng-container>
+            <ng-container *ngIf="isUsuario">Actividad de Postulaciones</ng-container>
+        </h2>
         <div class="space-y-4">
-            <!-- Actividades -->
             <div class="flex items-center space-x-4" *ngFor="let activity of recentActivities">
                 <div class="flex-shrink-0">
                     <div class="w-10 h-10 rounded-full bg-[#C2AFFF] flex items-center justify-center">

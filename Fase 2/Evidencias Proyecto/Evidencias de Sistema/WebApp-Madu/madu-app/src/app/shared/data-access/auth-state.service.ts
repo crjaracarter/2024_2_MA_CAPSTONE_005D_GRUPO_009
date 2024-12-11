@@ -19,7 +19,11 @@ export class AuthStateService {
       
       return from(
         getDoc(doc(this._firestore, `users/${user.uid}`))
-          .then(snapshot => snapshot.data() as CustomUser)
+          .then(snapshot => {
+            const userData = snapshot.data() as CustomUser;
+            console.log('Firestore user data:', userData); // Debug log
+            return userData;
+          })
       );
     })
   );

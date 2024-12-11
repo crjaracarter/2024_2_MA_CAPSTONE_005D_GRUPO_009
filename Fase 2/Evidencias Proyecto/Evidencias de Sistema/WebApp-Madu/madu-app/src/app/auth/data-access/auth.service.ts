@@ -8,6 +8,7 @@ import {
   signOut,
   onAuthStateChanged,
   getAuth,
+  sendPasswordResetEmail,
 } from '@angular/fire/auth';
 import {
   Firestore,
@@ -42,6 +43,23 @@ export class AuthService {
         observer.next(!!user);
       });
     });
+  }
+
+  /**
+   * Envía un correo de restablecimiento de contraseña
+   * @param email Correo electrónico del usuario
+   * @returns Promise<void>
+   */
+  async resetPassword(email: string): Promise<void> {
+    try {
+      await sendPasswordResetEmail(this._auth, email, {
+        url: window.location.origin + '/auth/login', // URL de redirección después de resetear la contraseña
+        handleCodeInApp: true,
+      });
+    } catch (error) {
+      console.error('Error al enviar correo de recuperación:', error);
+      throw error;
+    }
   }
 
   getCurrentUser() {

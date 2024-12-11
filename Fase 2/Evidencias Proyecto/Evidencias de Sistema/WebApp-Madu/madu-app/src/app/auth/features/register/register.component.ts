@@ -87,9 +87,9 @@ export class RegisterComponent {
 
     this.loading = true;
     try {
-      const { email, password, nombres, apellidos } = this.form.value;
+      const { email, password, nombres, apellidos, rut } = this.form.value;
 
-      if (!email || !password || !nombres || !apellidos) {
+      if (!email || !password || !nombres || !apellidos || !rut) {
         this.loading = false;
         return;
       }
@@ -102,7 +102,7 @@ export class RegisterComponent {
         telefono: '',
         region: '',
         ciudad: '',
-        rut: '',
+        rut,
         rol: UserRole.USUARIO,
         genero: Gender.NO_ESPECIFICA,
         estadoCuenta: AccountStatus.ACTIVA,

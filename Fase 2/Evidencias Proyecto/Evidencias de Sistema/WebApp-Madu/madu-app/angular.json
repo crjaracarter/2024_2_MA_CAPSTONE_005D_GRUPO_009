@@ -42,9 +42,7 @@
             "styles": [
               "src/styles.scss",
               "@angular/material/prebuilt-themes/indigo-pink.css",
-              
               "node_modules/ngx-toastr/toastr.css",
-              
               "node_modules/swiper/swiper-bundle.css"
             ],
             "scripts": [
