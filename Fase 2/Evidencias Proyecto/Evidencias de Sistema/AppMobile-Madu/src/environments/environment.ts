@@ -6,7 +6,7 @@ import { initializeApp } from "firebase/app";
 export const environment = {
   production: false,
   firebaseConfig: {
-    apiKey: "AIzaSyCwLAJ0Wm4QFGXla-3JrUIOPkaBuXwG4c8",
+    apiKey: "",
     authDomain: "madu-app-ca037.firebaseapp.com",
     projectId: "madu-app-ca037",
     storageBucket: "madu-app-ca037.firebasestorage.app",
